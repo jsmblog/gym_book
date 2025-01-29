@@ -109,7 +109,7 @@ const CommentsBox = React.memo(({ publication, setIsOnBoxComments, currentUser ,
                         ) : (
                             <div className="commentsBox__empty">
                                 <img src={iconEmptyComments} width={120} alt="" />
-                                <h3>Sé el primero en comentar</h3>
+                                <h3 className="message_empty_comments">Sé el primero en comentar</h3>
                             </div>
                         )}
                     </div>

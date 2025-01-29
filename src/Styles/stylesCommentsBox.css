@@ -115,6 +115,10 @@
     gap: .5rem;
     overflow-y: auto;
 }
+.message_empty_comments {
+    color: var(--co-gray);
+    text-shadow: 0 1px 0 var(--co-back-gray);
+}
 .slide-in-bottom {
 	-webkit-animation: slide-in-bottom 1.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 	        animation: slide-in-bottom 1.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;

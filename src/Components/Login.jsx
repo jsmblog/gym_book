@@ -2,7 +2,7 @@ import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'fir
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../STYLES/stylesLogin.css';
+import '../Styles/stylesLogin.css';
 import useMessage from '../Hooks/useMessage.js'; 
 import DisplayMessage from './DisplayMessage.jsx';
 import LoaderSuccess from './LoaderSuccess.jsx';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { signOut } from 'firebase/auth';
 import {useNavigate} from 'react-router-dom'
-import '../STYLES/styleSesionOff.css'
+import '../Styles/styleSesionOff.css'
 import {AUTH_USER} from '../ConfigFirebase/config.js'
 import iconTurn_on  from '/turn-on.png';
 const SesionOff = () => {
