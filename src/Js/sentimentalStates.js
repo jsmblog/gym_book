@@ -1,0 +1,15 @@
+const sentimentalStates = [
+    "Feliz 😄",
+    "Triste 😔",
+    "Enojado 😠",
+    "Sorprendido 😮",
+    "Confundido 🤔",
+    "Emocionado 😁",
+    "Agradecido 😊",
+    "Nostálgico 😔",
+    "Decepcionado 😞",
+    "Ansioso 😬",
+  ];
+  
+  export default sentimentalStates;
+  

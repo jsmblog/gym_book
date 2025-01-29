@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Sanchez:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Sanchez:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  font-family: "Sanchez", serif;
+  font-weight: 400;
+  font-style: normal;
+  user-select: none;
+}
+.libre-Baskerville {
+  font-family: "Libre Baskerville", serif;
+}
+/*Font of google merriweather*/
+.merriweather-bold {
+  font-family: "Merriweather", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+:root {
+  --co-white :white;
+  --co-gray:#818080;
+  --co-back-gray :#e5e4e3;
+  --co-back-gray-2 :#f7f6f5;
+  --co-back-gray-3 :#d4d2d0;
+  --co-blue-1:#2a205f;
+  --co-black-1:rgba(0, 0, 0, 0.934);
+  --co-black-2:rgba(0, 0, 0, 0.555);
+  --co-red:red;
+}
+
+* button {
+  cursor: pointer;
+  padding: .3rem 1rem;
+  border-radius: 10px;
+  background-color: var(--co-white);
+  font-size: .90rem;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  justify-content: center;
+}
+
+* button:hover {
+  filter: brightness(90%);
+  transition: .4s ease;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--co-back-gray);
+  border-radius: 10px;
+}
+.back-blue-dark{
+  color: var(--co-white);
+  background: #000428;
+  background: -webkit-linear-gradient(to top, #004e92, #000428);
+  background: linear-gradient(to top, #004e92, #000428);
+}
