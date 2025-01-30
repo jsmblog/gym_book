@@ -1,3 +1,4 @@
+
 #nav-bar-home{
 background-color: var(--co-back-gray-2);
 width: 300px;
@@ -10,6 +11,13 @@ position: absolute;
 bottom: 1rem;
 box-shadow: 0 6px 12px -5px var(--co-gray);
 z-index: 1;
+}
+#main-nvhome {
+    background-color: greenyellow;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 #nav-bar-home button{
     border-radius: 50%;

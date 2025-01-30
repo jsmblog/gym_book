@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../Context/UserContext.jsx"; // Importa el contexto
 import SesionOff from "./SesionOff";
@@ -17,14 +17,18 @@ const Home = React.memo(({ userId }) => {
 
   const currentUser = users.find((user) => user.uid === userId);
   
-  const publications = users.flatMap((user) => 
-    user.posts.map((post) => ({
-      owner: user.name,
-      ownerPhoto: user.imageProfile, 
-      ownerId: user.uid, 
-      post: post || [] 
-    }))
-  );
+  const publications = useMemo(() => {
+    return users.flatMap((user) => 
+      user.posts.map((post) => ({
+        owner: user.name,
+        ownerPhoto: user.imageProfile, 
+        ownerId: user.uid, 
+        post: post || [] 
+      }))
+    );
+  }, [users]);  
+  
+  
    const shuffledPublications = shuffled(publications)
   console.log(shuffledPublications)
   return (
@@ -32,7 +36,6 @@ const Home = React.memo(({ userId }) => {
       <Post currentUser={currentUser} />
       <Publications users={shuffledPublications} currentUser={currentUser} />
       <NavBarHome userId={userId} />
-      <SesionOff />
     </main>
   );
 });

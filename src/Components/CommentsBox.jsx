@@ -54,11 +54,11 @@ const CommentsBox = React.memo(({ publication, setIsOnBoxComments, currentUser ,
 
             const newComment = {
                 id: uuid(35),
-                text: encrypt(comment),
-                image: image ? URL.createObjectURL(image) : null,
-                createdAt,
-                name: encrypt(currentUser.name),
-                photo: encrypt(currentUser.imageProfile)
+                t: encrypt(comment), // text-comment
+                img: image ? URL.createObjectURL(image) : null,
+                c_a:createdAt,
+                n: encrypt(currentUser.name),
+                p_u: encrypt(currentUser.imageProfile)
             };
 
             const updatedPosts = posts.map((p) => {
@@ -95,14 +95,14 @@ const CommentsBox = React.memo(({ publication, setIsOnBoxComments, currentUser ,
                                 {publication.comments.map((c, index) => (
                                     <div key={index} className="comment">
                                         <div className="comment__avatar"> 
-                                        <img src={decrypt(c.photo)} alt={c.name} />
+                                        <img src={decrypt(c.p_u)} alt={c.n} />
                                         <h5>{decrypt(c.name)}</h5>
                                         </div>
                                         <div className="comment__text">
-                                        <p>{decrypt(c.text)}</p>
-                                        {c.image && <img src={c.image} alt="Comentario" />}
+                                        <p>{decrypt(c.t)}</p>
+                                        {c.img && <img src={c.img} alt="Comentario" />}
                                         </div>
-                                        <small className="createdAt_comment">{formatDate(c.createdAt)}</small>
+                                        <small className="createdAt_comment">{formatDate(c.c_a)}</small>
                                     </div>
                                 ))}
                             </div>

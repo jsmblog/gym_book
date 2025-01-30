@@ -13,11 +13,8 @@ const ProtectedRoute = ({ user, role, allowedRoles, emailVerified }) => {
         }
 
         const token = await getIdToken(user, false); 
-        if (token) {
-          setIsTokenValid(true);
-        } else {
-          setIsTokenValid(false);
-        }
+        setIsTokenValid(token);
+       
       } catch (error) {
         console.error("Error al validar el token:", error.message);
         setIsTokenValid(false);

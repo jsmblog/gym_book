@@ -14,6 +14,7 @@ import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import Home from './Components/Home';
 import Profile from './Components/Profile';
 import Marketplace from './Components/Marketplace';
+import Gyms from './Components/Gyms.jsx';
 
 function App() {
   const [dataUser, setDataUser] = useState([]);
@@ -36,8 +37,8 @@ function App() {
         if (docSnap.exists()) {
           const user = docSnap.data();
           setDataUser(user || []);
-          setEmailVerified(user.emailVerified)
-          setRole(user.userRole);
+          setEmailVerified(user.v)
+          setRole(user.rol);
         } else {
           console.error('No user data found');
         }
@@ -94,7 +95,7 @@ function App() {
         <Route path='/ingreso' element={ <Login/> } />
         <Route path="/area-de-espera" element={<RoomWaiting />} />
         <Route path='/profile/:userId' element={<Profile />} />
-        <Route path='/marketplace/:userId' element={<Marketplace />} />
+        <Route path='/gimnasios/:userId' element={<Gyms  userId={userId} />} />
       </Routes>
     </Router>
   );

@@ -13,6 +13,7 @@ import { getDownloadURL,ref, uploadBytes } from 'firebase/storage';
 import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
 import LoaderSuccess from './LoaderSuccess.jsx';
+import convertToWebP from '../Js/convertToWebp.js';
 const CURRENT_YEAR = new Date().getFullYear();
 
 const SignUpUser = () => {
@@ -53,83 +54,83 @@ const SignUpUser = () => {
   const saveInfoToFirebase = async () => {
     setLoaderMessageSuccess(true);
     try {
-      if (!nameUser  || !numberTelf || !password || !email || displayPhoto === null || !gender || !dateBirth || !province) {
+      if (!nameUser || !numberTelf || !password || !email || displayPhoto === null || !gender || !dateBirth || !province) {
         messageError("Rellena todos los campos 😉​");
         setLoaderMessageSuccess(false);
         return;
-      }else if (!isNaN(nameUser)){
-        messageError('Su nombre no puede ser un número');
+      } 
+      if (!isNaN(nameUser)) {
+        messageError("El nombre no puede ser un número");
         setLoaderMessageSuccess(false);
-        setNameUser('');
+        setNameUser("");
         return;
-      }else if (isNaN(numberTelf)) {
-        messageError('Su contacto debe ser un número');
+      } 
+      if (isNaN(numberTelf) || numberTelf.length !== 10) {
+        messageError("El contacto debe ser un número de 10 dígitos");
         setLoaderMessageSuccess(false);
-        setNumberTelf('');
-        return;
-      } else if (numberTelf.length != 10){
-        messageError('Su contacto debe contar con 10 dígitos');
-        setLoaderMessageSuccess(false);
-        setNumberTelf('');
-        return;
-      } else if (verifyFormatEmail(email)) {
-          messageError("Correo con formato incorrecto.​");
-          setEmail("");
-          setLoaderMessageSuccess(false);
-          return;
-      } else if (password.length < 8) {
-        messageError("Ingresa mínimo 8 caracteres.​");
-        setLoaderMessageSuccess(false);
-        setPassword('');
-        return;
-      }else if ((CURRENT_YEAR - dateBirth.slice(0,4)) < 18){
-        messageError('Lo sentimos , debes ser mayor de edad para registrarte.')
-        setLoaderMessageSuccess(false);
-        setDateBirth('');
+        setNumberTelf("");
         return;
       }
+      if (verifyFormatEmail(email)) {
+        messageError("Correo con formato incorrecto.");
+        setEmail("");
+        setLoaderMessageSuccess(false);
+        return;
+      } 
+      if (password.length < 8) {
+        messageError("Ingresa mínimo 8 caracteres.");
+        setLoaderMessageSuccess(false);
+        setPassword("");
+        return;
+      }
+      if (CURRENT_YEAR - dateBirth.slice(0, 4) < 18) {
+        messageError("Debes ser mayor de edad para registrarte.");
+        setLoaderMessageSuccess(false);
+        setDateBirth("");
+        return;
+      }
+  
       const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, password);
       const userId = userCredential.user.uid;
-
-      await updateProfile(userCredential.user, {
-        displayName: nameUser,
-      });
-      await sendEmailVerification(userCredential.user);
-      const storageRef = ref(STORAGE, `profileImages/${userId}/image.png`);
-      await uploadBytes(storageRef, photo);
-      const downloadUrl = await getDownloadURL(storageRef);
   
-      // Datos para Firestore
-      const createAccount = formatDate(new Date().toISOString());
+      await updateProfile(userCredential.user, { displayName: nameUser });
+      await sendEmailVerification(userCredential.user);
+  
+      const webpImage = await convertToWebP(photo);
+  
+      const storageRef = ref(STORAGE, `profileImages/${userId}/image.webp`);
+      await uploadBytes(storageRef, webpImage);
+      const imageUrl = await getDownloadURL(storageRef);
+      const createdAt = new Date().toISOString();
       const userDoc = {
-        name: encrypt(nameUser),
-        email: encrypt(email),
-        imageProfile: encrypt(downloadUrl),
-        createAccount,
-        userRole: 'user',
+        n: encrypt(nameUser), // name -> n
+        e: encrypt(email), // email -> e
+        img: encrypt(imageUrl), // imageProfile -> img
+        c_a: createdAt, // createAccount -> c_a
+        rol: "user", // userRole -> rol
         uid: userId,
-        dateBirth:encrypt(dateBirth),
-        province:encrypt(province),
-        gender:encrypt(gender),
-        isOnline:true,
-        numberTelf: encrypt(numberTelf),
-        emailVerified:false,
-        posts:[]
+        birth: encrypt(dateBirth), // dateBirth -> birth
+        pro: encrypt(province), // province -> prov
+        g: encrypt(gender), // gender -> g
+        on: true, // isOnline -> on
+        tel: encrypt(numberTelf), // numberTelf -> tel
+        v: false, // emailVerified -> v
+        posts: [] 
       };
   
-      // Guardar en Firestore
       const collectionUsers = collection(db, "USERS");
-      await setDoc(doc(collectionUsers, userId), userDoc,{merge:true});
+      await setDoc(doc(collectionUsers, userId), userDoc, { merge: true });
   
       navigate("/area-de-espera", { replace: true });
       setLoaderMessageSuccess(false);
+  
     } catch (error) {
       console.error("Error al guardar en Firebase: ", error);
       messageError("Ocurrió un error al registrar la información. Inténtalo de nuevo.");
       setLoaderMessageSuccess(false);
     }
-  }
-
+  };
+  
   useEffect(() => {
     let index = 0 ;
     const interval = setInterval(() => {
@@ -241,7 +242,7 @@ const SignUpUser = () => {
             />
           </label>
           <label htmlFor="">
-            Seleccione una provincia
+           Provincia de residencia
             <br />
             <select onChange={(e) => setProvince(e.target.value)} >
               <option disabled >--seleccione una provincia--</option>

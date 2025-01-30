@@ -2,7 +2,7 @@ import { getAuth, sendEmailVerification } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import '../Styles/styleRoomWaiting.css';
-import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import useMessage from "../Hooks/useMessage";
 import DisplayMessage from "./DisplayMessage";
 
@@ -32,17 +32,27 @@ const RoomWaiting = () => {
         try {
           const userId = getAuth().currentUser.uid;
           const userDocRef = doc(db, "USERS", userId);
-          await updateDoc(userDocRef, { emailVerified: true });
-          navigate(`/`, { replace: true });
+          const userDoc = await getDoc(userDocRef);  
+          const role = userDoc.exists() ? userDoc.data().rol : null;  
+  
+          if (role) {
+            await updateDoc(userDocRef, { v: true });
+  
+            if (role === "user") {
+              navigate(`/Home/${userId}`, { replace: true });
+            }
+          } else {
+            console.error("El documento del usuario no existe.");
+          }
         } catch (error) {
           console.error("Error al actualizar la verificación en Firestore:", error);
         }
       }
     };
-
+  
     handleVerificationUpdate();
   }, [isVerified, navigate]);
-
+  
   const reenviarCorreo = async () => {
     try {
       const currentUser = getAuth().currentUser;

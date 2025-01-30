@@ -266,6 +266,12 @@ const provinces = [
             "Chinchipe",
             "Nangaritza"
         ]
+    },
+    {
+        provincia: "Otro",
+        cantones: [
+            "Otro"
+        ]
     }
 ]
 

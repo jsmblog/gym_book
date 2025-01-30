@@ -47,9 +47,9 @@ const Publications = React.memo(({ users ,currentUser}) => {
       const posts = userData.posts || [];
   
       const userLiked = {
-        id: userId,
-        name: currentUser.name,
-        photo: currentUser.imageProfile
+        id: userId, // id
+        n: currentUser.name, // name
+        p: currentUser.imageProfile // photo
       };
   
       // Buscar el post a actualizar
@@ -102,7 +102,7 @@ const Publications = React.memo(({ users ,currentUser}) => {
       const ownerData = docSnapOwner.data();
       const currentUserData = docSnapCurrentUser.data();
   
-      const hasShared = currentUserData.posts.some((p) => p.post_id === post.post_id && p.isShared);
+      const hasShared = currentUserData.posts.some((p) => p.post_id === post.post_id && p.i_sh);
   
       if (hasShared) {
         messageError("¡Ya compartiste esta publicación!");
@@ -110,13 +110,13 @@ const Publications = React.memo(({ users ,currentUser}) => {
       }
       const createdAt = new Date().toISOString();
       const sharedPost = {
-        createdAt,
-        description: post.description || '',
-        sentiment:'',
-        media:post.media || [],
-        link:post.link || '',
+        c_a:createdAt,
+        d: post.d || '',
+        s:'',
+        m:post.m || [],
+        l:post.l || '',
         post_id: uuid(35), 
-        isShared: true, 
+        i_sh: true, 
         likes: [], 
         comments: [], 
         shared: [] 
@@ -128,8 +128,8 @@ const Publications = React.memo(({ users ,currentUser}) => {
   
       const user = {
         id: currentUser.uid,
-        name: encrypt(currentUser.name),
-        photo: encrypt(currentUser.imageProfile)
+        n: encrypt(currentUser.name),
+        p: encrypt(currentUser.imageProfile)
       }
 
       const updatedOwnerPosts = ownerData.posts.map((p) => {
@@ -165,22 +165,22 @@ const handleComments = async (comments,uidOwner) => {
                 <div>
                   <img src={user.ownerPhoto} alt="" />
                   <h4>{user.owner}</h4>
-                  {user.post?.sentiment && (
-                    <span id="sentiment-user">{`se siente ${decrypt(user.post?.sentiment)}`}</span>
+                  {user.post?.s && (
+                    <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
                   )}
                 </div>
-                <span>{formatDate(user.post?.createdAt)}</span>
+                <span>{formatDate(user.post?.c_a)}</span>
               </div>
-              <p className="libre-Baskerville paragrahp">{decrypt(user.post?.description) || ""}</p>
+              <p className="libre-Baskerville paragrahp">{decrypt(user.post?.d) || ""}</p>
               <a
                 id="link-user"
-                href={decrypt(user.post?.link)}
+                href={decrypt(user.post?.l)}
                 target="_blank"
                 rel="noopener noreferrer"
                 >
-                {sliceText(decrypt(user.post?.link), 25)}
+                {sliceText(decrypt(user.post?.l), 25)}
               </a>
-                {user.post.isShared && <h6 id="isShared">publicación compartida</h6>}
+                {user.post.i_sh && <h6 id="isShared">publicación compartida</h6>}
               <div className="reactions">
                 <button onClick={()=> handleLiked(user.post,user.ownerId)}>
                 <img src={user.post?.likes?.some(like => like.id === user.ownerId) ? iconHeartRed : iconHeart} alt="like" />

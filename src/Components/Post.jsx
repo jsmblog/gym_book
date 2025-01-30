@@ -14,7 +14,6 @@ import { setDoc, doc, arrayUnion } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import encrypt from './../Js/encrypt';
 const Post = React.memo(({ currentUser }) => {
-  if(!currentUser) return;
   const { name, imageProfile, isOnline, uid } = currentUser || null;
   const [message, messageError] = useMessage();
   const [popupType, setPopupType] = useState(null);
@@ -108,16 +107,16 @@ const Post = React.memo(({ currentUser }) => {
         const createdAt = new Date().toISOString();
         const post_id = uuid(30);
         const objectPost = {
-          description: textPublish ? encrypt(textPublish) : '',
-          media: uploadedFiles || [],
-          link: link ? encrypt(link) : '',
-          sentiment: selectedSentiment ? encrypt(selectedSentiment) : '',
-          createdAt,
+          d: textPublish ? encrypt(textPublish) : '',
+          m: uploadedFiles || [],
+          l: link ? encrypt(link) : '',
+          s: selectedSentiment ? encrypt(selectedSentiment) : '',
+          c_a:createdAt,
           post_id,
           likes: [],
           comments: [],
           shared:[],
-          isShared:false
+          i_sh:false
         }
         await setDoc(docRef, {
           posts: arrayUnion(objectPost)

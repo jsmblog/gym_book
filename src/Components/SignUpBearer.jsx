@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 import provinces from '../Js/provinces.js';
-import genders from './../Js/genders.js';
 import { useEffect, useState } from 'react';
 import '../Styles/stylesSignUser.css'
 import {AUTH_USER,STORAGE} from '../ConfigFirebase/config.js'
@@ -13,6 +12,7 @@ import { getDownloadURL,ref, uploadBytes } from 'firebase/storage';
 import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
 import LoaderSuccess from './LoaderSuccess.jsx';
+import GymOwnerWizard from './GymOwnerWizard.jsx';
 const CURRENT_YEAR = new Date().getFullYear();
 
 const SignUpBearer = () => {
@@ -30,6 +30,10 @@ const SignUpBearer = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [textRegister, setTextRegister] = useState('');
+  const [address, setAddress] = useState('');
+  const [nameGym, setNameGym] = useState('');
+  const [geoGym, setGeoGym] = useState('');
+  const [contact, setContact] = useState('')
   const [message, messageError] = useMessage();
   const [loaderMessageSuccess, setLoaderMessageSuccess] = useState(false);
 
@@ -164,12 +168,56 @@ const SignUpBearer = () => {
             Nombre
             <br />
             <input
-              placeholder='ejm : Pedro'
+              placeholder='Tu nombre'
               type="text"
               name="inputName"
               id="inputName"
               value={nameUser}
               onChange={(e) => setNameUser(e.target.value)}
+              required
+            />
+          </label>
+          <label htmlFor="inputName">
+            Nombre del gym
+            <br />
+            <input
+              placeholder='Nombre del gimnasio'
+              type="text"
+              name="inputName"
+              id="inputName"
+              value={nameGym}
+              onChange={(e) => setNameGym(e.target.value)}
+              required
+            />
+          </label>
+          <label htmlFor="">
+            Seleccione su ubicación
+            <br />
+            <select onChange={(e) => setGeoGym(e.target.value)} >
+              <option disabled >--seleccione una provincia--</option>
+              {
+                provinces.map((p,index)=>( 
+                  <optgroup key={index} label={p.provincia}>
+                    {
+                      p.cantones.sort().map((canton ,i)=>( 
+                        <option value={`${p.provincia} ${canton}`} key={i}>{canton}</option>
+                      ))
+                    }
+                  </optgroup>
+                ))
+              }
+            </select>
+          </label>
+          <label htmlFor="inputName">
+            Dirección
+            <br />
+            <input
+              placeholder='La ubicación del gimnasio'
+              type="text"
+              name="inputName"
+              id="inputName"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               required
             />
           </label>
@@ -182,8 +230,8 @@ const SignUpBearer = () => {
               name="inputPhone"
               id="inputPhone"
               maxLength={10}
-              value={numberTelf}
-              onChange={(e) => setNumberTelf(e.target.value)}
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
             />
           </label>
           <label htmlFor="inputEmail">
@@ -215,48 +263,6 @@ const SignUpBearer = () => {
               {seePass ? '🔒' : '👁️'}
             </button>
           </label>
-          <label htmlFor="">
-            Seleccione su género
-            <br />
-            <select onChange={(e)=> setGender(e.target.value)} >
-              <option disabled>--seleccione su genéro--</option>
-              {
-                genders.map((gender,index)=>( 
-                  <option key={index} value={gender} >{gender}</option>
-                ))
-              }
-            </select>
-          </label>
-          <label htmlFor="inputDateBirth">
-            Fecha de nacimiento
-            <br />
-            <input
-              value={dateBirth}
-              onChange={(e) => setDateBirth(e.target.value)}
-              type="date"
-              name="inputDateBirth"
-              id="inputDateBirth"
-              required
-            />
-          </label>
-          <label htmlFor="">
-            Seleccione una provincia
-            <br />
-            <select onChange={(e) => setProvince(e.target.value)} >
-              <option disabled >--seleccione una provincia--</option>
-              {
-                provinces.map((p,index)=>( 
-                  <optgroup key={index} label={p.provincia}>
-                    {
-                      p.cantones.sort().map((canton ,i)=>( 
-                        <option value={`${p.provincia} ${canton}`} key={i}>{canton}</option>
-                      ))
-                    }
-                  </optgroup>
-                ))
-              }
-            </select>
-          </label>
           <div>
             <button className='btn-register' type="button" onClick={(e) => {
               e.preventDefault()
@@ -271,6 +277,7 @@ const SignUpBearer = () => {
         <h4 className='registered'>Ya tengo una cuenta registrada anteriormente , iniciar sesión .</h4>
         </Link>
     </main>
+    {/* <GymOwnerWizard/> */}
     <DisplayMessage message={message} />
     <LoaderSuccess loaderMessageSuccess={loaderMessageSuccess} />
     </>

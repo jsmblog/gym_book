@@ -1,14 +1,11 @@
-import React, { useState } from 'react'
 import { signOut } from 'firebase/auth';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import '../Styles/styleSesionOff.css'
-import {AUTH_USER} from '../ConfigFirebase/config.js'
-import iconTurn_on  from '/turn-on.png';
+import { AUTH_USER } from '../ConfigFirebase/config.js'
+import iconTurn_on from '/apagar.png';
 const SesionOff = () => {
-    const navigate = useNavigate();
-  const [signingOut, setSigningOut] = useState(false);
+  const navigate = useNavigate();
   const handleSignOut = async () => {
-    setSigningOut(true);
     try {
       await signOut(AUTH_USER);
       setTimeout(() => {
@@ -16,16 +13,13 @@ const SesionOff = () => {
       }, 3000);
     } catch (error) {
       console.error("Error al cerrar sesión: ");
-      setSigningOut(false);
     }
   };
   return (
     <>
-  <button title='cerrar sesión' id='btn-signout' onClick={handleSignOut}>
-    {
-      signingOut ? 'cerrando sesión...' : <img src={iconTurn_on} width={20} alt='cerrar-sesión' />
-    }
-  </button>
+      <button title='cerrar sesión' onClick={handleSignOut}>
+        <img src={iconTurn_on} alt='cerrar-sesión' />
+      </button>
     </>
   )
 }

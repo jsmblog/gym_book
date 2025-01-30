@@ -1,5 +1,5 @@
 #greet {
-    background: linear-gradient(90deg, black, #2d3bff, #cf1512);
+    background: linear-gradient(90deg, #000428, #267cfd, #000428);
     -webkit-background-clip: text;
     -webkit-text-fill-color:transparent ;
     font-weight: bold;
