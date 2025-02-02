@@ -72,14 +72,32 @@
     text-decoration: underline;
     color: var(--co-blue-1);
 }
+
 @media screen and (max-width:768px) {
+    .main {
+        gap: 0;
+    }
     .Form-signIn {
         width: 98%;
+        height: 99vh;
     }
     .Form-signIn form {
         justify-content: center;
     }
     .Form-signIn form label input , .Form-signIn form label select{
         width: 300px;
+    }
+    .Form-signIn form {
+        height: 85%;
+    }
+    .txtRegister {
+    font-size: 1rem;
+    }
+    .registered {
+        font-size: .8rem;
+    }
+    #label-photo , #img-perfil-login{
+        width: 70px;
+        height: 70px;
     }
 }

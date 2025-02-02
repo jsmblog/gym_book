@@ -10,6 +10,7 @@
     justify-content: center;
     flex-direction: column;
     gap: .5rem;
+    z-index: 999;
 }
 .loader-success-register {
     height: 4px;

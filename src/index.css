@@ -29,6 +29,7 @@
   --co-back-gray :#e5e4e3;
   --co-back-gray-2 :#f7f6f5;
   --co-back-gray-3 :#d4d2d0;
+  --co-back-gray-4 :#f9f7f4;
   --co-blue-1:#2a205f;
   --co-black-1:rgba(0, 0, 0, 0.934);
   --co-black-2:rgba(0, 0, 0, 0.555);
@@ -65,7 +66,7 @@ textarea {
   border-radius: 10px;
   padding:.5rem;
 }
-input {
+input , select {
   border: 1px solid var(--co-back-gray);
   border-radius: 10px;
   padding:.5rem;
@@ -80,4 +81,21 @@ textarea:focus , input:focus {
   background: #000428;
   background: -webkit-linear-gradient(to top, #004e92, #000428);
   background: linear-gradient(to top, #004e92, #000428);
+}
+.offline-warning {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--co-red);
+  color: var(--co-white);
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 8px -5px var(--co-black-2);
+}
+@media screen and (max-width:768px) {
+  .offline-warning {
+    width: 90%;
+    text-align: center;
+  }
 }

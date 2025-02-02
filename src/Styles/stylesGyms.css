@@ -1,4 +1,224 @@
 .main-gyms {
+    display: flex;
     width: 100%;
     height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem 0;
+}
+
+.gym-list {
+    display: flex;
+    width: 75%;
+    align-items: center;
+    gap: .5rem;
+    height: 72vh;
+    overflow-y: auto;
+    padding: .5rem;
+    border: 1px solid var(--co-back-gray-2);
+    border-radius: 20px;
+}
+
+.gym-card {
+    width: 100%;
+    cursor: pointer;
+    border: 1px solid var(--co-back-gray-3);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: .2rem;
+    padding: .3rem;
+    box-shadow: 0 5px 9px -4px var(--co-back-gray);
+    border-radius: 20px;
+}
+
+.gym-card:hover {
+    background-color: var(--co-back-gray-2);
+    transition: .3s ease-in-out;
+}
+
+.all-gyms {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    gap: .5rem;
+    height: 100%;
+}
+
+.gym-card_width {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    gap: .5rem;
+    height: 100%;
+}
+
+.gym-filter {
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+}
+
+.search-input {
+    width: 55%;
+}
+
+.gym-image {
+    border-radius: 20px 0 0 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid var(--co-back-gray);
+}
+
+.gym-card__image {
+    text-align: center;
+    width: 100%;
+    gap: .4rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: .2rem;
+}
+
+.gym-card__province {
+    color: var(--co-back-gray-3);
+    text-shadow: 0 0 1px var(--co-back-gray-3);
+}
+
+.gyms_available {
+    width: 75%;
+}
+
+.no-gyms {
+    border: 1px solid var(--co-back-gray-2);
+    height: 100%;
+    border-radius: 20px;
+    display: flex;
+    text-align: justify;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: .5rem;
+    padding: 0 2rem;
+}
+
+.gym-data__description {
+    text-align: justify;
+}
+
+.social-links {
+    display: flex;
+    width: 100%;
+    gap: .75rem;
+}
+
+.gym-card-header {
+    width: 100%;
+    height: 100px;
+    border-radius: 20px 20px 0 0;
+}
+
+.gym-card__card {
+    padding: 0;
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--co-back-gray-2);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.gym-card-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    border: 1px solid var(--co-back-gray-2);
+}
+.gym-card-body {
+    position: relative;
+    bottom: 1.3rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+    padding-left: .7rem;
+}
+
+.gym-card__address {
+    position: absolute;
+    right: .75rem;
+}
+
+.gym-image_width {
+    width: 75px;
+    height: 75px;
+}
+.gym-data__description_lh {
+    line-height: 1.6;
+    padding: 0 .75rem;
+     position: relative;
+ bottom: 1rem;
+}
+
+.gym-card__tables {
+    width: 100%;
+    display: flex;
+    padding: 0 .75rem;
+    gap: 1rem;
+    justify-content: space-between;
+}
+.gym-card__tables table {
+    width: 50%;
+    text-align: center;
+    border: 1px solid var(--co-back-gray);
+}
+.gym-card__tables table td {
+    background-color: var(--co-back-gray-4);
+    font-size: .82rem;
+}
+.payment-methods {
+    display: flex;
+    padding: .75rem;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+.max-people {
+    padding-left: .75rem;
+    position: relative;
+    bottom: .5rem;
+}
+.payment-contacts {
+    padding-left: .75rem;
+
+}
+@media screen and (max-width:768px) {
+    .gym-list {
+        width: 98%;
+        height: 75vh;
+    }
+
+    .gym-filter {
+        width: 97%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .province-select {
+        width: 60%;
+    }
 }

@@ -1,5 +1,4 @@
 .wizard-container {
-    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     height: 100vh;
@@ -19,7 +18,6 @@
     flex-direction: column;
     width: 50vw;
     height: 50vh;
-    gap: .75rem;
     align-items: center;
     justify-content: space-evenly;
 }
@@ -36,6 +34,78 @@
 .wizard-container textarea {
     width: 100%;
     height: 45%;
+}
+.current-step {
+    margin-top: 1rem;
+}
+.schedule-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-direction: column;
+    justify-content: center;
+}
+.schedule {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.rrss-links {
+    height: 100px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: .75rem;
+}
+.schedule_plans {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .3rem;
+}
+#amount-to-pay {
+    width: 100px;
+}
+#table_wizard {
+ border: 1px solid var(--co-back-gray);
+ width: 50vw;
+}
+#table_wizard tbody tr td , .delete_shedule{
+    background-color: var(--co-back-gray-2);
+}
+#table_wizard tbody tr td:last-child {
+    align-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.methods_payment {
+    border: 1px solid var(--co-back-gray);
+    padding: .5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+}
+.methods_payment h4 {
+    color: var(--co-gray);
+}
+@media screen and (max-width:768px) {
+    .wizard-container .step {
+        width: 100%;
+        height: 70vh;
+    }
+    #table_wizard {
+        width: 90vw;
+    }
 }
 
   

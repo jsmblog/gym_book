@@ -1,31 +1,21 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
+import { Link} from 'react-router-dom';
 import provinces from '../Js/provinces.js';
 import { useEffect, useState } from 'react';
 import '../Styles/stylesSignUser.css'
-import {AUTH_USER,STORAGE} from '../ConfigFirebase/config.js'
 import useMessage from '../Hooks/useMessage.js';
 import formatDate from '../Js/formatDate.js';
 import verifyFormatEmail from '../Js/verifyFormatEmail.js';
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
-import { getDownloadURL,ref, uploadBytes } from 'firebase/storage';
 import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
 import LoaderSuccess from './LoaderSuccess.jsx';
 import GymOwnerWizard from './GymOwnerWizard.jsx';
-const CURRENT_YEAR = new Date().getFullYear();
 
 const SignUpBearer = () => {
   const [displayPhoto, setDisplayPhoto] = useState('');
   const [photo, setPhoto] = useState(null);
-  const [dateBirth, setDateBirth] = useState('');
-  const [province, setProvince] = useState('');
-  const [gender, setGender] = useState('');
   const [numberTelf, setNumberTelf] = useState('')
   const [seePass, setSeePass] = useState(false)
   const MESSAGE = '¡ Bienvenido , registrese ahora ! ';
-  const db = getFirestore();
-  const navigate = useNavigate();
   const [nameUser, setNameUser] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -33,9 +23,9 @@ const SignUpBearer = () => {
   const [address, setAddress] = useState('');
   const [nameGym, setNameGym] = useState('');
   const [geoGym, setGeoGym] = useState('');
-  const [contact, setContact] = useState('')
   const [message, messageError] = useMessage();
-  const [loaderMessageSuccess, setLoaderMessageSuccess] = useState(false);
+  const [isWizard, setIsWizard] = useState(false);
+  const [infoPrincipalGym, setInfoPrincipalGym] = useState({});
 
   const getImage = async (e) => {
     const file = e.target.files[0];
@@ -55,81 +45,62 @@ const SignUpBearer = () => {
     setPhoto(file);
   }
   const saveInfoToFirebase = async () => {
-    setLoaderMessageSuccess(true);
+  
     try {
-      if (!nameUser  || !numberTelf || !password || !email || displayPhoto === null || !gender || !dateBirth || !province) {
+      //|| !numberTelf || !address || !password || !email || displayPhoto === null || !province
+      if (!nameUser  || !nameGym ) {
         messageError("Rellena todos los campos 😉​");
-        setLoaderMessageSuccess(false);
+        
         return;
       }else if (!isNaN(nameUser)){
         messageError('Su nombre no puede ser un número');
-        setLoaderMessageSuccess(false);
+        
         setNameUser('');
         return;
       }else if (isNaN(numberTelf)) {
         messageError('Su contacto debe ser un número');
-        setLoaderMessageSuccess(false);
+        
         setNumberTelf('');
         return;
       } else if (numberTelf.length != 10){
         messageError('Su contacto debe contar con 10 dígitos');
-        setLoaderMessageSuccess(false);
+        
         setNumberTelf('');
         return;
       } else if (verifyFormatEmail(email)) {
           messageError("Correo con formato incorrecto.​");
           setEmail("");
-          setLoaderMessageSuccess(false);
+          
           return;
       } else if (password.length < 8) {
         messageError("Ingresa mínimo 8 caracteres.​");
-        setLoaderMessageSuccess(false);
+        
         setPassword('');
         return;
-      }else if ((CURRENT_YEAR - dateBirth.slice(0,4)) < 18){
-        messageError('Lo sentimos , debes ser mayor de edad para registrarte.')
-        setLoaderMessageSuccess(false);
-        setDateBirth('');
-        return;
       }
-      const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, password);
-      const userId = userCredential.user.uid;
 
-      await updateProfile(userCredential.user, {
-        displayName: nameUser,
-      });
-      await sendEmailVerification(userCredential.user);
-      const storageRef = ref(STORAGE, `profileImages/${userId}/image.png`);
-      await uploadBytes(storageRef, photo);
-      const downloadUrl = await getDownloadURL(storageRef);
-  
-      // Datos para Firestore
       const createAccount = formatDate(new Date().toISOString());
       const userDoc = {
-        name: encrypt(nameUser),
-        email: encrypt(email),
-        imageProfile: encrypt(downloadUrl),
-        createAccount,
-        userRole: 'user',
-        uid: userId,
-        dateBirth:encrypt(dateBirth),
-        province:encrypt(province),
-        gender:encrypt(gender),
-        isOnline:true,
-        numberTelf: encrypt(numberTelf),
-        emailVerified:false,
-      };
-  
-      // Guardar en Firestore
-      const collectionUsers = collection(db, "USERS");
-      await setDoc(doc(collectionUsers, userId), userDoc,{merge:true});
-  
-      navigate("/area-de-espera", { replace: true });
-      setLoaderMessageSuccess(false);
+          address,
+          name:nameUser,
+          nameGym,
+          email,
+          imageProfile: photo,
+          createAccount,
+          userRole: 'owner',
+          password: encrypt(password),
+          province:geoGym,
+          isOnline:true,
+          numberTelf,
+          emailVerified:false,
+        };
+      setInfoPrincipalGym(userDoc);
+      setIsWizard(true);
+      
     } catch (error) {
-      console.error("Error al guardar en Firebase: ", error);
+      console.log(error)
       messageError("Ocurrió un error al registrar la información. Inténtalo de nuevo.");
-      setLoaderMessageSuccess(false);
+      
     }
   }
 
@@ -212,7 +183,7 @@ const SignUpBearer = () => {
             Dirección
             <br />
             <input
-              placeholder='La ubicación del gimnasio'
+              placeholder='La dirección del gimnasio'
               type="text"
               name="inputName"
               id="inputName"
@@ -230,8 +201,8 @@ const SignUpBearer = () => {
               name="inputPhone"
               id="inputPhone"
               maxLength={10}
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
+              value={numberTelf}
+              onChange={(e) => setNumberTelf(e.target.value)}
             />
           </label>
           <label htmlFor="inputEmail">
@@ -277,9 +248,12 @@ const SignUpBearer = () => {
         <h4 className='registered'>Ya tengo una cuenta registrada anteriormente , iniciar sesión .</h4>
         </Link>
     </main>
-    {/* <GymOwnerWizard/> */}
+     {
+      isWizard && (
+        <GymOwnerWizard infoPrincipalGym={infoPrincipalGym}/>
+      )
+    }
     <DisplayMessage message={message} />
-    <LoaderSuccess loaderMessageSuccess={loaderMessageSuccess} />
     </>
   )
 }

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, query, limit, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../ConfigFirebase/config.js"; 
 import decrypt from "../Js/decrypt.js"; 
 
@@ -7,20 +7,23 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
-  const usersCollection = collection(db, "USERS");
-
+  
   useEffect(() => {
-    const unsubscribe = onSnapshot(usersCollection, (snapshot) => {
+    const usersCollection = collection(db, "USERS");
+    const q = query(usersCollection, limit(100));               
+    const unsubscribe = onSnapshot(q,usersCollection, (snapshot) => {
       const userData = snapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           name: decrypt(data.n),
           email: decrypt(data.e),
-          gender: decrypt(data.g),
+          gender: decrypt(data.g) || "",
           numberTelf: decrypt(data.tel),
           province: decrypt(data.pro),
           imageProfile: decrypt(data.img),
           uid: data.uid,
+          rol:data.rol,
+          name_gym : data.n_g && decrypt(data.n_g),
           isOnline: data.on,
           posts: data.posts || [], 
         };

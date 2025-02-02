@@ -171,6 +171,7 @@ const SignUpUser = () => {
               name="inputName"
               id="inputName"
               value={nameUser}
+              maxLength={20}
               onChange={(e) => setNameUser(e.target.value)}
               required
             />
@@ -211,6 +212,7 @@ const SignUpUser = () => {
               type={seePass ? 'text' : 'password'}
               name="inputPass"
               id="inputPass"
+              maxLength={30}
               required
             />
             <button className='btn-see' onClick={() => setSeePass(!seePass)}>

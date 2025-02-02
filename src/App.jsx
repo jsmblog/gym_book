@@ -15,6 +15,7 @@ import Home from './Components/Home';
 import Profile from './Components/Profile';
 import Marketplace from './Components/Marketplace';
 import Gyms from './Components/Gyms.jsx';
+import OfflineDetector from './Components/OfflineDetector.jsx';
 
 function App() {
   const [dataUser, setDataUser] = useState([]);
@@ -37,7 +38,7 @@ function App() {
         if (docSnap.exists()) {
           const user = docSnap.data();
           setDataUser(user || []);
-          setEmailVerified(user.v)
+          setEmailVerified(user.v);
           setRole(user.rol);
         } else {
           console.error('No user data found');
@@ -64,6 +65,7 @@ function App() {
   }
 
   return (
+    <>
     <Router>
       <Routes>
       <Route
@@ -71,7 +73,7 @@ function App() {
             element={
                 user ? (
                     <Navigate
-                        to={role === "user" ? `/Home/${userId}` : role === "admin" ? `/Admin/${userId}` : '/'}
+                        to={role === "user" || role === "owner" ? `/Home/${userId}` : role === "admin" ? `/Admin/${userId}` : '/'}
                         replace
                     />
                 ) : (
@@ -80,7 +82,7 @@ function App() {
             }
         />
         <Route
-            element={<ProtectedRoute emailVerified={emailVerified} user={user} role={role} allowedRoles={['user']} />}
+            element={<ProtectedRoute emailVerified={emailVerified} user={user} role={role} allowedRoles={['user','owner']} />}
         >
             <Route
                 path="/Home/:userId"
@@ -98,6 +100,9 @@ function App() {
         <Route path='/gimnasios/:userId' element={<Gyms  userId={userId} />} />
       </Routes>
     </Router>
+    <OfflineDetector/>
+    </>
+
   );
 }
 

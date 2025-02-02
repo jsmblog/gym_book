@@ -22,7 +22,7 @@ const convertToWebP = async (file, maxWidth = 720, maxHeight = 720, quality = 0.
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
   
-          // Convertir a WebP con calidad ajustada
+          // Convertir a WebP
           canvas.toBlob((blob) => resolve(blob), "image/webp", quality);
         };
       };

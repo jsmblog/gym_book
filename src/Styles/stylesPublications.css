@@ -22,6 +22,9 @@
 .paragrahp {
     line-height: 1.5;
 }
+#name_gym {
+    font-weight: bold;
+}
 .publication-header {
     width: 100%;
     display: flex;

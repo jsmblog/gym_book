@@ -6,10 +6,15 @@ import {
     VITE_FIREBASE_PROJECT_ID,
     VITE_FIREBASE_STORAGE_BUCKET,
   } from '../FirebaseEnv/firebaseEnv.js';
-  import { initializeApp } from 'firebase/app'
-  import { getFirestore } from 'firebase/firestore'
-  import { getAuth} from 'firebase/auth';
-  import { getStorage } from 'firebase/storage';
+
+  import { initializeApp } from 'firebase/app';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager
+} from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
   const firebaseConfig = {
     apiKey: VITE_FIREBASE_API_KEY,
@@ -23,6 +28,8 @@ import {
 const APP = initializeApp(firebaseConfig);
 const STORAGE = getStorage(APP);
 const AUTH_USER = getAuth(APP);
-const db = getFirestore();
+const db = initializeFirestore(APP, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+});
 
 export { APP, STORAGE, AUTH_USER, db };

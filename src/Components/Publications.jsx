@@ -14,7 +14,7 @@ import DisplayMessage from "./DisplayMessage";
 import uuid from './../Js/uuid';
 import encrypt from "../Js/encrypt";
 import CommentsBox from "./CommentsBox";
-const COUNT = 2
+const COUNT = 10
 const Publications = React.memo(({ users ,currentUser}) => {
   const [visibleCount, setVisibleCount] = useState(COUNT);
   const [isOnBoxComments, setIsOnBoxComments] = useState(false)
@@ -160,11 +160,11 @@ const handleComments = async (comments,uidOwner) => {
       <section id="sect-publications">
         <div className="container-publications">
           {visiblePublications?.map((user) => (
-            <div key={user.post.post_id} className="publication">
+            <div key={user.post.post_id} style={{border: user.rol === 'owner' ? '1px solid #818080' : '' }} className="publication">
               <div className="publication-header">
                 <div>
                   <img src={user.ownerPhoto} alt="" />
-                  <h4>{user.owner}</h4>
+                  <p><h4 id="name_gym">{user.name_gym || ''}</h4> {user.owner}</p>
                   {user.post?.s && (
                     <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
                   )}

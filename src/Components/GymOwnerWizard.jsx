@@ -1,30 +1,106 @@
 import React, { useState } from 'react';
 import '../Styles/stylesWizard.css';
-
-const GymOwnerWizard = () => {
-  // Estados para almacenar los datos del formulario
+import gymTypes from '../Js/gymTypes';
+import useMessage from '../Hooks/useMessage';
+import DisplayMessage from './DisplayMessage';
+import payments from '../Js/payments.js'
+import LoaderSuccess from './LoaderSuccess.jsx';
+import convertToWebP from '../Js/convertToWebp.js';
+import { db } from '../ConfigFirebase/config.js';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
+import { getDownloadURL,ref, uploadBytes } from 'firebase/storage';
+import {AUTH_USER,STORAGE} from '../ConfigFirebase/config.js'
+import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import decrypt from './../Js/decrypt';
+import encrypt from '../Js/encrypt.js';
+const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
+  const navigate = useNavigate();
+  const { paymentMethodsList, plans, paymentTypes } = payments;
+  const [message, messageError] = useMessage()
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [loaderMessageSuccess, setLoaderMessageSuccess] = useState(false);
+  const [price, setPrice] = useState("");
+  const [paymentType, setPaymentType] = useState("");
   const [gymData, setGymData] = useState({
-    gymType: '',
-    description: '',
-    hours: '',
-    maxMembers: '',
-    services: '',
-    paymentMethods: '',
-    membershipPlans: '',
-    socialMediaLinks: '',
-    gallery: [],
-    trainerCertifications: '',
-    healthSafety: '',
-    cancellationPolicy: '',
-    promotions: '',
-    equipmentBrands: '',
-    preferredLanguage: '',
+    g_t: '', // gym type
+    des: '', // description
+    m_m: '', // max members
+    h: [], // hours
+    p_m: [], // payment methods
+    m_p: [], // membership plans
+    s_l: { 
+      wh: '',
+      fb: '',
+      tk: '',
+      ig: ''
+    }, // social media links
   });
+  console.log(infoPrincipalGym)
+  console.log(gymData)
 
-  // Estado de paso actual
   const [step, setStep] = useState(1);
+  const [newSchedule, setNewSchedule] = useState({ on: '', off: '' });
 
-  // Función para manejar el cambio de valor en los inputs
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoaderMessageSuccess(true);
+    const hasEmptyFields = Object.entries(gymData).some(([key, value]) => {
+      if (key === "des" || key === "s_l") return false;
+      
+      if (Array.isArray(value)) {
+        return value.length === 0; 
+      }
+      return !value; 
+    });
+    
+    if (hasEmptyFields) {
+      setLoaderMessageSuccess(false)
+      return messageError("¡Debes completar todos los campos!");
+    }
+    try {
+      const {address,name,nameGym,email,imageProfile,createAccount,userRole,password,province,isOnline,numberTelf,emailVerified} = infoPrincipalGym || {};
+      const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, decrypt(password));
+      const userId = userCredential.user.uid;
+  
+      await updateProfile(userCredential.user, {
+        displayName: name,
+      });
+      await sendEmailVerification(userCredential.user);
+  
+      const webpImage = await convertToWebP(imageProfile);
+      const storageRef = ref(STORAGE, `profileImgOwner/${userId}/image.webp`);
+      await uploadBytes(storageRef, webpImage);
+      const downloadUrl = await getDownloadURL(storageRef);  
+      const userDoc = {
+        n: encrypt(name), // name -> n
+        n_g :encrypt(nameGym),
+        e: encrypt(email), // email -> e
+        img: encrypt(downloadUrl), // imageProfile -> img
+        c_a:createAccount, // createAccount -> c_a
+        rol: userRole, // userRole -> rol
+        uid: userId,
+        pro: encrypt(province), // province -> prov
+        dir: encrypt(address) ,
+        on: isOnline, // isOnline -> on
+        tel: encrypt(numberTelf), // numberTelf -> tel
+        v: emailVerified, // emailVerified -> v
+        posts: [],
+        gymData: gymData,
+      };
+  
+      const collectionUsers = collection(db, "USERS");
+      await setDoc(doc(collectionUsers, userId), userDoc, { merge: true });
+      navigate("/area-de-espera", { replace: true });
+      setLoaderMessageSuccess(false);
+  
+    } catch (error) {
+      console.error("Error al registrar usuario:", error.message);
+      messageError("No se pudo registrar el usuario. Inténtalo de nuevo.");
+    }
+  };
+  
+  // Manejar cambios en inputs generales
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setGymData({
@@ -33,109 +109,265 @@ const GymOwnerWizard = () => {
     });
   };
 
-  // Función para manejar la galería de imágenes
-  const handleFileChange = (e) => {
+  // Manejar cambios en las redes sociales
+  const handleSocialMediaChange = (e) => {
+    const { name, value } = e.target;
     setGymData({
       ...gymData,
-      gallery: [...gymData.gallery, ...e.target.files],
+      s_l: {
+        ...gymData.s_l,
+        [name]: value
+      }
     });
   };
 
-  // Función para ir al siguiente paso
-  const nextStep = () => setStep(step + 1);
+  // Manejar selección de métodos de pago
+  const handlePaymentChange = (method) => {
+    setGymData((prevData) => {
+      const updatedMethods = prevData.p_m.includes(method)
+        ? prevData.p_m.filter((m) => m !== method)
+        : [...prevData.p_m, method];
 
-  // Función para ir al paso anterior
-  const prevStep = () => setStep(step - 1);
-
-  // Función para manejar el envío del formulario
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(gymData);
+      return { ...prevData, p_m: updatedMethods };
+    });
   };
 
-  // Estructura de los pasos
+  // Manejar planes de membresía
+  
+  const addMembershipPlan = () => {
+    if ((gymData.m_p?.length || 0) >= 3) {
+      messageError("Solo se pueden agregar 3 planes de membresía");
+      return;
+    }
+    if (selectedPlan && price && paymentType) {
+      setGymData((prevData) => ({
+        ...prevData, 
+        m_p: [
+          ...prevData.m_p,
+          { plan: selectedPlan, pr: `$${price}`, pay:paymentType },
+        ],
+      }));      
+      setSelectedPlan("");
+      setPrice("");
+      setPaymentType("");
+    }
+  };
+
+  const removeMembershipPlan = (index) => {
+    setGymData((prevData) => ({
+      ...prevData, 
+      m_p: prevData.m_p.filter((_, i) => i !== index),
+    }));
+  };
+  
+
+
+  // Manejar horarios de funcionamiento
+  const addSchedule = () => {
+    if (newSchedule.on && newSchedule.off && gymData.h.length < 3) {
+      setGymData({
+        ...gymData,
+        h: [...gymData.h, newSchedule],
+      })
+      setNewSchedule({ on: '', off: '' });
+    } else {
+      messageError("Añada una horario de apertura y cierre")
+    }
+  };
+
+  const removeSchedule = (index) => {
+    setGymData({
+      ...gymData,
+      h: gymData.h.filter((_, i) => i !== index),
+    });
+    messageError("eliminado")
+  };
+
   const steps = [
     (
       <div className="step">
         <label>Tipo de gimnasio:</label>
-        <input type="text" name="gymType" value={gymData.gymType} onChange={handleInputChange} />
+        <select name="g_t" onChange={handleInputChange}>
+          <option disabled>Elegir tipo</option>
+          {gymTypes.map((type, index) => (
+            <option key={index} value={type}>{type}</option>
+          ))}
+        </select>
 
         <label>Descripción del gimnasio:</label>
-        <textarea name="description" value={gymData.description} onChange={handleInputChange} />
-
-      </div>
-    ),
-    (
-      <div className="step">
-        <label>Horario de funcionamiento:</label>
-        <input type="text" name="hours" value={gymData.hours} onChange={handleInputChange} />
+        <textarea name="des" maxLength={200} placeholder="¡Describe tu gimnasio! (Opcional)" value={gymData.des} onChange={handleInputChange} />
 
         <label>Capacidad máxima de miembros:</label>
-        <input type="number" name="maxMembers" value={gymData.maxMembers} onChange={handleInputChange} />
-      </div>
-    ),
-    (
-      <div className="step">
-        <label>Servicios ofrecidos:</label>
-        <textarea name="services" value={gymData.services} onChange={handleInputChange} />
+        <input type="number" name="m_m" min="0" placeholder="Ejemplo: 100" value={gymData.m_m} onChange={handleInputChange} />
 
-        <label>Métodos de pago:</label>
-        <input type="text" name="paymentMethods" value={gymData.paymentMethods} onChange={handleInputChange} />
+      </div>
+    ),
+    (
+      <div className="step ">
+        <div className="schedule-container">
+          <label>Horario de funcionamiento:</label>
+          <div className="schedule">
+            <input
+              type="time"
+              value={newSchedule.on}
+              onChange={(e) => setNewSchedule({ ...newSchedule, on: e.target.value })}
+            />
+            -
+            <input
+              type="time"
+              value={newSchedule.off}
+              onChange={(e) => setNewSchedule({ ...newSchedule, off: e.target.value })}
+            />
+            <button type="button" className="back-blue-dark" onClick={addSchedule} disabled={gymData.h?.length >= 3}>
+              Agregar horario
+            </button>
+          </div>
+          <div>
+            <table id='table_wizard'>
+              <thead>
+                <tr>
+                  <th>Apertura</th>
+                  <th>Cierre</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gymData.h?.map((hour, index) => (
+                  <tr key={index}>
+                    <td>{hour.on} am</td>
+                    <td>{hour.off} pm</td>
+                    <td><button className='delete_shedule' type="button" onClick={() => removeSchedule(index)}>❌</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="methods_payment">
+          <h4>Métodos de pago aceptados:</h4>
+          {paymentMethodsList.map((method, index) => (
+            <div key={index}>
+              <label htmlFor={`payment-${method}`}>
+                {method}
+                <input
+                  type="checkbox"
+                  id={`payment-${method}`}
+                  checked={gymData.p_m.includes(method)}
+                  onChange={() => handlePaymentChange(method)}
+                />
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
     ),
     (
       <div className="step">
-        <label>Planes de membresía y precios:</label>
-        <textarea name="membershipPlans" value={gymData.membershipPlans} onChange={handleInputChange} />
+        <div className="schedule-container">
+          <label>Planes de membresía y precios:</label>
+          <div className="schedule schedule_plans">
+            <select
+              value={selectedPlan}
+              onChange={(e) => setSelectedPlan(e.target.value)}
+              aria-label="Selecciona un plan predefinido"
+            >
+              <option value="">Seleccionar plan</option>
+              {plans.map((plan) => (
+                <option key={plan.id} value={plan.name}>
+                  {plan.name}
+                </option>
+              ))}
+            </select>
 
-        <label>Redes sociales y enlaces web:</label>
-        <input type="text" name="socialMediaLinks" value={gymData.socialMediaLinks} onChange={handleInputChange} />
-      </div>
-    ),
-    (
-      <div className="step">
-        <label>Fotos o galería de imágenes:</label>
-        <input type="file" multiple onChange={handleFileChange} />
+            <input
+              type="number"
+              id='amount-to-pay'
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Cantidad a pagar"
+              min="0"
+              aria-label="Cantidad a pagar por membresía"
+            />
 
-        <label>Certificación de entrenadores:</label>
-        <input type="text" name="trainerCertifications" value={gymData.trainerCertifications} onChange={handleInputChange} />
-      </div>
-    ),
-    (
-      <div className="step">
-        <label>Política de salud y seguridad:</label>
-        <textarea name="healthSafety" value={gymData.healthSafety} onChange={handleInputChange} />
+            <select
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
+              aria-label="Selecciona el tipo de pago"
+            >
+              <option value="">Seleccionar tipo de pago</option>
+              {paymentTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
 
-        <label>Condiciones de cancelación o reembolsos:</label>
-        <textarea name="cancellationPolicy" value={gymData.cancellationPolicy} onChange={handleInputChange} />
-      </div>
-    ),
-    (
-      <div className="step">
-        <label>Promociones o descuentos especiales:</label>
-        <textarea name="promotions" value={gymData.promotions} onChange={handleInputChange} />
+            <button
+              type="button"
+              className='back-blue-dark'
+              onClick={addMembershipPlan}
+              disabled={(gymData.m_p?.length || 0) >= 3 || !selectedPlan || !price || !paymentType}
+              aria-disabled={(gymData.m_p?.length || 0) >= 3 || !selectedPlan || !price || !paymentType}
+            >
+              Agregar
+            </button>
+          </div>
+          <table id='table_wizard'>
+            <thead>
+              <tr>
+                <th>Tipo de plan</th>
+                <th>Precio</th>
+                <th>Tipo de pago</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gymData.m_p.map((plan, index) => (
+                <tr key={index}>
+                  <td>{plan.plan}</td>
+                  <td>{plan.pr}</td>
+                  <td>{plan.pay}</td>
+                  <td><button className='delete_shedule' type="button" onClick={() => removeMembershipPlan(index)}>❌</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="rrss-links">
+          <label>Redes sociales (opcional)</label>
+          <input type="url" name="wh" placeholder="WhatsApp: https://wa.me/123456789" value={gymData.s_l.wh} onChange={handleSocialMediaChange} />
+          <input type="url" name="fb" placeholder="Facebook: https://www.facebook.com/TuGimnasio" value={gymData.s_l.fb} onChange={handleSocialMediaChange} />
+          <input type="url" name="tk" placeholder="TikTok: https://www.tiktok.com/@TuGimnasio" value={gymData.s_l.tk} onChange={handleSocialMediaChange} />
+          <input type="url" name="ig" placeholder="Instagram: https://www.instagram.com/TuGimnasio" value={gymData.s_l.ig} onChange={handleSocialMediaChange} />
+        </div>
       </div>
     )
   ];
 
   return (
-    <div className="wizard-container">
-      <h2 className='merriweather-bold'>Complete los siguientes campos</h2>
-      <form onSubmit={handleSubmit}>
-        {steps[step - 1]} 
-        <div className="navigation-buttons">
-          {step > 1 && (
-            <button type="button" onClick={prevStep}>Volver</button>
-          )}
-          {step < steps.length ? (
-            <button className='back-blue-dark' type="button" onClick={nextStep}>Siguiente</button>
-          ) : (
-            <button className='back-blue-dark' type="submit">Guardar Información</button>
-          )}
+    <>
+      <div className="wizard-container">
+        <div>
+          <h2 className="merriweather-bold">Rellene los campos solicitados para continuar.</h2>
         </div>
-      </form>
-    </div>
+          <span className="current-step"> {`${step} / ${steps?.length}`} </span>
+        <form onSubmit={handleSubmit}>
+          {steps[step - 1]}
+          <div className="navigation-buttons">
+            {step > 1 && <button type="button" onClick={() => setStep(step - 1)}>Volver</button>}
+            {step < steps.length ? (
+              <button type="button" className="back-blue-dark" onClick={() => setStep(step + 1)}>Siguiente</button>
+            ) : (
+              <button type="submit" className="back-blue-dark">{loaderMessageSuccess ? "Registrando..." :"Guardar y registrar"}</button>
+            )}
+          </div>
+        </form>
+      </div>
+      <DisplayMessage message={message} />
+      <LoaderSuccess loaderMessageSuccess={loaderMessageSuccess} text={'Espere un momento'} />
+    </>
   );
-};
+})
 
 export default GymOwnerWizard;

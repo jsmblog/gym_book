@@ -38,8 +38,8 @@ const RoomWaiting = () => {
           if (role) {
             await updateDoc(userDocRef, { v: true });
   
-            if (role === "user") {
-              navigate(`/Home/${userId}`, { replace: true });
+            if (role === "user" || role === "owner") {
+              navigate(`/`);
             }
           } else {
             console.error("El documento del usuario no existe.");
