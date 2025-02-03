@@ -4,7 +4,7 @@ import i_fb from '/facebook.png';
 import i_ig from '/instagram.png';
 import i_tk from '/tik-tok.png';
 
-const CardGym = React.memo(({ selectedGym }) => {
+const CardGym = React.memo(({ selectedGym , setSelectedGym }) => {
   if (!selectedGym) {
     return (
       <div className="gym-card-empty">
@@ -13,10 +13,13 @@ const CardGym = React.memo(({ selectedGym }) => {
     );
   }
 
-  const { uid, name_gym, imageProfile, email, contact, address, province, gym_data } = selectedGym;
+  const { uid, name_gym, imageProfile, email, contact, address, province, gym_data } = selectedGym || {};
   return (
-    <section className="gym-card_width">
-      <div key={uid} className="gym-card__card">
+  <>
+  {
+    selectedGym !== null && (
+      <section className="gym-card_width">
+      <div key={uid} className="gym-card__card fade-in">
         <div className="gym-card-header back-blue-dark">
         </div>
         <section className="gym-card-body">
@@ -25,7 +28,6 @@ const CardGym = React.memo(({ selectedGym }) => {
             <h2>{name_gym}</h2>
             <p className="gym-card__province">{province}</p>
           </div>
-          <p className='gym-card__address'>Dir: {address}</p>
         </section>
         <p className='gym-data__description gym-data__description_lh'>{gym_data.g_t} : {gym_data.des ? gym_data.des : ''}</p>
         {gym_data.m_m && <p className='max-people'>Aforo máximo: <span>{gym_data.m_m}</span> personas</p>}
@@ -72,6 +74,7 @@ const CardGym = React.memo(({ selectedGym }) => {
           </div>
         )}
         <div className="payment-contacts">
+        <p className='gym-card__address'>Dir: {address}</p>
         <p><strong>Email:</strong> {email}</p>
         <p><strong>Contacto:</strong> {contact}</p>
         <div className="social-links">
@@ -95,8 +98,14 @@ const CardGym = React.memo(({ selectedGym }) => {
           )}
         </div>
         </div>
+      <button className='btn-close-card-gyms' onClick={()=> setSelectedGym(null)}>
+        X 
+      </button>
       </div>
     </section>
+    )
+  }
+  </>  
   );
 });
 

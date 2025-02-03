@@ -63,7 +63,7 @@ const Gyms = React.memo(({ userId }) => {
         <h3 className='gyms_available' >Gimnasios disponibles : {filteredGyms.length}</h3>
         <div className="gym-list">
           <AllGyms filteredGyms={filteredGyms} setSelectedGym={setSelectedGym} />
-          <CardGym selectedGym={selectedGym} />
+          <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} />
         </div>
       </main>
       <NavBarHome userId={userId} />
