@@ -1,4 +1,4 @@
-const paymentMethodsList = ['Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria','Efectivo'];
+const paymentMethodsList = ['Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria','Efectivo','Paypal'];
 const plans = [
   { id: "basic", name: "Básico" } ,
   { id: "intermediate", name: "Intermedio" },

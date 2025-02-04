@@ -16,8 +16,8 @@
   .wizard-container .step {
     display: flex;
     flex-direction: column;
-    width: 50vw;
-    height: 50vh;
+    width: 55vw;
+    height: 70vh;
     align-items: center;
     justify-content: space-evenly;
 }
@@ -46,12 +46,28 @@
     flex-direction: column;
     justify-content: center;
 }
+
 .schedule {
     width: 100%;
     display: flex;
     align-items: center;
+    flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
+}
+.schedule-row {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
+}
+.day-selection {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.add-time-slot {
+    border: 1px solid var(--co-back-gray-3);
 }
 .rrss-links {
     height: 100px;
@@ -67,13 +83,27 @@
     flex-wrap: wrap;
     align-items: center;
     gap: .3rem;
+    width: 100%;
+}
+#plans-inputs {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.btn-add-plans {
+    align-self: flex-end;
 }
 #amount-to-pay {
     width: 100px;
 }
 #table_wizard {
  border: 1px solid var(--co-back-gray);
- width: 50vw;
+ width: 55vw;
+}
+.btn-save-shedule {
+    align-self: flex-end;
+    border: 1px solid var(--co-back-gray);
+    box-shadow: 0 5px 10px -5px var(--co-back-gray-3);
 }
 #table_wizard tbody tr td , .delete_shedule{
     background-color: var(--co-back-gray-2);
@@ -101,10 +131,19 @@
 @media screen and (max-width:768px) {
     .wizard-container .step {
         width: 100%;
-        height: 70vh;
+        height: 75vh;
     }
     #table_wizard {
         width: 90vw;
+    }
+    .day-selection {
+        flex-wrap: wrap;
+    }
+    .add-time-slot {
+        font-size: .75rem;
+    }
+    #plans-inputs {
+        flex-wrap: wrap;
     }
 }
 

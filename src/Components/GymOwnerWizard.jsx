@@ -14,6 +14,7 @@ import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import decrypt from './../Js/decrypt';
 import encrypt from '../Js/encrypt.js';
+import is_am_or_pm from '../Js/pm_am.js';
 const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
   const navigate = useNavigate();
   const { paymentMethodsList, plans, paymentTypes } = payments;
@@ -40,8 +41,10 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
   console.log(gymData)
 
   const [step, setStep] = useState(1);
-  const [newSchedule, setNewSchedule] = useState({ on: '', off: '' });
-
+  const [newSchedule, setNewSchedule] = useState({
+    d: [], // Días seleccionados
+    schedules: [] // Lista de horarios [{on: "06:00", off: "12:00"}, {on: "13:00", off: "21:00"}]
+  });
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoaderMessageSuccess(true);
@@ -54,10 +57,6 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       return !value; 
     });
     
-    if (hasEmptyFields) {
-      setLoaderMessageSuccess(false)
-      return messageError("¡Debes completar todos los campos!");
-    }
     try {
       const {address,name,nameGym,email,imageProfile,createAccount,userRole,password,province,isOnline,numberTelf,emailVerified} = infoPrincipalGym || {};
       const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, decrypt(password));
@@ -159,30 +158,46 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       m_p: prevData.m_p.filter((_, i) => i !== index),
     }));
   };
+  const handleDaySelection = (day) => {
+    setNewSchedule((prev) => ({
+      ...prev,
+      d: prev.d.includes(day)
+        ? prev.d.filter((d) => d !== day) // Si ya está, lo eliminamos
+        : [...prev.d, day] // Si no está, lo agregamos
+    }));
+  };
   
-
-
-  // Manejar horarios de funcionamiento
+  const handleTimeChange = (field, value, index) => {
+    const updatedSchedules = [...newSchedule.schedules];
+    updatedSchedules[index][field] = value;
+    setNewSchedule((prev) => ({ ...prev, schedules: updatedSchedules }));
+  };
+  
   const addSchedule = () => {
-    if (newSchedule.on && newSchedule.off && gymData.h.length < 3) {
-      setGymData({
-        ...gymData,
-        h: [...gymData.h, newSchedule],
-      })
-      setNewSchedule({ on: '', off: '' });
-    } else {
-      messageError("Añada una horario de apertura y cierre")
-    }
+    if (newSchedule.d.length === 0 || newSchedule.schedules.length === 0) return;
+  
+    setGymData((prev) => ({
+      ...prev,
+      h: [...prev.h, { d: [...newSchedule.d], schedules: [...newSchedule.schedules] }]
+    }));
+  
+    // Reiniciamos el formulario
+    setNewSchedule({ d: [], schedules: [] });
   };
-
+  
+  const addTimeSlot = () => {
+    setNewSchedule((prev) => ({
+      ...prev,
+      schedules: [...prev.schedules, { on: "", off: "" }]
+    }));
+  };
+  
   const removeSchedule = (index) => {
-    setGymData({
-      ...gymData,
-      h: gymData.h.filter((_, i) => i !== index),
-    });
-    messageError("eliminado")
+    setGymData((prev) => ({
+      ...prev,
+      h: prev.h.filter((_, i) => i !== index)
+    }));
   };
-
   const steps = [
     (
       <div className="step">
@@ -203,46 +218,74 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       </div>
     ),
     (
-      <div className="step ">
-        <div className="schedule-container">
-          <label>Horario de funcionamiento:</label>
-          <div className="schedule">
+      <div className="step">
+  <div className="schedule-container">
+    <label>Horario de funcionamiento:</label>
+    <div className="schedule">
+      <div className="day-selection">
+        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((day) => (
+          <label key={day}>
+            <input type="checkbox" checked={newSchedule.d.includes(day)} onChange={() => handleDaySelection(day)} />
+            {day}
+          </label>
+        ))}
+      </div>
+
+      <div className="schedule-row">
+        {newSchedule.schedules.map((timeSlot, index) => (
+          <div key={index} className="time-slot">
             <input
               type="time"
-              value={newSchedule.on}
-              onChange={(e) => setNewSchedule({ ...newSchedule, on: e.target.value })}
+              value={timeSlot.on}
+              onChange={(e) => handleTimeChange("on", e.target.value, index)}
             />
             -
             <input
               type="time"
-              value={newSchedule.off}
-              onChange={(e) => setNewSchedule({ ...newSchedule, off: e.target.value })}
+              value={timeSlot.off}
+              onChange={(e) => handleTimeChange("off", e.target.value, index)}
             />
-            <button type="button" className="back-blue-dark" onClick={addSchedule} disabled={gymData.h?.length >= 3}>
-              Agregar horario
-            </button>
           </div>
-          <div>
-            <table id='table_wizard'>
-              <thead>
-                <tr>
-                  <th>Apertura</th>
-                  <th>Cierre</th>
-                  <th>Eliminar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {gymData.h?.map((hour, index) => (
-                  <tr key={index}>
-                    <td>{hour.on} am</td>
-                    <td>{hour.off} pm</td>
-                    <td><button className='delete_shedule' type="button" onClick={() => removeSchedule(index)}>❌</button></td>
-                  </tr>
+        ))}
+        <button type="button" onClick={addTimeSlot} className="add-time-slot">➕ Agregar horario</button>
+      </div>
+
+      <button type="button" className="btn-save-shedule" onClick={addSchedule} disabled={gymData.h.length >= 3}>
+        Hecho ✅
+      </button>
+    </div>
+
+    <div>
+      <table id="table_wizard">
+        <thead>
+          <tr>
+            <th>Días</th>
+            <th>Horarios</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gymData.h.map((hour, index) => (
+            <tr key={index}>
+              <td>{hour.d.join(", ")}</td>
+              <td>
+                {hour.schedules.map((s, i) => (
+                  <div key={i}>{`${s.on} ${is_am_or_pm(s.on)} - ${s.off} ${is_am_or_pm(s.off)}`}</div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </td>
+              <td>
+                <button className="delete_schedule" type="button" onClick={() => removeSchedule(index)}>❌</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+    ),
+    (
+      <div className="step">
         <div className="methods_payment">
           <h4>Métodos de pago aceptados:</h4>
           {paymentMethodsList.map((method, index) => (
@@ -266,6 +309,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
         <div className="schedule-container">
           <label>Planes de membresía y precios:</label>
           <div className="schedule schedule_plans">
+            <div id='plans-inputs'>
             <select
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
@@ -278,7 +322,6 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
                 </option>
               ))}
             </select>
-
             <input
               type="number"
               id='amount-to-pay'
@@ -301,10 +344,10 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
                 </option>
               ))}
             </select>
-
+            </div>
             <button
               type="button"
-              className='back-blue-dark'
+              className='btn-add-plans back-blue-dark'
               onClick={addMembershipPlan}
               disabled={(gymData.m_p?.length || 0) >= 3 || !selectedPlan || !price || !paymentType}
               aria-disabled={(gymData.m_p?.length || 0) >= 3 || !selectedPlan || !price || !paymentType}

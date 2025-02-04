@@ -16,6 +16,7 @@ import Profile from './Components/Profile';
 import Marketplace from './Components/Marketplace';
 import Gyms from './Components/Gyms.jsx';
 import OfflineDetector from './Components/OfflineDetector.jsx';
+import InstructorSignUp from './Components/InstructorSignUp';
 
 function App() {
   const [dataUser, setDataUser] = useState([]);
@@ -95,6 +96,7 @@ function App() {
         <Route path='/registro/usuario' element={ <SignUpUser/> } />
         <Route path='/registro/propietario' element={ <SignUpBearer/> } />
         <Route path='/ingreso' element={ <Login/> } />
+        <Route path='/registro/instructor' element={<InstructorSignUp/>  } />
         <Route path="/area-de-espera" element={<RoomWaiting />} />
         <Route path='/profile/:userId' element={<Profile />} />
         <Route path='/gimnasios/:userId' element={<Gyms  userId={userId} />} />

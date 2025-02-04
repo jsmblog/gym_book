@@ -38,7 +38,7 @@ const Login = () => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         const role = userData.rol;
-        if (role === 'user') {
+        if (role === 'user' || role === 'owner') {
           navigate(`/Home/${user.uid}`, { replace: true });
         }//  else if (userData.userRole === 'admin') {
         //   navigate(`/Admin/${user.uid}`, { replace: true });

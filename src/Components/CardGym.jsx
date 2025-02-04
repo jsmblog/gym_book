@@ -3,6 +3,7 @@ import i_wh from '/whatsapp.png';
 import i_fb from '/facebook.png';
 import i_ig from '/instagram.png';
 import i_tk from '/tik-tok.png';
+import is_am_or_pm from './../Js/pm_am';
 
 const CardGym = React.memo(({ selectedGym , setSelectedGym }) => {
   if (!selectedGym) {
@@ -34,18 +35,25 @@ const CardGym = React.memo(({ selectedGym , setSelectedGym }) => {
         <div className="gym-card__tables">
           {gym_data.h?.length > 0 && (
             <table className="schedule-table">
-              <thead>
-                <tr><th className='libre-Baskerville'>Apertura</th><th className='libre-Baskerville'>Cierre</th></tr>
-              </thead>
-              <tbody>
-                {gym_data.h.map(({ on, off }, index) => (
-                  <tr key={index}>
-                    <td>{`${on} am`}</td>
-                    <td>{`${off} pm`}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  <thead>
+    <tr>
+      <th className='libre-Baskerville'>Días</th>
+      <th className='libre-Baskerville'>Horarios</th>
+    </tr>
+  </thead>
+  <tbody>
+  {
+  gym_data.h.map((hour, index) => (
+    <tr key={index}>
+      <td>{Array.isArray(hour.d) ? hour.d.join(', ') : ''}</td>
+      <td className='td-hours'>{Array.isArray(hour.schedules) && hour.schedules.map(shed => `| ${shed.on} ${is_am_or_pm(shed.on)} - ${shed.off} ${is_am_or_pm(shed.off)} | `)}</td>
+    </tr>
+  ))
+}
+
+  </tbody>
+</table>
+        
           )}
           {gym_data.m_p?.length > 0 && (
             <table className="plans-table">

@@ -27,7 +27,10 @@
   justify-content: space-between;
 }
 #bearer {
-    border: 1px solid var(--co-back-gray);
+    background-color: var(--co-back-gray);
+}
+#instructor {
+  border: 1px solid var(--co-back-gray);
 }
 #cta-message {
     width: 600px;
@@ -93,6 +96,11 @@
       width: 100%;
       right: 0;
       padding: .5rem;
+    }
+
+    #cont-btns-actions button {
+      font-size: .75rem;
+      padding: .2rem;
     }
   }
   

@@ -17,6 +17,9 @@ const Landing = () => {
     <Link to="/registro/propietario">
       <button id='bearer'>Regístrate como Propietario</button>
     </Link>
+    <Link to="/registro/instructor">
+      <button id='instructor'>Soy Instructor</button>
+    </Link>
     <Link to="/ingreso">
       <button>Iniciar Sesión</button>
     </Link>
