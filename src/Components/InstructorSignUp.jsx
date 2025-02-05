@@ -1,19 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 import provinces from '../Js/provinces.js';
 import genders from './../Js/genders.js';
 import { useEffect, useState } from 'react';
 import '../Styles/stylesSignUser.css'
-import {AUTH_USER,STORAGE} from '../ConfigFirebase/config.js'
 import useMessage from '../Hooks/useMessage.js';
-import formatDate from '../Js/formatDate.js';
 import verifyFormatEmail from '../Js/verifyFormatEmail.js';
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
-import { getDownloadURL,ref, uploadBytes } from 'firebase/storage';
 import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
-import LoaderSuccess from './LoaderSuccess.jsx';
-import convertToWebP from '../Js/convertToWebp.js';
+import WizardInstructor from './WizardInstructor.jsx';
 const CURRENT_YEAR = new Date().getFullYear();
 
 const InstructorSignUp = () => {
@@ -25,14 +19,14 @@ const InstructorSignUp = () => {
   const [numberTelf, setNumberTelf] = useState('')
   const [seePass, setSeePass] = useState(false)
   const MESSAGE = '¡ Bienvenido , registrese ahora ! ';
-  const db = getFirestore();
   const navigate = useNavigate();
   const [nameUser, setNameUser] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [textRegister, setTextRegister] = useState('');
   const [message, messageError] = useMessage();
-  const [loaderMessageSuccess, setLoaderMessageSuccess] = useState(false);
+  const [isWizard, setIsWizard] = useState(false);
+  const [instructorData, setInstructorData] = useState([]);
 
   const getImage = async (e) => {
     const file = e.target.files[0];
@@ -52,63 +46,51 @@ const InstructorSignUp = () => {
     setPhoto(file);
   }
   const saveInfoToFirebase = async () => {
-    setLoaderMessageSuccess(true);
+    
     try {
       if (!nameUser || !numberTelf || !password || !email || displayPhoto === null || !gender || !dateBirth || !province) {
         messageError("Rellena todos los campos 😉​");
-        setLoaderMessageSuccess(false);
+        
         return;
       } 
       if (!isNaN(nameUser)) {
         messageError("El nombre no puede ser un número");
-        setLoaderMessageSuccess(false);
+        
         setNameUser("");
         return;
       } 
       if (isNaN(numberTelf) || numberTelf.length !== 10) {
         messageError("El contacto debe ser un número de 10 dígitos");
-        setLoaderMessageSuccess(false);
+        
         setNumberTelf("");
         return;
       }
       if (verifyFormatEmail(email)) {
         messageError("Correo con formato incorrecto.");
         setEmail("");
-        setLoaderMessageSuccess(false);
+        
         return;
       } 
       if (password.length < 8) {
         messageError("Ingresa mínimo 8 caracteres.");
-        setLoaderMessageSuccess(false);
+        
         setPassword("");
         return;
       }
       if (CURRENT_YEAR - dateBirth.slice(0, 4) < 18) {
         messageError("Debes ser mayor de edad para registrarte.");
-        setLoaderMessageSuccess(false);
+        
         setDateBirth("");
         return;
       }
   
-      const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, password);
-      const userId = userCredential.user.uid;
-  
-      await updateProfile(userCredential.user, { displayName: nameUser });
-      await sendEmailVerification(userCredential.user);
-  
-      const webpImage = await convertToWebP(photo);
-  
-      const storageRef = ref(STORAGE, `profileImages/${userId}/image.webp`);
-      await uploadBytes(storageRef, webpImage);
-      const imageUrl = await getDownloadURL(storageRef);
       const createdAt = new Date().toISOString();
       const userDoc = {
         n: encrypt(nameUser), // name -> n
         e: encrypt(email), // email -> e
-        img: encrypt(imageUrl), // imageProfile -> img
+        img: photo, // imageProfile -> img
         c_a: createdAt, // createAccount -> c_a
-        rol: "user", // userRole -> rol
-        uid: userId,
+        rol: "instructor", // userRole -> rol
         birth: encrypt(dateBirth), // dateBirth -> birth
         pro: encrypt(province), // province -> prov
         g: encrypt(gender), // gender -> g
@@ -117,17 +99,13 @@ const InstructorSignUp = () => {
         v: false, // emailVerified -> v
         posts: [] 
       };
-  
-      const collectionUsers = collection(db, "USERS");
-      await setDoc(doc(collectionUsers, userId), userDoc, { merge: true });
-  
-      navigate("/area-de-espera", { replace: true });
-      setLoaderMessageSuccess(false);
-  
+      setInstructorData(userDoc);
+      setIsWizard(true)
+      
     } catch (error) {
       console.error("Error al guardar en Firebase: ", error);
       messageError("Ocurrió un error al registrar la información. Inténtalo de nuevo.");
-      setLoaderMessageSuccess(false);
+      
     }
   };
   
@@ -276,7 +254,9 @@ const InstructorSignUp = () => {
         </Link>
     </main>
     <DisplayMessage message={message}/>
-    <LoaderSuccess loaderMessageSuccess={loaderMessageSuccess} text="espere un momento" />
+    {
+      isWizard && <WizardInstructor instructorData={instructorData} />
+    }
     </>
   )
 }

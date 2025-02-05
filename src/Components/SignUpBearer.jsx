@@ -7,7 +7,6 @@ import formatDate from '../Js/formatDate.js';
 import verifyFormatEmail from '../Js/verifyFormatEmail.js';
 import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
-import LoaderSuccess from './LoaderSuccess.jsx';
 import GymOwnerWizard from './GymOwnerWizard.jsx';
 
 const SignUpBearer = () => {

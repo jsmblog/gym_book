@@ -14,6 +14,8 @@ import encrypt from '../Js/encrypt.js';
 import DisplayMessage from './DisplayMessage.jsx';
 import LoaderSuccess from './LoaderSuccess.jsx';
 import convertToWebP from '../Js/convertToWebp.js';
+import { db } from '../ConfigFirebase/config.js';
+
 const CURRENT_YEAR = new Date().getFullYear();
 
 const SignUpUser = () => {
@@ -25,7 +27,6 @@ const SignUpUser = () => {
   const [numberTelf, setNumberTelf] = useState('')
   const [seePass, setSeePass] = useState(false)
   const MESSAGE = '¡ Bienvenido , registrese ahora ! ';
-  const db = getFirestore();
   const navigate = useNavigate();
   const [nameUser, setNameUser] = useState("");
   const [password, setPassword] = useState("");

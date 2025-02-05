@@ -37,13 +37,11 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       ig: ''
     }, // social media links
   });
-  console.log(infoPrincipalGym)
-  console.log(gymData)
 
   const [step, setStep] = useState(1);
   const [newSchedule, setNewSchedule] = useState({
     d: [], // Días seleccionados
-    schedules: [] // Lista de horarios [{on: "06:00", off: "12:00"}, {on: "13:00", off: "21:00"}]
+    schedules: [] // Lista de horarios 
   });
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -56,7 +54,11 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       }
       return !value; 
     });
-    
+    if(hasEmptyFields){
+      messageError("Complete todos los campos");
+      setLoaderMessageSuccess(false);
+      return;
+    }
     try {
       const {address,name,nameGym,email,imageProfile,createAccount,userRole,password,province,isOnline,numberTelf,emailVerified} = infoPrincipalGym || {};
       const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, decrypt(password));

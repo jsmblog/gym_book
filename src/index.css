@@ -47,7 +47,10 @@
   gap: .3rem;
   justify-content: center;
 }
-
+body {
+  /* background: linear-gradient(to bottom, #ffffff, #ececec); */
+  /*linear-gradient(to bottom, #092635, #020d16)*/
+}
 * button:hover {
   filter: brightness(90%);
   transition: .4s ease;

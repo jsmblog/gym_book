@@ -13,7 +13,6 @@ box-shadow: 0 6px 12px -5px var(--co-gray);
 z-index: 1;
 }
 #main-nvhome {
-    background-color: greenyellow;
     width: 100%;
     display: flex;
     align-items: center;
