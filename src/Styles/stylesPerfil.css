@@ -34,7 +34,7 @@
 
 .perfil-info p {
     margin: 5px 0;
-    color: #555;
+    color: var(--co-gray);
     font-size: 16px;
 }
 .perfil-posts {
@@ -58,7 +58,8 @@
 }
 
 .post-item:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
+    transition: .3s ease-in-out;
     box-shadow: 0 5px 4px -1px var(--co-back-gray);
 
 }
@@ -102,6 +103,10 @@
     align-items: center;
     gap: .5rem;
     position: relative;
+}
+#nameUser-perfil {
+    font-size: 1.7rem;
+    text-shadow: 1px 1px 5px var(--co-back-gray-3);
 }
 @media (max-width: 768px) {
     .perfil-header {

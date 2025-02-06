@@ -5,7 +5,7 @@ import iconMoon from '/moon.webp'
 import '../Styles/stylesNavBarHome.css'
 import { Link } from 'react-router-dom'
 import SesionOff from './SesionOff'
-const NavBarHome = ({ userId }) => {
+const NavBarHome = ({ userId}) => {
   return (
     <>
       <main id="main-nvhome">
@@ -16,7 +16,7 @@ const NavBarHome = ({ userId }) => {
           <Link to={`/gimnasios/${userId}`} >
             <button><img src={iconStore} alt="iconStore" /></button>
           </Link>
-          <Link to={`/profile/${userId}`} >
+          <Link to={`/perfil/${userId}`} >
             <button><img src={iconUser} alt="iconUser" /></button>
           </Link>
           <button><img src={iconMoon} alt="iconMoon" /></button>

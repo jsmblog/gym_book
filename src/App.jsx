@@ -69,7 +69,7 @@ function App() {
         <Route path="/area-de-espera" element={<RoomWaiting />} />
         <Route path='/profile/:userId' element={<Profile />} />
         <Route path='/gimnasios/:userId' element={<Gyms userId={userId} />} />
-        <Route path='/perfil/:userId' element={ <Perfil/> } />
+        <Route path='/perfil/:userId' element={ <Perfil currentUserData={currentUserData} /> } />
       </Routes>
       <OfflineDetector />
     </Router>

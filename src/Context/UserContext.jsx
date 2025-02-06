@@ -22,23 +22,26 @@ export const AuthProvider = ({ children }) => {
     });
     return () => unsubscribeAuth();
   }, []);
-
-  // Fetch datos del usuario actual usando onSnapshot
+  // useEffect para obtener los datos del usuario
   useEffect(() => {
     if (!authUser) {
       setCurrentUserData(null);
+      setUsers([]);
       setIsLoading(false);
       return;
     }
-
-    const docRef = doc(db, "USERS", authUser.uid);
-    
-    const unsubscribeCurrentUser = onSnapshot(
-      docRef,
-      (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setCurrentUserData({
+  
+    const usersCollectionRef = collection(db, "USERS");
+  
+    const unsubscribe = onSnapshot(
+      usersCollectionRef,
+      (snapshot) => {
+        let currentUser = null;
+  
+        const allUsers = snapshot.docs.map((doc) => {
+          const data = doc.data();
+  
+          const userObj = {
             name: decrypt(data.n),
             email: decrypt(data.e),
             gender: decrypt(data.g) || "",
@@ -47,65 +50,41 @@ export const AuthProvider = ({ children }) => {
             imageProfile: decrypt(data.img),
             uid: data.uid,
             rol: data.rol,
+            address: data.dir && decrypt(data.dir),
             name_gym: data.n_g && decrypt(data.n_g),
             isOnline: data.on,
             posts: data.posts || [],
-            v: data.v, // Verificación (campo "v")
-          });
-        } else {
-          console.error("No se encontró el documento del usuario actual.");
-          setCurrentUserData(null);
-        }
+            gymData:
+              data.gymData && typeof data.gymData === "object"
+                ? data.gymData
+                : {},
+          };
+  
+          if (data.uid === authUser.uid) {
+            currentUser = {
+              ...userObj,
+              v: data.v,
+            };
+          }
+  
+          return userObj;
+        });
+  
+        setUsers(allUsers);
+        setCurrentUserData(currentUser);
         setIsLoading(false);
       },
       (error) => {
-        console.error("Error al obtener datos del usuario actual:", error);
+        console.error("Error fetching users:", error);
+        setUsers([]);
         setCurrentUserData(null);
         setIsLoading(false);
       }
     );
-
-    return () => unsubscribeCurrentUser();
+  
+    return unsubscribe;
   }, [authUser]);
-
-  // Opcional: suscripción a todos los usuarios
-  useEffect(() => {
-    if (!authUser) {
-      setUsers([]);
-      return;
-    }
     
-    const usersCollection = collection(db, "USERS");
-    const unsubscribeUsers = onSnapshot(
-      usersCollection,
-      (snapshot) => {
-        const allUsers = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            name: decrypt(data.n),
-            email: decrypt(data.e),
-            gender: decrypt(data.g) || "",
-            numberTelf: decrypt(data.tel),
-            province: decrypt(data.pro),
-            imageProfile: decrypt(data.img),
-            uid: data.uid,
-            rol: data.rol,
-            name_gym: data.n_g && decrypt(data.n_g),
-            isOnline: data.on,
-            posts: data.posts || [],
-          };
-        });
-        setUsers(allUsers);
-      },
-      (error) => {
-        console.error("Error fetching users:", error);
-      }
-    );
-
-    // Cleanup: Detener la escucha de todos los usuarios si authUser cambia
-    return () => unsubscribeUsers();
-  }, [authUser]);
-
   const value = useMemo(
     () => ({
       authUser,

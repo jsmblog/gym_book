@@ -5,6 +5,7 @@ const Search = React.memo(({setSearchTerm,searchTerm,setProvince,filteredGyms}) 
     return (
       <>
       <div className="gym-filter">
+      <button id='go-back-search'>←</button>
             <input
               type="text"
               placeholder="🔎 Busca un gimnasio por su nombre..."
