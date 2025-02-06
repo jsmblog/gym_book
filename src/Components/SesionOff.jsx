@@ -2,7 +2,7 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom'
 import '../Styles/styleSesionOff.css'
 import { AUTH_USER } from '../ConfigFirebase/config.js'
-import iconTurn_on from '/apagar.png';
+import iconTurn_on from '/apagar.webp';
 const SesionOff = () => {
   const navigate = useNavigate();
   const handleSignOut = async () => {

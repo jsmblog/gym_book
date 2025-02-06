@@ -1,14 +1,1 @@
-.form_login {
-height: 60vh;
-}
-.main_login {
-    gap: 1rem;
-}
-#form-login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#form-login label input {
-width: 300px;
-}
+.form_login{height:60vh}.main_login{gap:1rem}#form-login{display:flex;flex-direction:column;align-items:center}#form-login label input{width:300px}

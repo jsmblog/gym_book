@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import '../Styles/stylesPost.css';
-import iconLaugh from '/laugh.png';
-import iconLink from '/link.png';
-import iconImage from '/image.png';
+import iconLaugh from '/laugh.webp';
+import iconLink from '/link.webp';
+import iconImage from '/image.webp';
 import useMessage from './../Hooks/useMessage';
 import sentimentalStates from '../Js/sentimentalStates';
 import sliceText from './../Js/sliceText';

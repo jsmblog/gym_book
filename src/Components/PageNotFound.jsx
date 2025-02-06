@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../Styles/stylesPageNotFound.css';
-import catIcon from '/gato_asustado.png'
+import catIcon from '/gato_asustado.webp'
 
 const PageNotFound = () => {
   const navigate = useNavigate(); 

@@ -1,15 +1,15 @@
 import React from 'react';
-import i_wh from '/whatsapp.png';
-import i_fb from '/facebook.png';
-import i_ig from '/instagram.png';
-import i_tk from '/tik-tok.png';
+import i_wh from '/whatsapp.webp';
+import i_fb from '/facebook.webp';
+import i_ig from '/instagram.webp';
+import i_tk from '/tik-tok.webp';
 // import iconEmpty from "/conjunto-vacio.png";
 import sliceText from './../Js/sliceText';
 
 const AllGyms = React.memo(({ filteredGyms, setSelectedGym }) => {
   return (
     <section className="all-gyms">
-      {filteredGyms?.length > 0 ?  filteredGyms.map(({ uid, name_gym, imageProfile, province, gym_data, email, contact, address }) => (
+      {filteredGyms?.length > 0 ?  filteredGyms?.map(({ uid, name_gym, imageProfile, province, gym_data, email, contact, address }) => (
         <div 
           key={uid} 
           className="gym-card"

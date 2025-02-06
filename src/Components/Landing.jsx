@@ -6,9 +6,7 @@ const Landing = () => {
     <main id='main-landing'>
   <h1 id='greet' className='tracking-in-expand'>¡ Bienvenido a GymBook !</h1>
   <p id='cta-message' className='fade-in'>
-    Descubre gimnasios cerca de ti , accede a información detallada sobre sus servicios, horarios y tarifas. 
-    Conecta con otros usuarios, crea publicaciones y comparte tus avances. 
-    ¡Si eres propietario, destaca tu gimnasio y atrae nuevos clientes!
+  Descubre gimnasios cercanos, conoce sus servicios y tarifas. Conéctate con otros usuarios, comparte tus avances y, si eres instructor o propietario, atrae nuevos clientes y haz crecer tu negocio.
   </p>
   <div id='cont-btns-actions' className='fade-in'>
     <Link to="/registro/usuario">

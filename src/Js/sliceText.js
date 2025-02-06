@@ -1,4 +1,1 @@
-const sliceText = (text,lengthToSlice) => {
-    return text.length > lengthToSlice ? `${text.slice(0,lengthToSlice)}...` : text 
-    }
-    export default sliceText
+const sliceText=(e,t)=>e.length>t?`${e.slice(0,t)}...`:e;export default sliceText;

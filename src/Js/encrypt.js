@@ -1,7 +1,1 @@
-import CryptoJS from "crypto-js";
-import {CUSTOM_KEY} from '../FirebaseEnv/firebaseEnv.js'
-const encryptText = (message)=> {
-    const text = CryptoJS.AES.encrypt(message,CUSTOM_KEY).toString();
-    return text;
-}
-export default encryptText
+import CryptoJS from"crypto-js";import{CUSTOM_KEY}from"../FirebaseEnv/firebaseEnv.js";const encryptText=t=>CryptoJS.AES.encrypt(t,CUSTOM_KEY).toString();export default encryptText;

@@ -1,12 +1,1 @@
-const gymTypes = [
-  "Centro de yoga y pilates",
-  "Centro de entrenamiento funcional",
-  "Box de CrossFit",
-  "Gimnasio tradicional",
-    "Gimnasio de musculación y pesas",
-    "Centro de entrenamiento personal",
-    "Gimnasio de artes marciales"
-  ];
-  
-  export default gymTypes;
-  
+const gymTypes=["Centro de yoga y pilates","Centro de entrenamiento funcional","Box de CrossFit","Gimnasio tradicional","Gimnasio de musculación y pesas","Centro de entrenamiento personal","Gimnasio de artes marciales"];export default gymTypes;

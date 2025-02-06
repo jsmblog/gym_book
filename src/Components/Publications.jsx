@@ -3,10 +3,10 @@ import "../Styles/stylesPublications.css";
 import decrypt from "../Js/decrypt";
 import sliceText from "../Js/sliceText";
 import formatDate from "./../Js/formatDate";
-import iconHeart from "/heart.png";
-import iconHeartRed from "/amor.png";
-import iconShare from "/share.png";
-import iconComment from "/comment.png";
+import iconHeart from "/heart.webp";
+import iconHeartRed from "/amor.webp";
+import iconShare from "/share.webp";
+import iconComment from "/comment.webp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../ConfigFirebase/config";
 import useMessage from "../Hooks/useMessage";
@@ -164,7 +164,7 @@ const handleComments = async (comments,uidOwner) => {
               <div className="publication-header">
                 <div>
                   <img src={user.ownerPhoto} alt="" />
-                  <p><h4 id="name_gym">{user.name_gym || ''}</h4> {user.owner}</p>
+                  <p><h4 id="name_gym">{user.name_gym || ''}</h4> {user.rol === 'instructor' ? 'Instr :' : ''} {user.owner}</p>
                   {user.post?.s && (
                     <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
                   )}

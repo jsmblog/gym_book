@@ -107,7 +107,7 @@ const SignUpUser = () => {
         n: encrypt(nameUser), // name -> n
         e: encrypt(email), // email -> e
         img: encrypt(imageUrl), // imageProfile -> img
-        c_a: createdAt, // createAccount -> c_a
+        c_a: formatDate(createdAt), // createAccount -> c_a
         rol: "user", // userRole -> rol
         uid: userId,
         birth: encrypt(dateBirth), // dateBirth -> birth

@@ -86,18 +86,18 @@ const InstructorSignUp = () => {
   
       const createdAt = new Date().toISOString();
       const userDoc = {
-        n: encrypt(nameUser), // name -> n
-        e: encrypt(email), // email -> e
-        img: photo, // imageProfile -> img
-        c_a: createdAt, // createAccount -> c_a
-        rol: "instructor", // userRole -> rol
-        birth: encrypt(dateBirth), // dateBirth -> birth
-        pro: encrypt(province), // province -> prov
-        g: encrypt(gender), // gender -> g
-        on: true, // isOnline -> on
-        tel: encrypt(numberTelf), // numberTelf -> tel
-        v: false, // emailVerified -> v
-        posts: [] 
+        name: encrypt(nameUser), // name -> n
+        email: email, // email -> e
+        imageProfile: photo, // imageProfile -> img
+        createAccount: createdAt, // createAccount -> c_a
+        userRole: "instructor", // userRole -> rol
+        dateBirth: encrypt(dateBirth), // dateBirth -> birth
+        password : encrypt(password), // password -> password
+        province: encrypt(province), // province -> prov
+        gender: encrypt(gender), // gender -> g
+        isOnline: true, // isOnline -> on
+        numberTelf: encrypt(numberTelf), // numberTelf -> tel
+        emailVerified: false, // emailVerified -> v
       };
       setInstructorData(userDoc);
       setIsWizard(true)

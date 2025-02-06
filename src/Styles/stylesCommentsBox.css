@@ -16,6 +16,9 @@
 
 .commentsBox__header__comments__list {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     height: 100%;
 }
 
@@ -27,12 +30,16 @@
     align-items: center;
     padding: 1.5rem .5rem;
     position: relative;
+    box-shadow: 0 5px 15px -5px var(--co-back-gray);
     text-align: justify;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .comment__text {
     width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
 
 .createdAt_comment {
@@ -121,6 +128,31 @@
 .message_empty_comments {
     color: var(--co-gray);
     text-shadow: 0 1px 0 var(--co-back-gray);
+}
+.comment__avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+}
+.comment_prev_image {
+    border: 1px solid var(--co-back-gray);
+    border-radius: 20px;
+    box-shadow: 0 0 10px 1px var(--co-back-gray);
+    position: absolute;
+    right: 4.5rem;
+    bottom: 4rem;
+    padding: .4rem;
+}
+.comment_prev_image .prev-image {
+    width: 100px;
+    height: 100px;
+}
+#img-comment {
+    width: 100px;
+    height: 100px;
+    border-radius: 3px;
 }
 .slide-in-bottom {
 	-webkit-animation: slide-in-bottom 1.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;

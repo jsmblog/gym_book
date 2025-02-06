@@ -1,4 +1,1 @@
-const verifyFormatEmail =(email) => {
-    return !/\S+@\S+\.\S+/.test(email);
-}
-export default verifyFormatEmail ;
+const verifyFormatEmail=t=>!/\S+@\S+\.\S+/.test(t);export default verifyFormatEmail;
