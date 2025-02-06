@@ -1,4 +1,3 @@
-// App.jsx
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './Components/Landing';
@@ -13,9 +12,10 @@ import Profile from './Components/Profile';
 import Gyms from './Components/Gyms.jsx';
 import OfflineDetector from './Components/OfflineDetector.jsx';
 import InstructorSignUp from './Components/InstructorSignUp';
-import { AuthProvider, useUserContext } from './Context/UserContext.jsx';
+import {useUserContext } from './Context/UserContext.jsx';
+import Perfil from './Components/Perfil.jsx';
 
-function AppContent() {
+function App() {
   const { authUser, currentUserData, isLoading } = useUserContext();
 
   if (isLoading) {
@@ -69,17 +69,10 @@ function AppContent() {
         <Route path="/area-de-espera" element={<RoomWaiting />} />
         <Route path='/profile/:userId' element={<Profile />} />
         <Route path='/gimnasios/:userId' element={<Gyms userId={userId} />} />
+        <Route path='/perfil/:userId' element={ <Perfil/> } />
       </Routes>
       <OfflineDetector />
     </Router>
-  );
-}
-
-function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
   );
 }
 

@@ -41,7 +41,7 @@ const Home = React.memo(({ userId }) => {
   return (
     <main id="main-home">
       <Post currentUser={currentUser} />
-      <Publications users={shuffledPublications} currentUser={currentUser} />
+      <Publications users={shuffledPublications} allUsers={users} currentUser={currentUser} />
       <NavBarHome userId={userId} />
     </main>
   );

@@ -14,11 +14,13 @@ import DisplayMessage from "./DisplayMessage";
 import uuid from './../Js/uuid';
 import encrypt from "../Js/encrypt";
 import CommentsBox from "./CommentsBox";
+import { useNavigate } from "react-router-dom";
 const COUNT = 10
-const Publications = React.memo(({ users ,currentUser}) => {
+const Publications = React.memo(({ users, currentUser, allUsers }) => {
   const [visibleCount, setVisibleCount] = useState(COUNT);
+  const navigate = useNavigate();
   const [isOnBoxComments, setIsOnBoxComments] = useState(false)
-  const [message,messageError] = useMessage();
+  const [message, messageError] = useMessage();
   const [currentComments, setCurrentComments] = useState([]);
   const [ownerId, setOwnerId] = useState('');
   const showMorePublications = () => {
@@ -27,7 +29,7 @@ const Publications = React.memo(({ users ,currentUser}) => {
     if (nextCount <= users.length) {
       setVisibleCount(nextCount);
     } else {
-      setVisibleCount(users.length); 
+      setVisibleCount(users.length);
     }
   };
 
@@ -37,40 +39,40 @@ const Publications = React.memo(({ users ,currentUser}) => {
     try {
       const docRef = doc(db, "USERS", userId);
       const docSnap = await getDoc(docRef);
-  
+
       if (!docSnap.exists()) {
         console.error("User document not found!");
         return;
       }
-  
+
       const userData = docSnap.data();
       const posts = userData.posts || [];
-  
+
       const userLiked = {
         id: userId, // id
         n: currentUser.name, // name
         p: currentUser.imageProfile // photo
       };
-  
+
       // Buscar el post a actualizar
       const updatedPosts = posts.map((p) => {
         if (p.post_id === post.post_id) {
           const hasLiked = p.likes?.some((like) => like.id === userId);
-  
+
           if (hasLiked) {
             messageError("¡Ya diste like a esta publicación!");
             return p; // No modificar el post si ya tiene el like
           }
-  
+
           const updatedLikes = p.likes ? [...p.likes, userLiked] : [userLiked];
           messageError("Me gusta enviado con éxito");
           return { ...p, likes: updatedLikes };
         }
         return p;
       });
-  
+
       await updateDoc(docRef, { posts: updatedPosts });
-  
+
     } catch (error) {
       console.error("Error liking the post:", error.message);
     }
@@ -78,18 +80,18 @@ const Publications = React.memo(({ users ,currentUser}) => {
 
   const handleShared = async (post, userId) => {
     try {
-      if(currentUser?.uid === userId){
+      if (currentUser?.uid === userId) {
         messageError("No puedes compartir tu propia publicación");
         return;
       }
       const docRefCurrentUser = doc(db, "USERS", currentUser?.uid);
       const docRefOwner = doc(db, "USERS", userId);
-  
+
       const [docSnapOwner, docSnapCurrentUser] = await Promise.all([
         getDoc(docRefOwner),
         getDoc(docRefCurrentUser)
       ]);
-  
+
       if (!docSnapOwner.exists()) {
         console.error("Owner document not found!");
         return;
@@ -98,34 +100,34 @@ const Publications = React.memo(({ users ,currentUser}) => {
         console.error("Current user document not found!");
         return;
       }
-  
+
       const ownerData = docSnapOwner.data();
       const currentUserData = docSnapCurrentUser.data();
-  
+
       const hasShared = currentUserData.posts.some((p) => p.post_id === post.post_id && p.i_sh);
-  
+
       if (hasShared) {
         messageError("¡Ya compartiste esta publicación!");
         return;
       }
       const createdAt = new Date().toISOString();
       const sharedPost = {
-        c_a:createdAt,
+        c_a: createdAt,
         d: post.d || '',
-        s:'',
-        m:post.m || [],
-        l:post.l || '',
-        post_id: uuid(35), 
-        i_sh: true, 
-        likes: [], 
-        comments: [], 
-        shared: [] 
+        s: '',
+        m: post.m || [],
+        l: post.l || '',
+        post_id: uuid(35),
+        i_sh: true,
+        likes: [],
+        comments: [],
+        shared: []
       };
-  
+
       const updatedCurrentUserPosts = [...currentUserData.posts, sharedPost];
-      
+
       await updateDoc(docRefCurrentUser, { posts: updatedCurrentUserPosts });
-  
+
       const user = {
         id: currentUser.uid,
         n: encrypt(currentUser.name),
@@ -135,36 +137,49 @@ const Publications = React.memo(({ users ,currentUser}) => {
       const updatedOwnerPosts = ownerData.posts.map((p) => {
         if (p.post_id === post.post_id) {
           const updatedShared = p.shared ? [...p.shared, user] : [user];
-          return {...p,shared:updatedShared}; 
+          return { ...p, shared: updatedShared };
         }
         return p;
       });
-  
+
       await updateDoc(docRefOwner, { posts: updatedOwnerPosts });
-  
+
       messageError("¡Publicación compartida con éxito!");
-  
+
     } catch (error) {
       console.error("Error sharing the post:", error.message);
     }
   };
-  
-const handleComments = async (comments,uidOwner) => {
-  setIsOnBoxComments(!isOnBoxComments)
-  setCurrentComments(comments);
-  setOwnerId(uidOwner)
-}
+
+  const handleComments = async (comments, uidOwner) => {
+    setIsOnBoxComments(!isOnBoxComments)
+    setCurrentComments(comments);
+    setOwnerId(uidOwner)
+  }
+
+  const navigateToPerfilUserSelected = (user) => {
+    try {
+      if (!user) {
+        messageError('Error');
+        return;
+      }
+      const userSelected = allUsers.find(u => u.uid === user.ownerId);
+      navigate(`/perfil/${user.ownerId}`, { state: userSelected || null })
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   return (
     <>
       <section id="sect-publications">
         <div className="container-publications">
           {visiblePublications?.map((user) => (
-            <div key={user.post.post_id} style={{border: user.rol === 'owner' ? '1px solid #818080' : '' }} className="publication">
+            <div key={user.post.post_id} style={{ border: user.rol === 'owner' ? '1px solid #818080' : '' }} className="publication">
               <div className="publication-header">
                 <div>
-                  <img src={user.ownerPhoto} alt="" />
-                  <p><h4 id="name_gym">{user.name_gym || ''}</h4> {user.rol === 'instructor' ? 'Instr :' : ''} {user.owner}</p>
+                  <img onClick={() => navigateToPerfilUserSelected(user)} src={user.ownerPhoto} alt="" />
+                  <p className="name-navigate" onClick={() => navigateToPerfilUserSelected(user)}><h4 id="name_gym">{user.name_gym || ''}</h4> {user.rol === 'instructor' ? 'Instr :' : ''} {user.owner}</p>
                   {user.post?.s && (
                     <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
                   )}
@@ -172,27 +187,41 @@ const handleComments = async (comments,uidOwner) => {
                 <span>{formatDate(user.post?.c_a)}</span>
               </div>
               <p className="libre-Baskerville paragrahp">{decrypt(user.post?.d) || ""}</p>
+              {user.post?.m?.length > 0 && 
+                <div className="publication-media">
+                {user.post?.m?.map((media, index) => (
+                  media.type === "image" ? (
+                    <img className="width-media" key={index} src={media.file} alt="Imagen de la publicación" />
+                  ) : (
+                    <video className="width-media" key={index} muted controls>
+                      <source src={media.file} type="video/mp4" />
+                      Tu navegador no soporta la reproducción de videos.
+                    </video>
+                  )
+                ))}
+              </div>
+              }
               <a
                 id="link-user"
                 href={decrypt(user.post?.l)}
                 target="_blank"
                 rel="noopener noreferrer"
-                >
+              >
                 {sliceText(decrypt(user.post?.l), 25)}
               </a>
-                {user.post.i_sh && <h6 id="isShared">publicación compartida</h6>}
+              {user.post.i_sh && <h6 id="isShared">publicación compartida</h6>}
               <div className="reactions">
-                <button onClick={()=> handleLiked(user.post,user.ownerId)}>
-                <img src={user.post?.likes?.some(like => like.id === user.ownerId) ? iconHeartRed : iconHeart} alt="like" />
-                <span>{user.post?.likes?.length}</span>
+                <button onClick={() => handleLiked(user.post, user.ownerId)}>
+                  <img src={user.post?.likes?.some(like => like.id === user.ownerId) ? iconHeartRed : iconHeart} alt="like" />
+                  <span>{user.post?.likes?.length}</span>
                 </button>
-                <button onClick={()=> handleComments(user.post,user.ownerId)} >
-                <img src={iconComment} alt="comment" />
-                <span>{user.post?.comments?.length}</span>
+                <button onClick={() => handleComments(user.post, user.ownerId)} >
+                  <img src={iconComment} alt="comment" />
+                  <span>{user.post?.comments?.length}</span>
                 </button>
-                <button onClick={()=> handleShared(user.post,user.ownerId)}>
-                <img src={iconShare} alt="share" />
-                <span>{user.post?.shared?.length}</span>
+                <button onClick={() => handleShared(user.post, user.ownerId)}>
+                  <img src={iconShare} alt="share" />
+                  <span>{user.post?.shared?.length}</span>
                 </button>
               </div>
             </div>
@@ -205,11 +234,11 @@ const handleComments = async (comments,uidOwner) => {
               No hay publicaciones disponibles.
             </p>
           )}
-        {visibleCount < users.length && (
-          <button onClick={showMorePublications} className="btn-show-more fade-in">
-            Filtrar más publicaciones ⟳
-          </button>
-        )}
+          {visibleCount < users.length && (
+            <button onClick={showMorePublications} className="btn-show-more fade-in">
+              Filtrar más publicaciones ⟳
+            </button>
+          )}
         </div>
       </section>
       {

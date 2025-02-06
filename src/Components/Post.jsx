@@ -13,6 +13,7 @@ import uuid from './../Js/uuid';
 import { setDoc, doc, arrayUnion } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import encrypt from './../Js/encrypt';
+import convertToWebP from '../Js/convertToWebp.js';
 const Post = React.memo(({ currentUser }) => {
   const { name, imageProfile, isOnline, uid } = currentUser || null;
   const [message, messageError] = useMessage();
@@ -97,30 +98,43 @@ const Post = React.memo(({ currentUser }) => {
       if (handleValidation()) {
         const docRef = doc(db, "USERS", uid);
         const uploadedFiles = [];
-
+  
         for (const file of files) {
-          const fileRef = ref(STORAGE, `posts/${uid}/${uuid(15)}_${file.name}`);
-          const snapshot = await uploadBytes(fileRef, file);
+          const fileRef = ref(STORAGE, `posts/${uid}/${uuid(15)}`);
+          let imageConvert = file;
+          
+          if (file.type.startsWith("image/")) {
+            imageConvert = await convertToWebP(file);
+          }
+  
+          const snapshot = await uploadBytes(fileRef, imageConvert);
           const fileURL = await getDownloadURL(snapshot.ref);
-          uploadedFiles.push(encrypt(fileURL));
+          
+          uploadedFiles.push({
+            file: fileURL,
+            type: file.type.startsWith("image/") ? "image" : "video"
+          });
         }
+  
         const createdAt = new Date().toISOString();
         const post_id = uuid(30);
         const objectPost = {
           d: textPublish ? encrypt(textPublish) : '',
-          m: uploadedFiles || [],
+          m: uploadedFiles || [],  
           l: link ? encrypt(link) : '',
           s: selectedSentiment ? encrypt(selectedSentiment) : '',
-          c_a:createdAt,
+          c_a: createdAt,
           post_id,
           likes: [],
           comments: [],
-          shared:[],
-          i_sh:false
-        }
+          shared: [],
+          i_sh: false
+        };
+  
         await setDoc(docRef, {
           posts: arrayUnion(objectPost)
-        }, { merge: true })
+        }, { merge: true });
+  
         setIsCreatedPublish(false);
         messageError("Publicación creada exitosamente 😄");
       }
@@ -129,6 +143,7 @@ const Post = React.memo(({ currentUser }) => {
     }
     clearInputs();
   };
+  
   return (
     <>
       <main id='main-post'>
