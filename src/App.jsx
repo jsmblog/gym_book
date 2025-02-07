@@ -14,6 +14,7 @@ import OfflineDetector from './Components/OfflineDetector.jsx';
 import InstructorSignUp from './Components/InstructorSignUp';
 import {useUserContext } from './Context/UserContext.jsx';
 import Perfil from './Components/Perfil.jsx';
+import './Styles/stylesDarkMode.css'
 
 function App() {
   const { authUser, currentUserData, isLoading } = useUserContext();

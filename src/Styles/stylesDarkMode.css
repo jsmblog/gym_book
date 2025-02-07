@@ -1,0 +1,62 @@
+.dark-mode {
+    background: linear-gradient(to bottom, #072230, #000204);
+    color: var(--co-txt-dark);
+    transition: .4s ease-in-out;
+}
+
+.dark-mode * button,
+.dark-mode #nav-bar-home button,
+.dark-mode .gym-card,
+.dark-mode table {
+    background-color: var(--co-);
+    color: var(--co-back-gray-2);
+    box-shadow: 0 0 0 0 ;
+}
+.dark-mode #cont-icons-actions button , .dark-mode .gym-card__card ,.dark-mode .gym-card-empty{
+    border: 1px solid var(--co-back-gray-5);
+}
+.dark-mode * button>img {
+    filter: brightness(0) invert(1);
+}
+
+.dark-mode table td {
+    background-color: var(--co-back-gray-5);
+    color: var(--co-txt-dark);
+}
+
+.dark-mode #main-post {
+    background: linear-gradient(to bottom, #092635, #020d16);
+    box-shadow: 0 7px 10px -5px var(--co-black-2);
+    border-bottom: none;
+}
+
+.dark-mode .publication {
+    border: 1px solid var(--co-back-gray-5);
+    box-shadow: 0 6px 6px -5px var(--co-back-gray-5);
+}
+
+.dark-mode .publication-media {
+    border: 1px solid var(--co-back-gray-5);
+}
+
+.dark-mode #sentiment-user,
+.dark-mode .reactions span {
+    color: var(--co-white);
+}
+
+.dark-mode #nav-bar-home {
+    background: linear-gradient(to bottom, #072230, #000204);
+    box-shadow: 0 6px 12px -5px var(--co-back-gray-5)
+}
+
+.dark-mode .close_comments_box {
+    color: var(--co-red);
+    border: none;
+}
+.dark-mode .post-item:hover {
+    box-shadow: 0 5px 4px -1px var(--co-black-1);
+}
+.dark-mode .media-description {
+    background-color: var(--co-black-1);
+    color: var(--co-txt-dark);
+}

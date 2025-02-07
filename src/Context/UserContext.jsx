@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
             imageProfile: decrypt(data.img),
             uid: data.uid,
             rol: data.rol,
+            instr: data.f_d && typeof data.f_d === "object" ? data.f_d : {},
             address: data.dir && decrypt(data.dir),
             name_gym: data.n_g && decrypt(data.n_g),
             isOnline: data.on,

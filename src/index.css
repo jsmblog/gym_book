@@ -17,7 +17,6 @@
 .libre-Baskerville {
   font-family: "Libre Baskerville", serif;
 }
-/*Font of google merriweather*/
 .merriweather-bold {
   font-family: "Merriweather", serif;
   font-weight: 700;
@@ -30,10 +29,12 @@
   --co-back-gray-2 :#f7f6f5;
   --co-back-gray-3 :#d4d2d0;
   --co-back-gray-4 :#f9f7f4;
+  --co-back-gray-5 :#3d3c3c81;
   --co-blue-1:#2a205f;
+  --co-txt-dark :#9dab9d;
   --co-black-1:rgba(0, 0, 0, 0.934);
   --co-black-2:rgba(0, 0, 0, 0.555);
-  --co-red:red;
+  --co-red:rgb(234, 25, 25);
 }
 
 * button {
@@ -56,11 +57,11 @@ body {
   transition: .4s ease;
 }
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: var(--co-back-gray);
+  background-color: var(--co-back-gray-3);
   border-radius: 10px;
 }
 textarea {

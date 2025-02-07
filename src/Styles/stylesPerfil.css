@@ -1,5 +1,6 @@
 .perfil-container {
-    width: 70%;
+    width: 85%;
+    height: 100vh;
     margin: 0 auto;
     font-family: Arial, sans-serif;
     padding: 20px;
@@ -8,7 +9,6 @@
     align-items: center;
 }
 
-/* Header del perfil */
 .perfil-header {
     display: flex;
     align-items: center;
@@ -16,6 +16,7 @@
     width: 100%;
     margin-bottom: 20px;
     padding-bottom: 20px;
+    position: relative;
     border-bottom: 1px solid var(--co-back-gray-3);
 }
 .perfil-avatar {
@@ -26,7 +27,30 @@
     border: 2px solid var(--co-back-gray);
 }
 
-/* Información del perfil */
+.perfil-info {
+width: 100%;
+display: flex;
+padding: .5rem;
+align-items: center;
+gap: 1rem;
+justify-content: space-between;
+}
+.table-table-striped {
+border: 1px solid var(--co-back-gray-2);
+padding: .5rem;
+width: 100%;
+height: 23vh;
+border-radius: 20px;
+box-shadow: 0 5px 10px -5px var(--co-back-gray);
+}
+.table-table-striped tr td {
+    text-align: center;
+    border-radius: 10px;
+    padding: 0 .3rem;
+    color: var(--co-black-1);
+    text-shadow: 0 0 1px var(--co-gray);
+    background-color: var(--co-back-gray-2);
+}
 .perfil-info h2 {
     margin: 0;
     font-size: 24px;
@@ -53,6 +77,8 @@
     position: relative;
     border-radius: 8px;
     cursor: pointer;
+    text-align: justify;
+    overflow: hidden;
     box-shadow: 0 5px 10px -5px var(--co-back-gray);
     transition: transform 0.2s ease-in-out;
 }
@@ -63,24 +89,43 @@
     box-shadow: 0 5px 4px -1px var(--co-back-gray);
 
 }
-
 .post-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
+.media-description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--co-black-2);
+    color: var(--co-white);
+    padding: 10px;
+    text-align: justify;
+    opacity: 0;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.post-item:hover .media-description {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 .no-posts {
     color: var(--co-gray);
     font-size: 18px;
-    width: 65vw;
+    width: 85vw;
     text-align: center;
-    margin-top: 20px;
 }
 #back-to-home {
     position: absolute;
     left: 2rem;
     font-size: 2rem;
+    z-index: 999;
 }
 .media-item {
     width: 100%;
@@ -108,17 +153,88 @@
     font-size: 1.7rem;
     text-shadow: 1px 1px 5px var(--co-back-gray-3);
 }
+.perfil-container-empty {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.edit-button {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+.edit-container {
+    position: absolute;
+    top: 1rem;
+    right: 0;
+}
+
+.edit-menu {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: var(--co-white);
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 1px solid var(--co-back-gray);
+    border-right: 1px solid var(--co-back-gray);
+    box-shadow: 0 8px 15px -5px var(--co-back-gray);
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-menu label {
+    font-size: 14px;
+    font-weight: bold;
+}
+.save-button {
+ height: 35px;
+}
+.delete-button {
+    z-index: 999;
+    position: absolute;
+    right: .1rem;
+    bottom: .1rem;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: var(--co-);
+}
+.delete-button:hover {
+    background-color: var(--co-back-gray-2);
+}
+
 @media (max-width: 768px) {
+    .perfil-container {
+        width: 100%;
+        padding: 1rem .2rem 0 .2rem;
+    }
+    .table-table-striped {
+        height: auto;
+    }
+    .table-table-striped thead tr {
+        font-size: .8rem;
+    }
     .perfil-header {
+        flex-direction: column;
         text-align: center;
-        width: 80%;
+        width: 100%;
     }
-
+    .perfil-info {
+        flex-wrap: wrap;
+    }
     .perfil-avatar {
-        width: 100px;
-        height: 100px;
+        width: 70px;
+        height: 70px;
     }
-
+    .perfil-name {
+        border: 1px solid var(--co-back-gray);
+        width: 100%;
+    }
     .perfil-info h2 {
         font-size: 20px;
     }
@@ -131,32 +247,10 @@
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
     .no-posts {
-        width: 90vw;
+        width: 99vw;
     }
     #back-to-home {
         left: 0;
     }
 }
 
-@media (max-width: 480px) {
-    .perfil-container {
-        width: 95%;
-        padding: 10px;
-    }
-
-    .perfil-info h2 {
-        font-size: 18px;
-    }
-
-    .perfil-info p {
-        font-size: 13px;
-    }
-
-    .perfil-posts {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 5px;
-    }
-    .no-posts {
-        width: 90vw;
-    }
-}

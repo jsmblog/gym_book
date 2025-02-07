@@ -1,11 +1,16 @@
 import React from 'react'
 import provinces from '../Js/provinces';
+import { useNavigate } from 'react-router-dom';
 
 const Search = React.memo(({setSearchTerm,searchTerm,setProvince,filteredGyms}) => {
-    return (
+  const navigate = useNavigate();
+  const backHome = () => {
+    navigate(-1, { replace: true });
+};  
+  return (
       <>
       <div className="gym-filter">
-      <button id='go-back-search'>←</button>
+      <button onClick={backHome} id='go-back-search'>←</button>
             <input
               type="text"
               placeholder="🔎 Busca un gimnasio por su nombre..."
