@@ -8,13 +8,13 @@ import RoomWaiting from './Components/RoomWaiting.jsx';
 import PageNotFound from './Components/PageNotFound.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import Home from './Components/Home';
-import Profile from './Components/Profile';
 import Gyms from './Components/Gyms.jsx';
 import OfflineDetector from './Components/OfflineDetector.jsx';
 import InstructorSignUp from './Components/InstructorSignUp';
 import {useUserContext } from './Context/UserContext.jsx';
 import Perfil from './Components/Perfil.jsx';
 import './Styles/stylesDarkMode.css'
+import Administration from './Dashboard_Owner/Administration.jsx';
 
 function App() {
   const { authUser, currentUserData, isLoading } = useUserContext();
@@ -52,6 +52,7 @@ function App() {
             )
           }
         />
+        {/*Ruta protegida para usuarios autenticados*/}
         <Route
           element={
             <ProtectedRoute emailVerified={currentUserData?.v} user={authUser} role={role} allowedRoles={['user','owner','instructor']} />
@@ -61,16 +62,17 @@ function App() {
             path="/Home/:userId"
             element={<Home role={role} userId={userId} user={authUser} />}
           />
+        <Route path='/administracion/:userId'  element={<Administration currentUserData={currentUserData} />} />
+        <Route path='/gimnasios/:userId' element={<Gyms role={role} userId={userId} />} />
+        <Route path='/perfil/:userId' element={ <Perfil currentUserData={currentUserData} /> } />
         </Route>
+
         <Route path="/*" element={<PageNotFound />} />
         <Route path='/registro/usuario' element={<SignUpUser />} />
         <Route path='/registro/propietario' element={<SignUpBearer />} />
         <Route path='/ingreso' element={<Login />} />
         <Route path='/registro/instructor' element={<InstructorSignUp />} />
         <Route path="/area-de-espera" element={<RoomWaiting />} />
-        <Route path='/profile/:userId' element={<Profile />} />
-        <Route path='/gimnasios/:userId' element={<Gyms userId={userId} />} />
-        <Route path='/perfil/:userId' element={ <Perfil currentUserData={currentUserData} /> } />
       </Routes>
       <OfflineDetector />
     </Router>

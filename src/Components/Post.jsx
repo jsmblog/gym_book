@@ -174,7 +174,6 @@ const Post = React.memo(({ currentUser }) => {
           </div>
         )}
 
-        {/* Popup para añadir estado sentimental */}
         {popupType === "sentiment" && (
           <div className="popup-overlay">
             <div className="popup-content">

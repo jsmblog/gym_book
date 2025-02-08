@@ -8,7 +8,7 @@ import AllGyms from './AllGyms.jsx';
 import CardGym from './CardGym.jsx';
 import Search from './Search.jsx';
 
-const Gyms = React.memo(({ userId }) => {
+const Gyms = React.memo(({ userId,role }) => {
   const [gyms, setGyms] = useState(() => {
     const savedGyms = sessionStorage.getItem('gymsData');
     return savedGyms ? JSON.parse(savedGyms) : [];
@@ -66,7 +66,7 @@ const Gyms = React.memo(({ userId }) => {
           <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} />
         </div>
       </main>
-      <NavBarHome userId={userId} />
+      <NavBarHome role={role} userId={userId} />
     </>
   );
 });

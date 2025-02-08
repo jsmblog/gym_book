@@ -131,6 +131,8 @@ const WizardInstructor = React.memo(({ instructorData }) => {
         v: emailVerified,         // emailVerified -> v
         posts: [],
         f_d:formData,
+        u:[],
+        paid:{i_p:false,t_p:''}
       };
 
       const collectionUsers = collection(db, "USERS");

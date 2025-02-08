@@ -2,14 +2,16 @@ import iconHome from '/home.webp';
 import iconUser from '/user.webp';
 import iconStore from '/store.webp';
 import iconMoon from '/moon.webp';
+import iconBrain from '/cerebro.webp'
 import '../Styles/stylesNavBarHome.css';
 import { Link } from 'react-router-dom';
 import SesionOff from './SesionOff';
 import { useDarkMode } from '../Context/DarkMode.jsx'; 
+import React from 'react';
 
-const NavBarHome = ({ userId }) => {
+const NavBarHome = React.memo(({ userId , role }) => {
   const { toggleDarkMode } = useDarkMode();
-
+ console.log(role)
   return (
     <>
       <main id="main-nvhome">
@@ -23,6 +25,11 @@ const NavBarHome = ({ userId }) => {
           <Link to={`/perfil/${userId}`}>
             <button><img src={iconUser} alt="iconUser" /></button>
           </Link>
+          {
+            role === "owner" || role === "instructor" ? <Link to={`/administracion/${userId}`}>
+            <button><img src={iconBrain} alt="iconUser" /></button>
+          </Link> : null
+          }
           <button onClick={toggleDarkMode}>
             <img src={iconMoon} alt="iconMoon" />
           </button>
@@ -31,6 +38,6 @@ const NavBarHome = ({ userId }) => {
       </main>
     </>
   );
-};
+})
 
 export default NavBarHome;

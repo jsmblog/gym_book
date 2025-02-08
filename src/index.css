@@ -48,10 +48,6 @@
   gap: .3rem;
   justify-content: center;
 }
-body {
-  /* background: linear-gradient(to bottom, #ffffff, #ececec); */
-  /*linear-gradient(to bottom, #092635, #020d16)*/
-}
 * button:hover {
   filter: brightness(90%);
   transition: .4s ease;
@@ -65,7 +61,7 @@ body {
   border-radius: 10px;
 }
 textarea {
-  resize: none;
+  resize: none !important;
   border: 1px solid var(--co-back-gray);
   border-radius: 10px;
   padding:.5rem;

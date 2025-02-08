@@ -1,0 +1,345 @@
+
+.main-administration {
+    width: 100%;
+    height: 100vh;
+}
+.table-container-admin {
+    height: 50vh;
+    overflow-y: auto;
+}
+.header-administration {
+    background: linear-gradient(to bottom, #072230, #000204);
+    color: var(--co-white);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .header-administration h1 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+  }
+  
+  .header-administration p {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  
+  /* Contenedor principal del dashboard */
+  .dashboard-container {
+    display: flex;
+    min-height: 80vh;
+  }
+  
+  /* Sidebar de navegación */
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(to bottom, #092635, #020d16);
+    padding: 20px;
+  }
+  
+  .sidebar nav ul li {
+    margin: 15px 0;
+  }
+  
+  .sidebar nav ul li button {
+    background: none;
+    border: none;
+    color: var(--co-back-gray-3);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar nav ul li button:hover,
+  .sidebar nav ul li.active button,.pagination button:hover {
+    background:linear-gradient(90deg,#185cc3,#8ec5fd,#185cc3);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  #go-back-admin {
+    background-color: var(--co);
+    color: var(--co-back-gray-2);
+    font-size: 1.5rem;
+    position: absolute;
+  }
+  .main-administration {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--co-back-gray-2);
+  }
+  
+  /* Sección de estadísticas */
+  .stats-section {
+    margin-bottom: 20px;
+  }
+  
+  .stats-section h2 {
+    margin-bottom: 15px;
+    color: var(--co-gray);
+  }
+  
+  /* Tarjetas de estadísticas */
+  .stats-cards {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .stats-cards .card {
+    background-color: var(--co-white);
+    flex: 1;
+    margin: 0 10px;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .stats-cards .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .stats-cards .card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .stats-cards .card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Placeholder para gráficos */
+  .charts {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sección de gestión de usuarios */
+  .users-management {
+    background-color: var(--co-white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow:0 7px 10px -5px var(--co-back-gray-3);
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .table-header h2 {
+    font-size: 1.5rem;
+    color: var(--co-gray);
+  }
+  
+  .table-header input[type="text"] {
+    padding: 8px;
+    width: 65%;
+    font-size: 1rem;
+  }
+  
+.users-table {
+    width: 100%;
+    margin-top: 10px;
+}
+.users-table thead {
+    position: sticky;
+    top: 0;
+}
+.users-table th,
+.users-table td {
+    padding: 5px;
+    text-align: left;
+    font-size: .9rem;
+    border-bottom: 1px solid var(--co-back-gray);
+}
+
+.users-table th {
+    background-color: var(--co-back-gray-2);
+    font-weight: bold;
+  }
+  
+  .users-table tbody tr:hover {
+    background-color: var(--co-back-gray-3);
+  }
+  
+  /* Estilos para el mensaje sin resultados */
+  .no-results {
+    text-align: center;
+    padding: 20px;
+    font-size: 1rem;
+    color: var(--co-gray);
+  }
+  
+  /* Estilos para la sección de búsqueda y cabecera de la tabla */
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .table-header input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  /* Estilos para la paginación */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    background: none;
+    border: none;
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  
+  .pagination button.active {
+    font-weight: bold;
+    border-bottom: 2px solid var(--co-gray);
+  }
+  
+  .pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Botones de acción */
+.td-actions {
+    display: flex;
+    gap: .5rem;
+}
+.td-actions button {
+    padding: .15rem;
+}
+  /* Sección de Campañas y Configuraciones */
+  .campaigns-section,
+  .configurations-section {
+    background-color: var(--co-white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .campaigns-section h2,
+  .configurations-section h2 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  /* Estilos minimalistas para el formulario de agregar usuario */
+.add-user-form {
+    background-color: var(--co-white);
+    border: 1px solid var(--co-back-gray);
+    position: absolute;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 10px -5px var(--co-black-1);
+    width: 500px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: .5rem 0;
+    text-align: center;
+    z-index: 999;
+    height: 375px;
+    overflow-y: auto;
+  }
+  
+    
+  .add-user-form .btn-delete {
+    color: var(--co-gray);
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+  
+
+  /* Formularios (Campañas y Configuraciones) */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+.header-actions {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    justify-content: space-between;
+    gap: .5rem;
+}  
+  /* Para pantallas medianas */
+  @media (max-width: 992px) {
+    .dashboard-container {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  
+    .main-administration {
+      padding: 10px;
+    }
+  
+    .stats-cards {
+      flex-direction: column;
+    }
+  
+    .stats-cards .card {
+      margin: 10px 0;
+    }
+  }
+  
+  /* Para pantallas pequeñas */
+  @media (max-width: 576px) {
+    .table-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .table-header input[type="text"] {
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    .users-table th,
+    .users-table td {
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+  }
+  

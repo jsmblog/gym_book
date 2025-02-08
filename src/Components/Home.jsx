@@ -7,7 +7,7 @@ import Post from "./Post.jsx";
 import Publications from "./Publications.jsx";
 import shuffled from './../Js/shuffled';
 
-const Home = React.memo(({ userId }) => {
+const Home = React.memo(({ userId ,role }) => {
   const { users } = useUserContext(); 
 
   const currentUser = useMemo(() => {
@@ -42,7 +42,7 @@ const Home = React.memo(({ userId }) => {
     <main id="main-home">
       <Post currentUser={currentUser} />
       <Publications users={shuffledPublications} allUsers={users} currentUser={currentUser} />
-      <NavBarHome userId={userId} />
+      <NavBarHome role={role} userId={userId} />
     </main>
   );
 });

@@ -88,6 +88,9 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
         v: emailVerified, // emailVerified -> v
         posts: [],
         gymData: gymData,
+        u:[],
+        paid:{i_p:false,t_p:''},
+        inv:[],
       };
   
       const collectionUsers = collection(db, "USERS");

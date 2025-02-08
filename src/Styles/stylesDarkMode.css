@@ -7,7 +7,7 @@
 .dark-mode * button,
 .dark-mode #nav-bar-home button,
 .dark-mode .gym-card,
-.dark-mode table {
+.dark-mode table ,.dark-mode .Form-signIn , .dark-mode #label-photo{
     background-color: var(--co-);
     color: var(--co-back-gray-2);
     box-shadow: 0 0 0 0 ;
@@ -19,11 +19,13 @@
     filter: brightness(0) invert(1);
 }
 
-.dark-mode table td {
+.dark-mode table td , .dark-mode #bearer {
     background-color: var(--co-back-gray-5);
     color: var(--co-txt-dark);
 }
-
+.dark-mode .gym-card__tables table , .dark-mode .popup-content button, .dark-mode .gym-card__tables table td {
+    color: var(--co-black-1);
+} 
 .dark-mode #main-post {
     background: linear-gradient(to bottom, #092635, #020d16);
     box-shadow: 0 7px 10px -5px var(--co-black-2);
@@ -59,4 +61,12 @@
 .dark-mode .media-description {
     background-color: var(--co-black-1);
     color: var(--co-txt-dark);
+}
+.dark-mode #greet , .dark-mode .btn-register , .dark-mode .registered{
+    background:linear-gradient(90deg,#185cc3,#8ec5fd,#185cc3);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.dark-mode #cta-message {
+    text-shadow: none;
 }
