@@ -8,7 +8,6 @@ import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from 'firebase/firest
 import uuid from './../Js/uuid';
 
 const Iventory = React.memo(({ currentUserData }) => {
-    // Estados para el formulario de agregar producto
     const [productName, setProductName] = useState('');
     const [category, setCategory] = useState('');
     const [brand, setBrand] = useState('')
@@ -24,6 +23,9 @@ const Iventory = React.memo(({ currentUserData }) => {
     const [filteredInventory, setFilteredInventory] = useState([]);
     const [currentInventoryPage, setCurrentInventoryPage] = useState(1);
     const [saving, setSaving] = useState(false);
+    const [inventoryDates, setInventoryDates] = useState([]);
+    const [selectedDate, setSelectedDate] = useState('');
+    const [categorySelected, setCategorySelected] = useState('');
     const inventoryItemsPerPage = 10;
 
     const [message, messageError] = useMessage();
@@ -32,16 +34,30 @@ const Iventory = React.memo(({ currentUserData }) => {
         const userInventory = currentUserData.paid?.i_p ? currentUserData.inv : fakeInventory;
         setInventory(userInventory);
         setFilteredInventory(userInventory);
+
+        const uniqueDates = [...new Set(userInventory.map(item => item.d))].filter(date => date);
+        setInventoryDates(uniqueDates);
     }, [currentUserData]);
 
     useEffect(() => {
-        const filtered = inventory.filter(({ p, c }) =>
-            p.toLowerCase().includes(inventorySearchQuery.toLowerCase()) ||
-            c.toLowerCase().includes(inventorySearchQuery.toLowerCase())
-        );
+        let filtered = inventory;
+
+        if (inventorySearchQuery) {
+            filtered = filtered.filter(({ p, c }) =>
+                p.toLowerCase().includes(inventorySearchQuery.toLowerCase()) ||
+                c.toLowerCase().includes(inventorySearchQuery.toLowerCase())
+            );
+        }
+        if (selectedDate) {
+            filtered = filtered.filter(item => item.d === selectedDate);
+        }
+        if(categorySelected){
+            filtered = filtered.filter(item => item.c === categorySelected);
+        }
+
         setFilteredInventory(filtered);
         setCurrentInventoryPage(1);
-    }, [inventorySearchQuery, inventory]);
+    }, [inventorySearchQuery, selectedDate,categorySelected, inventory]);
 
     // Cálculos para la paginación
     const indexOfLastInventory = currentInventoryPage * inventoryItemsPerPage;
@@ -122,6 +138,16 @@ const Iventory = React.memo(({ currentUserData }) => {
                             value={inventorySearchQuery}
                             onChange={(e) => setInventorySearchQuery(e.target.value)}
                         />
+                        <select id='select-category' onChange={(e) => setCategorySelected(e.target.value)} >
+                            <option value="">--Filtra por categoría--</option>
+                            {gymProductCategories.map((c, index) => (<option key={index} value={c}>{c}</option>))}
+                        </select>
+                        <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+                            <option value="">-- Filtre por fecha --</option>
+                            {inventoryDates.map((date, index) => (
+                                <option key={index} value={date}>{date}</option>
+                            ))}
+                        </select>
                         {
                             currentUserData.paid?.i_p ? <button className="back-blue-dark" onClick={() => setShowAddProductForm(true)}>
                                 Agregar
@@ -144,67 +170,53 @@ const Iventory = React.memo(({ currentUserData }) => {
                         <button type="button" className="btn-delete" onClick={() => setShowAddProductForm(false)}>X</button>
                     </form>
                 )}
-                {filteredInventory ? (
-                    <div className="table-container-admin">
-                        <table className="users-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Producto</th>
-                                    <th>Marca</th>
-                                    <th>Categoría</th>
-                                    <th>Fecha de Adquisición</th>
-                                    <th>Ubicación</th>
-                                    <th>Estado</th>
-                                    <th>Cantidad</th>
-                                    <th>Costo de Adquisición</th>
-                                    <th>Total</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentInventoryItems.length > 0 ? (
-                                    currentInventoryItems.map((p) => (
-                                        <tr key={p.i}>
-                                            <td>{p.i}</td>
-                                            <td>{p.p}</td>
-                                            <td>{p.b}</td>
-                                            <td>{p.c}</td>
-                                            <td>{p.d}</td>
-                                            <td>{p.l}</td>
-                                            <td>{p.s}</td>
-                                            <td>{p.q}</td>
-                                            <td>{p.pr}</td>
-                                            <td>$ {p.q * p.pr}</td>
-                                            <td className="td-actions">
-                                                <button className="btn-edit">🖋️</button>
-                                                <button className="btn-delete" onClick={() => removeProductTable(p.i)}>🗑️</button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="11" className="no-results">
-                                            No se encontraron productos
+                           <div className="table-container-admin">
+                    <table className="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Categoría</th>
+                                <th>Fecha de Adquisición</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th>Cantidad</th>
+                                <th>Costo de Adquisición</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentInventoryItems.length > 0 ? (
+                                currentInventoryItems.map((p) => (
+                                    <tr key={p.i}>
+                                        <td>{p.i}</td>
+                                        <td>{p.p}</td>
+                                        <td>{p.b}</td>
+                                        <td>{p.c}</td>
+                                        <td>{p.d}</td>
+                                        <td>{p.l}</td>
+                                        <td>{p.s}</td>
+                                        <td>{p.q}</td>
+                                        <td>{p.pr}</td>
+                                        <td>$ {p.q * p.pr}</td>
+                                        <td className="td-actions">
+                                            <button className="btn-edit">🖋️</button>
+                                            <button className="btn-delete" onClick={() => removeProductTable(p.i)}>🗑️</button>
                                         </td>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : (
-                    <div className="table-container-admin">
-                        <table className="users-table">
-                            <tbody>
+                                ))
+                            ) : (
                                 <tr>
-                                    <td colSpan="7" className="no-results">
+                                    <td colSpan="11" className="no-results">
                                         No se encontraron productos
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                            )}
+                        </tbody>
+                    </table>
+                </div>
                 <div className="pagination">
                     <button
                         onClick={() => setCurrentInventoryPage(currentInventoryPage - 1)}

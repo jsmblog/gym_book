@@ -60,8 +60,8 @@ const Administration = React.memo((({currentUserData}) => {
     <>
       <header className="header-administration">
       <button onClick={backHome} id='go-back-admin'>←</button>
-        <h1>Dashboard de Administración</h1>
-        <p>Panel para el propietario</p>
+        <h1>Bienvenido {currentUserData?.name} al dashboard de Administración</h1>
+        <p>Panel de propietario</p>
       </header>
       <div className="dashboard-container">
         <aside className="sidebar">
