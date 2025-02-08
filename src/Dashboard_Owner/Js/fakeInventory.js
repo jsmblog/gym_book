@@ -1,8 +1,8 @@
 const fakeInventory = [
-    { id: 1, product: 'Mancuernas', brand : 'Tunturi', status:'activo', location:'bodega', category: 'Equipamiento', quantity: 20, price: 50, lastUpdated: '2025-02-01' },
-    { id: 2, product: 'Barras', brand : 'Matrix Fitness', status:'en reparación', location:'Sala de pesas', category: 'Equipamiento', quantity: 15, price: 100, lastUpdated: '2025-02-02' },
-    { id: 3, product: 'Cintas', brand : 'Matrix Fitness', status:'en mantenimiento', location:'Zona de crossfit', category: 'Accesorios', quantity: 30, price: 10, lastUpdated: '2025-01-30' },
-    { id: 4, product: 'Bicicleta estática', brand : 'BH Fitness', status:'activo', location:'Sala de cintas', category: 'Cardio', quantity: 5, price: 500, lastUpdated: '2025-02-05' },
-    { id: 5, product: 'Cintas de correr', brand : 'Matrix Fitness', status:'en mantenimiento', location:'Sala de cintas', category: 'Cardio', quantity: 3, price: 700, lastUpdated: '2025-02-06' }
+    { i: 1, p: 'Mancuernas', b : 'Tunturi', s:'activo', l:'bodega', c: 'Equipamiento', q: 20, pr: 50, d: '2025-02-01' },
+    { i: 2, p: 'Barras', b : 'Matrix Fitness', s:'en reparación', l:'Sala de pesas', c: 'Equipamiento', q: 15, pr: 100, d: '2025-02-02' },
+    { i: 3, p: 'Cintas', b : 'Matrix Fitness', s:'en mantenimiento', l:'Zona de crossfit', c: 'Accesorios', q: 30, pr: 10, d: '2025-01-30' },
+    { i: 4, p: 'Bicicleta estática', b : 'BH Fitness', s:'activo', l:'Sala de cintas', c: 'Cardio', q: 5, pr: 500, d: '2025-02-05' },
+    { i: 5, p: 'Cintas de correr', b : 'Matrix Fitness', s:'en mantenimiento', l:'Sala de cintas', c: 'Cardio', q: 3, pr: 700, d: '2025-02-06' }
 ];
 export default fakeInventory;
