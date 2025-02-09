@@ -1,82 +1,171 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import fakeUsers from './Js/fakeUsers'; // Lista de usuarios de ejemplo
+import useMessage from './../Hooks/useMessage';
+import DisplayMessage from './../Components/DisplayMessage';
+import { db } from '../ConfigFirebase/config.js';
+import { arrayUnion, arrayRemove, doc, setDoc, updateDoc } from 'firebase/firestore';
+import uuid from './../Js/uuid';
+import formatDate from './../Js/formatDate';
 
-const Usuarios = React.memo(({users,setUsers}) => {
-    // Estados para la gestión de usuarios
-      const [searchQuery, setSearchQuery] = useState('');
-      const [filteredUsers, setFilteredUsers] = useState([]);
-      
-      const [currentPage, setCurrentPage] = useState(1);
-      const itemsPerPage = 10; 
-      // Estados para el formulario de agregar usuario
-      const [showAddUserForm, setShowAddUserForm] = useState(false);
-      const [newUserName, setNewUserName] = useState("");
-      const [newUserEmail, setNewUserEmail] = useState("");
-      const [newUserStatus, setNewUserStatus] = useState("Activo");
-      const [newUserMembership, setNewUserMembership] = useState("Básico");
-    
-      // Simulación de datos iniciales (esto se reemplazaría por una llamada a una API)
-      useEffect(() => {
-        const fakeData = [
-          { id: 1, name: 'Juan Pérez', email: 'juan@example.com', status: 'Activo', membership: 'Premium', lastLogin: '2025-02-05' },
-          { id: 2, name: 'María López', email: 'maria@example.com', status: 'Inactivo', membership: 'Básico', lastLogin: '2025-01-20' },
-          { id: 3, name: 'Carlos Sánchez', email: 'carlos@example.com', status: 'Activo', membership: 'Premium', lastLogin: '2025-02-06' },
-          { id: 4, name: 'Ana Gómez', email: 'ana@example.com', status: 'Activo', membership: 'Básico', lastLogin: '2025-02-03' },
-        ];
-        setUsers(fakeData);
-        setFilteredUsers(fakeData);
-      }, []);
-    
-      // Filtrado de usuarios basado en la búsqueda (nombre o email)
-      useEffect(() => {
-        const filtered = users.filter(user =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFilteredUsers(filtered);
-        setCurrentPage(1); // Reinicia la paginación al buscar
-      }, [searchQuery, users]);
-     
-      // calculos para la paginación
-      const indexOfLastUser = currentPage * itemsPerPage;
-      const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-      const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-      const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-    
-      const handleSearchChange = (e) => {
-          setSearchQuery(e.target.value);
-        };
-      
-        // Función para agregar un nuevo usuario
-        const handleAddUserSubmit = (e) => {
-          e.preventDefault();
-          // Generamos un ID único basado en el máximo actual o 1 si no hay usuarios
-          const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
-          const newUser = {
-            id: newId,
-            name: newUserName,
-            email: newUserEmail,
-            status: newUserStatus,
-            membership: newUserMembership,
-            lastLogin: new Date().toISOString().slice(0, 10) // Formato AAAA-MM-DD
-          };
-      
-          // Actualizamos la lista de usuarios
-          const updatedUsers = [...users, newUser];
-          setUsers(updatedUsers);
-          // Actualizamos también los usuarios filtrados en caso de que la búsqueda esté activa
-          setFilteredUsers(updatedUsers);
-      
-          // Limpiamos el formulario y ocultamos la sección de agregar usuario
-          setNewUserName("");
-          setNewUserEmail("");
-          setNewUserStatus("Activo");
-          setNewUserMembership("Básico");
-          setShowAddUserForm(false);
-        };
-      
-    return (
-      <>
+const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
+  // Estados para búsqueda, paginación y formulario de nuevo usuario
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Estados para agregar nuevo usuario
+  const [showAddUserForm, setShowAddUserForm] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserStatus, setNewUserStatus] = useState('Activo');
+  const [newUserMembership, setNewUserMembership] = useState('Básico');
+  const [saving, setSaving] = useState(false);
+  const [message, messageError] = useMessage();
+
+  // Estados para filtrar por estado y membresía
+  const [statusFilter, setStatusFilter] = useState('');
+  const [membershipFilter, setMembershipFilter] = useState('');
+
+  // Estados para edición inline
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editingUserData, setEditingUserData] = useState({ n: '', e: '', s: '', m: '' });
+
+  useEffect(() => {
+    const userList = currentUserData?.paid?.i_p ? currentUserData.users : fakeUsers;
+    setUsers(userList);
+    setFilteredUsers(userList);
+  }, [currentUserData, setUsers]);
+
+  useEffect(() => {
+    let filtered = users;
+    // Filtrado por búsqueda (nombre o email)
+    if (searchQuery) {
+      filtered = filtered.filter(user =>
+        user.n.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.e.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    // Filtrado por estado
+    if (statusFilter) {
+      filtered = filtered.filter(user => user.s === statusFilter);
+    }
+    // Filtrado por membresía
+    if (membershipFilter) {
+      filtered = filtered.filter(user => user.m === membershipFilter);
+    }
+    setFilteredUsers(filtered);
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, membershipFilter, users]);
+
+  // Cálculos para la paginación
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  // Función para agregar nuevo usuario
+  const handleAddUserSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    if (!newUserName || !newUserEmail) {
+      messageError("Complete los campos");
+      setSaving(false);
+      return;
+    }
+
+    const newUser = {
+      i: uuid(5),
+      n: newUserName,
+      e: newUserEmail,
+      s: newUserStatus,
+      m: newUserMembership,
+      c: formatDate(new Date().toISOString())
+    };
+
+    try {
+      const docRef = doc(db, 'USERS', currentUserData?.uid);
+      await setDoc(docRef, { u: arrayUnion(newUser) }, { merge: true });
+      messageError("¡¡ Usuario agregado con éxito !!");
+      setSaving(false);
+      // Reiniciar el formulario
+      setNewUserName("");
+      setNewUserEmail("");
+      setNewUserStatus("Activo");
+      setNewUserMembership("Básico");
+      setShowAddUserForm(false);
+    } catch (error) {
+      console.error("Error al guardar el usuario:", error);
+      messageError("Sucedió un error, intentalo nuevamente");
+      setSaving(false);
+    }
+  };
+
+  // Función para remover un usuario
+  const removeUser = async (userId) => {
+    try {
+      if (currentUserData.rol === 'owner') {
+        const docRef = doc(db, 'USERS', currentUserData?.uid);
+        const userToRemove = users.find(u => u.i === userId);
+        if (!userToRemove) {
+          messageError("Usuario no encontrado");
+          return;
+        }
+        await updateDoc(docRef, {
+          u: arrayRemove(userToRemove)
+        });
+      }
+    } catch (error) {
+      console.error("Error al remover el usuario:", error);
+    }
+  };
+
+  // Funciones para editar un usuario
+  const handleEditClick = (user) => {
+    setEditingUserId(user.i);
+    setEditingUserData({ n: user.n, e: user.e, s: user.s, m: user.m });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditingUserData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveEdit = async () => {
+    const oldUser = users.find(u => u.i === editingUserId);
+    if (!oldUser) {
+      messageError("Usuario no encontrado");
+      return;
+    }
+    const updatedUser = { ...oldUser, ...editingUserData };
+    try {
+      const docRef = doc(db, 'USERS', currentUserData?.uid);
+      // Eliminar el usuario antiguo y agregar el actualizado
+      await updateDoc(docRef, {
+        u: arrayRemove(oldUser)
+      });
+      await updateDoc(docRef, {
+        u: arrayUnion(updatedUser)
+      });
+      messageError("Usuario actualizado con éxito");
+      setEditingUserId(null);
+      setEditingUserData({ n: '', e: '', s: '', m: '' });
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+      messageError("Error al actualizar el usuario");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUserId(null);
+    setEditingUserData({ n: '', e: '', s: '', m: '' });
+  };
+
+  return (
+    <>
       <section className="users-management">
+      <h4 className='added'>{`${currentUsers.length} ${users?.length === 0 || users?.length > 1 ? `usuarios añadidos` : `usuario añadido`}`}</h4>
         <div className="table-header">
           <h2 className='libre-Baskerville'>Gestión de Usuarios</h2>
           <div className="header-actions">
@@ -84,16 +173,28 @@ const Usuarios = React.memo(({users,setUsers}) => {
               type="text"
               placeholder="Buscar por nombre o email..."
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            {!showAddUserForm && (
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="">Filtrar por estado</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+            <select value={membershipFilter} onChange={(e) => setMembershipFilter(e.target.value)}>
+              <option value="">Filtrar por membresía</option>
+              <option value="Básico">Básico</option>
+              <option value="Premium">Premium</option>
+            </select>
+            {currentUserData?.paid?.i_p ? (
               <button className="back-blue-dark" onClick={() => setShowAddUserForm(true)}>
-                Agregar Usuario
+                Agregar
               </button>
+            ) : (
+              <button className="back-blue-dark">Susbríbete a un plan</button>
             )}
           </div>
         </div>
-  
+
         {showAddUserForm && (
           <form onSubmit={handleAddUserSubmit} className="add-user-form">
             <div className="form-group">
@@ -135,51 +236,107 @@ const Usuarios = React.memo(({users,setUsers}) => {
               </select>
             </div>
             <div className="form-actions">
-              <button type="submit" className="btn-submit">Agregar Usuario</button>
+              <button type="submit" className="btn-submit back-blue-dark" disabled={saving}>
+                {saving ? 'Guardando...' : 'Agregar Usuario'}
+              </button>
               <button type="button" className="btn-delete" onClick={() => setShowAddUserForm(false)}>
-                Cancelar
+                X
               </button>
             </div>
           </form>
         )}
-  
+
         <div className="table-container-admin">
-        <table className="users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Estado</th>
-              <th>Membresía</th>
-              <th>Último Acceso</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentUsers.length > 0 ? (
-              currentUsers.map(user => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.status}</td>
-                  <td>{user.membership}</td>
-                  <td>{user.lastLogin}</td>
-                  <td className="td-actions">
-                    <button className="btn-edit">🖋️</button>
-                    <button className="btn-delete">🗑️</button>
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Membresía</th>
+                <th>Creado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.length > 0 ? (
+                currentUsers.map((user,index) => (
+                  <tr key={user.i}>
+                    <td>{index +1}</td>
+                    <td>
+                      {editingUserId === user.i ? (
+                        <input
+                          type="text"
+                          name="n"
+                          value={editingUserData.n}
+                          onChange={handleEditChange}
+                        />
+                      ) : (
+                        user.n
+                      )}
+                    </td>
+                    <td>
+                      {editingUserId === user.i ? (
+                        <input
+                          type="email"
+                          name="e"
+                          value={editingUserData.e}
+                          onChange={handleEditChange}
+                        />
+                      ) : (
+                        user.e
+                      )}
+                    </td>
+                    <td>
+                      {editingUserId === user.i ? (
+                        <select name="s" value={editingUserData.s} onChange={handleEditChange}>
+                          <option value="Activo">Activo</option>
+                          <option value="Inactivo">Inactivo</option>
+                        </select>
+                      ) : (
+                        user.s
+                      )}
+                    </td>
+                    <td>
+                      {editingUserId === user.i ? (
+                        <select name="m" value={editingUserData.m} onChange={handleEditChange}>
+                          <option value="Básico">Básico</option>
+                          <option value="Premium">Premium</option>
+                        </select>
+                      ) : (
+                        user.m
+                      )}
+                    </td>
+                    <td>{user.c}</td>
+                    <td className="td-actions">
+                      {editingUserId === user.i ? (
+                        <>
+                         <div className='cancel-or-saved'>
+                         <button className="btn-save" onClick={handleSaveEdit}>Guardar</button>
+                         <button className="btn-cancel" onClick={handleCancelEdit}>Cancelar</button>
+                         </div>
+                        </>
+                      ) : (
+                        <>
+                          <button className="btn-edit" onClick={() => handleEditClick(user)}>🖋️</button>
+                          <button className="btn-delete" onClick={() => removeUser(user.i)}>🗑️</button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="no-results">
+                    No se encontraron usuarios
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="no-results">No se encontraron usuarios</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
         </div>
+
         <div className="pagination">
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
@@ -204,8 +361,9 @@ const Usuarios = React.memo(({users,setUsers}) => {
           </button>
         </div>
       </section>
-      </>
-    )
-  }
-)
-export default Usuarios
+      <DisplayMessage message={message} />
+    </>
+  );
+});
+
+export default Usuarios;

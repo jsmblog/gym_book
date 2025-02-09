@@ -8,20 +8,25 @@ import Campaign from './Campaign';
 import Config from './Config';
 
 const Administration = React.memo((({currentUserData}) => {
+  if(!currentUserData){
+    return (
+      <div className="loading-container">
+        <p>Descargando datos de usuario...</p>
+        <div className="loader-spinner"></div>
+      </div>
+    )
+  }
   const navigate = useNavigate();
   const backHome = () => {
     navigate(-1, { replace: true });
 }; 
       const [users, setUsers] = useState([]);
   const [activeSection, setActiveSection] = useState("usuarios");
-  const totalUsers = users.length;
-  const activeUsers = users.filter(user => user.status === 'Activo').length;
-  const inactiveUsers = users.filter(user => user.status === 'Inactivo').length;
 
   // Funciones de renderizado para cada sección
 
   const renderUsuariosSection = () => (
-    <Usuarios users={users} setUsers={setUsers}/>
+    <Usuarios currentUserData={currentUserData} users={users} setUsers={setUsers}/>
   );
   const renderInventarioSection = () => (
     <Iventory currentUserData={currentUserData} />

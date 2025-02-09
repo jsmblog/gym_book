@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }) => {
             paid: data.paid && typeof data.paid === "object" ? data.paid : {},
             address: data.dir && decrypt(data.dir),
             name_gym: data.n_g && decrypt(data.n_g),
+            users: data.u && Array.isArray(data.u) && data.u.length > 0 ? data.u : [],
             isOnline: data.on,
             posts: data.posts || [],
             gymData:
