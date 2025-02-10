@@ -41,7 +41,7 @@ const Administration = React.memo((({currentUserData}) => {
   );
 
   const renderConfiguracionesSection = () => (
-    <Config/>
+    <Config currentUserData={currentUserData}/>
   );
 
   const renderSection = () => {
@@ -72,12 +72,14 @@ const Administration = React.memo((({currentUserData}) => {
         <aside className="sidebar">
           <nav>
             <ul>
-              <li className={activeSection === "usuarios" ? "active" : ""}>
+              {
+              currentUserData?.rol === 'owner' || currentUserData?.rol === 'instructor' ? <li className={activeSection === "usuarios" ? "active" : ""}>
                 <button onClick={() => setActiveSection("usuarios")}>Usuarios</button>
-              </li>
-              <li className={activeSection === "inventario" ? "active" : ""}>
+              </li> : null
+              }
+              {currentUserData?.rol === 'owner' && <li className={activeSection === "inventario" ? "active" : ""}>
                 <button onClick={() => setActiveSection("inventario")}>Inventario</button>
-              </li>
+              </li>}
               <li className={activeSection === "estadisticas" ? "active" : ""}>
                 <button onClick={() => setActiveSection("estadisticas")}>Estadísticas</button>
               </li>

@@ -190,11 +190,11 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
               {user.post?.m?.length > 0 && 
                 <div className="publication-media">
                 {user.post?.m?.map((media, index) => (
-                  media.type === "image" ? (
-                    <img className="width-media" key={index} src={media.file} alt="Imagen de la publicación" />
+                  media.t === "image" ? (
+                    <img className="width-media" key={index} src={media.f} alt="Imagen de la publicación" />
                   ) : (
                     <video className="width-media" key={index} muted controls>
-                      <source src={media.file} type="video/mp4" />
+                      <source src={media.f} type="video/mp4" />
                       Tu navegador no soporta la reproducción de videos.
                     </video>
                   )

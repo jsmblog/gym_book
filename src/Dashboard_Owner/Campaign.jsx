@@ -64,7 +64,8 @@ const Campaign = React.memo(() => {
         Esta sección permite crear y gestionar campañas de email, promociones y notificaciones.
         Aquí podrás programar envíos masivos, segmentar clientes y personalizar tus mensajes.
       </p>
-      <form className="campaign-form" onSubmit={handleSubmit}>
+      <h3>Próximamente...</h3>
+      {/* <form className="campaign-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="campaignName">Nombre de la campaña:</label>
           <input
@@ -129,7 +130,7 @@ const Campaign = React.memo(() => {
         <button type="submit" className="back-blue-dark send-campaign" disabled={isSending}>
           {isSending ? 'Enviando...' : 'Enviar Campaña'}
         </button>
-      </form>
+      </form> */}
     </section>
     <DisplayMessage message={message} />
     </>    

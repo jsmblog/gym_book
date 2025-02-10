@@ -19,7 +19,7 @@ const Iventory = React.memo(({ currentUserData }) => {
   const { gymProductCategories, gymProductStatus, gymProductLocations } = optionsForms || {};
   const [showAddProductForm, setShowAddProductForm] = useState(false);
   const [date, setDate] = useState('');
-  
+  const [isUpdating, setIsUpdating] = useState(false)
   // Estados para el inventario y filtrado
   const [inventory, setInventory] = useState([]);
   const [inventorySearchQuery, setInventorySearchQuery] = useState('');
@@ -124,9 +124,12 @@ const Iventory = React.memo(({ currentUserData }) => {
     setSaving(false);
   };
 
-  // Eliminar producto
   const removeProductTable = async (id) => {
     try {
+      if(!currentUserData.paid.i_p){
+        messageError("¡¡ Suscríbete a un plan !!");
+        return;
+        }
       if (currentUserData.rol === 'owner') {
         const docRef = doc(db, 'USERS', currentUserData?.uid);
         const productToRemove = inventory.find(product => product.i === id);
@@ -164,16 +167,19 @@ const Iventory = React.memo(({ currentUserData }) => {
   };
 
   const handleSaveEdit = async (id) => {
-    // Buscar el producto antiguo
+    if(!currentUserData.paid.i_p){
+      messageError("¡¡ Suscríbete a un plan !!");
+      return;
+      }
     const oldProduct = inventory.find(prod => prod.i === id);
     if (!oldProduct) {
       messageError("Producto no encontrado");
       return;
     }
     const updatedProduct = { ...oldProduct, ...editingProductData };
+    setIsUpdating(true);
     try {
       const docRef = doc(db, 'USERS', currentUserData?.uid);
-      // Eliminar el producto antiguo y agregar el actualizado
       await updateDoc(docRef, {
         inv: arrayRemove(oldProduct)
       });
@@ -182,6 +188,9 @@ const Iventory = React.memo(({ currentUserData }) => {
       });
       messageError("Producto actualizado con éxito");
       setEditingProductId(null);
+      setTimeout(() => {
+        setIsUpdating(false);
+      }, 1000);
       setEditingProductData({ p: '', c: '', b: '', q: '', pr: '', l: '', s: '', d: '' });
     } catch (error) {
       console.error("Error al actualizar el producto:", error);
@@ -200,6 +209,7 @@ const Iventory = React.memo(({ currentUserData }) => {
         <h4 className='added'>{`${currentInventoryItems.length} ${inventory?.length === 0 || inventory?.length > 1 ? `productos añadidos` : `producto añadido`}`}</h4>
         <div className="table-header">
           <h2 className='libre-Baskerville'>Gestión de Inventario {!currentUserData.paid?.i_p && '(ejemplo)'}</h2>
+        {isUpdating && <div className='updating'></div>}
           <div className="header-actions">
             <input
               type="text"
@@ -373,7 +383,7 @@ const Iventory = React.memo(({ currentUserData }) => {
                       {editingProductId === p.i ? (
                         <input type="number" min={0} name="pr" value={editingProductData.pr} onChange={handleEditChange} />
                       ) : (
-                        p.pr
+                        <span>$ {p.pr}</span>
                       )}
                     </td>
                     <td>$ {p.q * p.pr}</td>

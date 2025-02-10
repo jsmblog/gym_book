@@ -23,7 +23,7 @@
     background-color: var(--co-back-gray-5);
     color: var(--co-txt-dark);
 }
-.dark-mode .gym-card__tables table , .dark-mode .popup-content button, .dark-mode .gym-card__tables table td {
+.dark-mode .gym-card__tables table , .dark-mode .table-header h2,.dark-mode .campaigns-section h2, .dark-mode .btn-save  ,.dark-mode .popup-content button, .dark-mode .gym-card__tables table td , .dark-mode .pagination button {
     color: var(--co-black-1);
 } 
 .dark-mode #main-post {
@@ -70,3 +70,13 @@
 .dark-mode #cta-message {
     text-shadow: none;
 }
+.dark-mode .users-table th {
+    background-color: var(--co-white);
+    color: var(--co-black-1);
+    font-weight: bold;
+  }
+  .dark-mode .users-table td {
+    background-color: var(--co-white);
+    color: var(--co-black-2);
+    font-weight: bold;
+  }

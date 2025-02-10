@@ -111,8 +111,8 @@ const Post = React.memo(({ currentUser }) => {
           const fileURL = await getDownloadURL(snapshot.ref);
           
           uploadedFiles.push({
-            file: fileURL,
-            type: file.type.startsWith("image/") ? "image" : "video"
+            f: fileURL,
+            t: file.type.startsWith("image/") ? "image" : "video"
           });
         }
   

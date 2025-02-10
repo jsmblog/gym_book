@@ -6,6 +6,8 @@ import iconThreePoint from '/tres-puntos.webp'
 import useMessage from './../Hooks/useMessage';
 import DisplayMessage from './DisplayMessage';
 import is_am_or_pm from './../Js/pm_am';
+import { arrayRemove, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../ConfigFirebase/config';
 
 const Perfil = React.memo(({ currentUserData }) => {
     const location = useLocation();
@@ -45,13 +47,21 @@ const Perfil = React.memo(({ currentUserData }) => {
         // Aquí agregarías la lógica para actualizar en Firestore
     };
 
-    const handleDeleteMedia = (postId) => {
-        console.log(`Eliminar post con ID: ${postId}`);
-        // Aquí puedes agregar la lógica para eliminar la imagen o video
-    };
-
     const mediaPosts = user.posts?.flatMap(post => post.m?.map(media => ({ ...media, des: decrypt(post.d), postId: post.post_id })) || []) || [];
-    console.log(user)
+
+    const handleDeleteMedia = async (post) => {
+        try {
+         const docRef = doc(db,"USERS",currentUserData?.uid);
+         const targetPost = user.posts?.find(p => p.post_id === post.postId);
+         await updateDoc(docRef,{
+         posts:arrayRemove(targetPost)
+         })
+         messageError("Publicación eliminada");
+        } catch (error) {
+         console.log(error.message);
+         messageError("¡ Sucedió un error !")
+        }
+     };
     return (
         <>
             <div className="perfil-container">
@@ -152,11 +162,11 @@ const Perfil = React.memo(({ currentUserData }) => {
                     {mediaPosts.length > 0 ? (
                         mediaPosts.map((media, index) => (
                             <div key={index} className="post-item">
-                                {media.type === "image" ? (
-                                    <img src={media.file} alt="Imagen de publicación" className="media-item" />
+                                {media.t === "image" ? (
+                                    <img src={media.f} alt="Imagen de publicación" className="media-item" />
                                 ) : (
                                     <video controls className="media-item">
-                                        <source src={media.file} type="video/mp4" />
+                                        <source src={media.f} type="video/mp4" />
                                         Tu navegador no soporta la reproducción de videos.
                                     </video>
                                 )}
@@ -166,7 +176,7 @@ const Perfil = React.memo(({ currentUserData }) => {
                                     </div>
                                 )}
                                 {uid === user.uid && (
-                                    <button className="delete-button" onClick={() => handleDeleteMedia(media.postId)}>
+                                    <button className="delete-button" onClick={() => handleDeleteMedia(media)}>
                                         🗑️
                                     </button>
                                 )}

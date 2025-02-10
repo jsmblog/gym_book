@@ -2,7 +2,7 @@ import iconHome from '/home.webp';
 import iconUser from '/user.webp';
 import iconStore from '/store.webp';
 import iconMoon from '/moon.webp';
-import iconBrain from '/cerebro.webp'
+import iconBrain from '/administrador.webp'
 import '../Styles/stylesNavBarHome.css';
 import { Link } from 'react-router-dom';
 import SesionOff from './SesionOff';

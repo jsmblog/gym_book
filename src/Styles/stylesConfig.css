@@ -1,0 +1,32 @@
+.personal-data{
+    border: 1px solid var(--co-back-gray);
+    height: 100%;
+    border-radius: 10px;
+    width: 25vw;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    gap: .2rem;
+    padding: .5rem;
+    justify-content: space-evenly;
+}
+#photo-profile-config {
+    width: 100%;
+    min-height: 190px;
+}
+.imagePerfil {
+    cursor: pointer;
+    position: absolute;
+    right: .5rem;
+    bottom: 38%;
+    display: flex;
+    background-color: var(--co-white);
+    border-radius: 50%;
+    padding: .2rem;
+    border: 1px solid var(--co-back-gray);
+    box-shadow: 0 0 15px 1px var(--co-back-gray);
+}
+.form-group-imagePerfil {
+    border: 1px solid var(--co-back-gray);
+}

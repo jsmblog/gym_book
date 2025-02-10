@@ -2,8 +2,8 @@ import React from 'react'
 
 const Statistics = React.memo(({users}) => {
     const totalUsers = users.length;
-  const activeUsers = users.filter(user => user.status === 'Activo').length;
-  const inactiveUsers = users.filter(user => user.status === 'Inactivo').length;
+  const activeUsers = users.filter(user => user.s === 'Activo').length;
+  const inactiveUsers = users.filter(user => user.s === 'Inactivo').length;
     return (
       <>
       <section className="stats-section">
@@ -23,7 +23,7 @@ const Statistics = React.memo(({users}) => {
         </div>
       </div>
       <div className="charts">
-        <p>Aquí se mostrarán gráficos y reportes detallados...</p>
+      <p>Visualiza gráficos, analiza interacciones en tiempo real y accede a reportes detallados para optimizar tu estrategia.</p>
       </div>
     </section>
       </>
