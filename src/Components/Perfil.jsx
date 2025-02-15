@@ -69,9 +69,9 @@ const Perfil = React.memo(({ currentUserData }) => {
                 <div className="perfil-header">
                     {uid === user.uid && (
                         <div className="edit-container">
-                            <button className="edit-button" onClick={toggleEditMenu}>
+                            {/* <button className="edit-button" onClick={toggleEditMenu}>
                                 <img width={18} src={iconThreePoint} alt="" />
-                            </button>
+                            </button> */}
                             {showEditMenu && (
                                 <div className="edit-menu fade-in">
                                     <label>Nombre:</label>

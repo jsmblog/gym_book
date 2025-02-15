@@ -296,7 +296,10 @@
   .configurations-section {
     display: flex;
     flex-direction: row;
-    height: 80vh;
+    height: 76vh;
+    width: 80vw;
+    gap: 1.5rem;
+    overflow-x: auto;
   }
   .campaigns-section h2{
     color: var(--co-gray);

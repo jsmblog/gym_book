@@ -2,14 +2,27 @@
     border: 1px solid var(--co-back-gray);
     height: 100%;
     border-radius: 10px;
-    width: 25vw;
+    min-width: 350px;
     display: flex;
+    overflow-y: auto;
     position: relative;
     flex-direction: column;
+    text-align: center;
     align-items: center;
     gap: .2rem;
     padding: .5rem;
     justify-content: space-evenly;
+    color: var(--co-black-1);
+}
+#input-Pass-signin {
+    display: flex;
+    flex-direction: column;
+}
+#input-Pass-signin .btn-see{
+    position: absolute;
+    right: .3rem;
+    top: 1.6rem;
+    padding: 0;
 }
 #photo-profile-config {
     width: 100%;
@@ -29,4 +42,76 @@
 }
 .form-group-imagePerfil {
     border: 1px solid var(--co-back-gray);
+}
+.search-address {
+    display: flex;
+    width: 90%;
+}
+.search-address input {
+    border-radius: 15px 0 0 15px;
+    width: 100%;
+}
+.search-address button {
+    border: 1px solid var(--co-back-gray);
+    border-radius: 0 15px 15px 0;
+    border-left: none;
+}
+.search-address button:hover{
+background-color: var(--co-back-gray-2);
+}
+#label-card {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    border: 1px solid var(--co-back-gray-3);
+    width: 100px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 1px var(--co-back-gray);
+    justify-content: center;
+    height: 100px;
+}
+#personnel {
+    border: 1px solid var(--co-gray);
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    border-radius: 10px 0 0 10px;
+    width: 75%;
+    box-shadow: 7px 0 12px -5px var(--co-back-gray-3);
+    background-color: var(--co-white);
+    padding: .5rem;
+}
+.card_personnel {
+    background-color: var(--co-back-gray-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: 10px;
+}
+.card_personnel img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px 0 0 10px;
+}
+.card_personnel button {
+    padding: .2rem;
+}
+#personnel-btn {
+    position: absolute;
+    right: .5rem;
+    bottom: .5rem;
+    border: 1px solid var(--co-back-gray);
+    filter: brightness(0);
+    opacity: 1;
+    border-radius: 50px;
+    width: 30px;
+    height: 30px;
+}
+@media screen and (max-width: 768px) {
+    .configurations-section {
+        width: 100%;
+    }
 }
