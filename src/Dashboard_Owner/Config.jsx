@@ -25,30 +25,77 @@ const Config = React.memo(({ currentUserData }) => {
   const [password, setPassword] = useState("")
   const [seePass, setSeePass] = useState(false)
   const [message, messageError] = useMessage();
-  const [locationQuery, setLocationQuery] = useState("")
   const [mapLocation, setMapLocation] = useState(null)
   const userDocRef = doc(db, "USERS", currentUserData.uid);
-  const [branches, setBranches] = useState(currentUserData.branches || []);
-  const [newBranch, setNewBranch] = useState({ name: '', address: '', location: '' });
-  const [isAddedPersonel, setIsAddedPersonel] = useState(false);
+  const [branches, setBranches] = useState(currentUserData.gymData.branches || []);
+  const [newBranch, setNewBranch] = useState({
+    name: '',
+    address: '',
+    lat: null,
+    lng: null
+  });
+  const [isAddBranch, setIsAddBranch] = useState(false);
+    const [isAddedPersonel, setIsAddedPersonel] = useState(false);
   const [isOnBoxPersonnel, setIsOnBoxPersonnel] = useState(false)
+
   const handleAddBranch = async () => {
-    if (!newBranch.name || !newBranch.address) return;
-    const updatedBranches = [...branches, newBranch];
-    setBranches(updatedBranches);
-    await updateDoc(userDocRef, { branches: updatedBranches });
-    setNewBranch({ name: '', address: '', location: '' });
+    if (!newBranch.name || !newBranch.address) {
+      messageError("Por favor, completa el nombre y la dirección de la sucursal.");
+      return;
+    }
+    setIsAddBranch(true);
+    try {
+      const data = await GET_LOCATION(newBranch.address);
+      if (data.status === 'OK' && data.results.length > 0) {
+        const location = data.results[0].geometry.location;
+        
+        const branchToSave = {
+          id: uuid(5), 
+          name: newBranch.name,
+          address: newBranch.address,
+          lat: location.lat,
+          lng: location.lng
+        };
+        
+        const updatedBranches = [...branches, branchToSave];
+        setBranches(updatedBranches);
+  
+        await updateDoc(userDocRef, { "gymData.branches": arrayUnion(...updatedBranches) });
+        
+        setNewBranch({ name: '', address: '', lat: null, lng: null });
+        messageError("Sucursal añadida correctamente");
+        setIsAddBranch(false);
+      } else {
+        messageError("No se encontró la ubicación");
+      }
+    } catch (error) {
+      console.log(error);
+      messageError("Ocurrió un error al añadir la sucursal");
+      setIsAddBranch(false);
+    }
   };
 
-  const handleRemoveBranch = async (index) => {
-    const updatedBranches = branches.filter((_, i) => i !== index);
-    setBranches(updatedBranches);
-    await updateDoc(userDocRef, { branches: updatedBranches });
+  const handleRemoveBranch = async (userId, branchId) => {
+    try {
+      const gymData = currentUserData.gymData || {}; 
+      const branches = gymData.branches || []; 
+  
+      const updatedBranches = branches.filter(branch => branch.id !== branchId);
+  
+      await updateDoc(userDocRef, {
+        "gymData.branches": updatedBranches, 
+      });
+  
+      messageError("Sucursal eliminada correctamente");
+    } catch (error) {
+      console.error("Error al eliminar la sucursal:", error);
+    }
   };
 
   const handleSearchBranchLocation = async () => {
     if (!newBranch.address) return;
     const data = await GET_LOCATION(newBranch.address);
+    console.log(data)
     if (data.status === 'OK' && data.results.length > 0) {
       const location = data.results[0].geometry.location;
       setNewBranch({ ...newBranch, location: `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${location.lat},${location.lng}` });
@@ -58,7 +105,7 @@ const Config = React.memo(({ currentUserData }) => {
   };
 
   // Estado para personal
-  const [personnel, setPersonnel] = useState(currentUserData.per || []);
+  const [personnel, setPersonnel] = useState(currentUserData.gymData.per || []);
   const [newPerson, setNewPerson] = useState({ n: '', r: '', i: '' });
 
   const handleAddPerson = async () => {
@@ -77,11 +124,9 @@ const Config = React.memo(({ currentUserData }) => {
       await uploadBytes(storageRef, webpImage);
       const imageUrl = await getDownloadURL(storageRef);
       
-      const personWithImage = { ...newPerson, i: imageUrl };  
-      const updatedPersonnel = [...personnel, personWithImage];
-      setPersonnel(updatedPersonnel);
-  
-      await setDoc(userDocRef, { per: arrayUnion(personWithImage) }, { merge: true });
+      const personWithImage = { ...newPerson, i: imageUrl }; 
+      setPersonnel([...personnel, personWithImage]);
+      await updateDoc(userDocRef, { "gymData.per": arrayUnion(personWithImage) }, { merge: true });
   
       messageError("Personal añadido correctamente");
   
@@ -94,13 +139,14 @@ const Config = React.memo(({ currentUserData }) => {
     }
   };
   
-
   const handleRemovePerson = async (index) => {
     try {
-      const updatedPersonnel = personnel.filter((_, i) => i !== index);
+      const dataGym = currentUserData.gymData || {};
+      const updatedPersonnel = dataGym.per.filter((_, i) => i !== index);
     setPersonnel(updatedPersonnel);
-    await updateDoc(userDocRef, { per: updatedPersonnel });
-    messageError("Eliminado correctamente");
+    await updateDoc(userDocRef, {
+      "gymData.per": updatedPersonnel, 
+    });    messageError("Eliminado correctamente");
     } catch (error) {
       console.log(error.message)
     }
@@ -108,10 +154,8 @@ const Config = React.memo(({ currentUserData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Podrías agregar una acción global de guardado si lo deseas
   }
 
-  // Función que actualiza un campo en Firestore
   const handleUpdateField = async (field, value) => {
     try {
       await updateDoc(userDocRef, {
@@ -123,26 +167,7 @@ const Config = React.memo(({ currentUserData }) => {
     }
   };
 
-  // Función para buscar una ubicación mediante la API de Google Maps
-  const handleLocationSearch = async () => {
-    if (!locationQuery) return;
-    try {
-      const data = await GET_LOCATION(locationQuery)
-      if (data.status === "OK" && data.results.length > 0) {
-        // Se toma la primera ubicación encontrada (latitud y longitud)
-        const location = data.results[0].geometry.location;
-        setMapLocation(location);
-        // Si lo deseas, puedes actualizar la dirección en Firebase
-        await handleUpdateField("province", locationQuery);
-        setProvince(locationQuery);
-      } else {
-        alert("No se encontró la ubicación");
-      }
-    } catch (error) {
-      console.error("Error al buscar la ubicación:", error);
-    }
-  };
-
+ 
   // Se determina el src del iframe. Si se obtuvo una ubicación de la búsqueda se usa esa,
   // de lo contrario se utiliza la dirección actual del usuario (province)
   let mapSrc = "";
@@ -234,7 +259,6 @@ const Config = React.memo(({ currentUserData }) => {
               value={province}
               onChange={(e) => {
                 setProvince(e.target.value);
-                // Actualiza Firebase al cambiar el valor
                 handleUpdateField("province", e.target.value);
               }}>
               <option disabled value="">--seleccione una provincia--</option>
@@ -287,8 +311,8 @@ const Config = React.memo(({ currentUserData }) => {
           {newBranch.location && (
             <iframe src={newBranch.location} width='300' height='200' allowFullScreen></iframe>
           )}
-          <button className='back-blue-dark' onClick={handleAddBranch}>Añadir Sucursal</button>
-          <ul>
+          <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button>
+          {/* <ul>
             {branches.map((branch, index) => (
               <li key={index}>
                 <strong>{branch.name}</strong> - {branch.address}
@@ -296,7 +320,7 @@ const Config = React.memo(({ currentUserData }) => {
                 <button onClick={() => handleRemoveBranch(index)}>Eliminar</button>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
         <div className='personal-data'>
           <h2>Gestión de Personal</h2>

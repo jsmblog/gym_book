@@ -77,7 +77,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
               </div>
               {gym_data.p_m?.length > 0 && (
                 <div className="payment-methods">
-                  <h3 className="gym-card__province">Métodos de pago:</h3>
+                  <h3>Métodos de pago:</h3>
                   <p className="payment-item">{gym_data.p_m.join(' , ')}</p>
                 </div>
               )}

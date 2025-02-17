@@ -84,7 +84,6 @@ background-color: var(--co-back-gray-2);
     padding: .5rem;
 }
 .card_personnel {
-    background-color: var(--co-back-gray-2);
     display: flex;
     align-items: center;
     justify-content: space-between;
