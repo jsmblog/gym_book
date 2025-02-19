@@ -79,8 +79,19 @@ background-color: var(--co-back-gray-2);
     left: 0;
     border-radius: 10px 0 0 10px;
     width: 75%;
+    gap: .5rem;
     box-shadow: 7px 0 12px -5px var(--co-back-gray-3);
     background-color: var(--co-white);
+    overflow-y: auto;
+    padding: .5rem;
+}
+.gestion-sucrusal {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     padding: .5rem;
 }
 .card_personnel {
@@ -88,6 +99,7 @@ background-color: var(--co-back-gray-2);
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    border: 1px solid var(--co-back-gray);
     border-radius: 10px;
 }
 .card_personnel img {
@@ -103,7 +115,6 @@ background-color: var(--co-back-gray-2);
     right: .5rem;
     bottom: .5rem;
     border: 1px solid var(--co-back-gray);
-    filter: brightness(0);
     opacity: 1;
     border-radius: 50px;
     width: 30px;

@@ -8,15 +8,13 @@ import AllGyms from './AllGyms.jsx';
 import CardGym from './CardGym.jsx';
 import Search from './Search.jsx';
 
-const Gyms = React.memo(({ userId,role }) => {
-  const [gyms, setGyms] = useState(() => {
-    const savedGyms = sessionStorage.getItem('gymsData');
-    return savedGyms ? JSON.parse(savedGyms) : [];
-  });
+const Gyms = React.memo(({ userId, role }) => {
+  const [gyms, setGyms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [province, setProvince] = useState('');
   const [selectedGym, setSelectedGym] = useState(null);
-
+  
+  console.log(gyms)
   useEffect(() => {
     if (gyms.length === 0) {
       (async () => {
@@ -33,13 +31,13 @@ const Gyms = React.memo(({ userId,role }) => {
             province: decrypt(data.pro),
             address: decrypt(data.dir),
             contact: decrypt(data.tel),
+            paid: data.paid || {},
             name_gym: decrypt(data.n_g).toLowerCase(),
             gym_data: data.gymData || {}
           };
         });
 
         setGyms(gymsData);
-        sessionStorage.setItem('gymsData', JSON.stringify(gymsData));
       })();
     }
   }, [gyms]);
@@ -60,7 +58,7 @@ const Gyms = React.memo(({ userId,role }) => {
           setProvince={setProvince} 
           filteredGyms={filteredGyms} 
         />
-        <h3 className='gyms_available' >Gimnasios disponibles : {filteredGyms.length}</h3>
+        <h3 className="gyms_available">Gimnasios disponibles: {filteredGyms.length}</h3>
         <div className="gym-list">
           <AllGyms filteredGyms={filteredGyms} setSelectedGym={setSelectedGym} />
           <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} />

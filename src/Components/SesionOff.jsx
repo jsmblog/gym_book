@@ -7,6 +7,7 @@ const SesionOff = () => {
   const navigate = useNavigate();
   const handleSignOut = async () => {
     try {
+      sessionStorage.removeItem('gymsData');
       await signOut(AUTH_USER);
       setTimeout(() => {
         navigate("/");

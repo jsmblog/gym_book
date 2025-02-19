@@ -13,6 +13,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import uuid from './../Js/uuid';
 import gymRoles from './Js/rolePersonal.js';
 import iconPersonal from '/personal.webp';
+import iconSucursal from '/sucursales.webp';
 const API_KEY = API_KEY_GOOGLE
 
 const Config = React.memo(({ currentUserData }) => {
@@ -27,7 +28,9 @@ const Config = React.memo(({ currentUserData }) => {
   const [message, messageError] = useMessage();
   const [mapLocation, setMapLocation] = useState(null)
   const userDocRef = doc(db, "USERS", currentUserData.uid);
+  const [isHasSearch, setIsHasSearch] = useState(false);
   const [branches, setBranches] = useState(currentUserData.gymData.branches || []);
+  const [isOnBoxSucursal, setIsOnBoxSucursal] = useState(false)
   const [newBranch, setNewBranch] = useState({
     name: '',
     address: '',
@@ -37,6 +40,11 @@ const Config = React.memo(({ currentUserData }) => {
   const [isAddBranch, setIsAddBranch] = useState(false);
     const [isAddedPersonel, setIsAddedPersonel] = useState(false);
   const [isOnBoxPersonnel, setIsOnBoxPersonnel] = useState(false)
+
+  const [editingGymName, setEditingGymName] = useState(false)
+  const [editingAddress, setEditingAddress] = useState(false)
+  const [editingContact, setEditingContact] = useState(false)
+  const [editingPassword, setEditingPassword] = useState(false)
 
   const handleAddBranch = async () => {
     if (!newBranch.name || !newBranch.address) {
@@ -75,27 +83,27 @@ const Config = React.memo(({ currentUserData }) => {
     }
   };
 
-  const handleRemoveBranch = async (userId, branchId) => {
+  const handleRemoveBranch = async (branchId) => {
     try {
       const gymData = currentUserData.gymData || {}; 
       const branches = gymData.branches || []; 
   
       const updatedBranches = branches.filter(branch => branch.id !== branchId);
-  
+      setBranches(updatedBranches);
       await updateDoc(userDocRef, {
         "gymData.branches": updatedBranches, 
       });
-  
       messageError("Sucursal eliminada correctamente");
     } catch (error) {
       console.error("Error al eliminar la sucursal:", error);
+      messageError("Ocurrió un error al eliminar la sucursal");
     }
   };
 
   const handleSearchBranchLocation = async () => {
     if (!newBranch.address) return;
     const data = await GET_LOCATION(newBranch.address);
-    console.log(data)
+    setIsHasSearch(true);
     if (data.status === 'OK' && data.results.length > 0) {
       const location = data.results[0].geometry.location;
       setNewBranch({ ...newBranch, location: `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${location.lat},${location.lng}` });
@@ -106,7 +114,7 @@ const Config = React.memo(({ currentUserData }) => {
 
   // Estado para personal
   const [personnel, setPersonnel] = useState(currentUserData.gymData.per || []);
-  const [newPerson, setNewPerson] = useState({ n: '', r: '', i: '' });
+  const [newPerson, setNewPerson] = useState({ n: '', r: 'Gerente', i: '' });
 
   const handleAddPerson = async () => {
     setIsAddedPersonel(true);
@@ -127,10 +135,8 @@ const Config = React.memo(({ currentUserData }) => {
       const personWithImage = { ...newPerson, i: imageUrl }; 
       setPersonnel([...personnel, personWithImage]);
       await updateDoc(userDocRef, { "gymData.per": arrayUnion(personWithImage) }, { merge: true });
-  
       messageError("Personal añadido correctamente");
-  
-      setNewPerson({ n: '', r: '', i: '' });
+      setNewPerson({ n: '', r: 'Gerente', i: '' });
       setIsAddedPersonel(false);
     } catch (error) {
       console.log(error);
@@ -193,62 +199,108 @@ const Config = React.memo(({ currentUserData }) => {
             </div>
           </div>
           <form className="config-form" onSubmit={handleSubmit}>
-            <div>
-              {rol === 'owner' && (
-                <div className="form-group">
-                  <label htmlFor="gimName">Nombre del Gimnasio:</label>
+          <div>
+            {rol === 'owner' && (
+              <div className="form-group">
+                <label htmlFor="gimName">Nombre del Gimnasio:</label>
+                <div className="input-with-icon">
                   <input
                     type="text"
                     id="gimName"
                     value={gymName}
                     onChange={(e) => setGymName(e.target.value)}
-                    onBlur={() => handleUpdateField("gymName", gymName)}
-                    placeholder="Nombre del gimnasio" />
+                    onBlur={() => {
+                      handleUpdateField("gymName", gymName)
+                      setEditingGymName(false)
+                    }}
+                    placeholder="Nombre del gimnasio"
+                    disabled={!editingGymName}
+                  />
+                  {!editingGymName && (
+                    <button type="button" onClick={() => setEditingGymName(true)}>
+                      ✏️
+                    </button>
+                  )}
                 </div>
-              )}
-              <div className="form-group">
-                <label htmlFor="gimAddress">Dirección:</label>
+              </div>
+            )}
+            <div className="form-group">
+              <label htmlFor="gimAddress">Dirección:</label>
+              <div className="input-with-icon">
                 <input
                   type="text"
                   id="gimAddress"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  onBlur={() => handleUpdateField("address", address)}
+                  onBlur={() => {
+                    handleUpdateField("address", address)
+                    setEditingAddress(false)
+                  }}
                   placeholder={rol === 'owner' ? "Dirección del gimnasio" : "Añade una dirección..."}
+                  disabled={!editingAddress}
                 />
+                {!editingAddress && (
+                  <button type="button" onClick={() => setEditingAddress(true)}>
+                    ✏️
+                  </button>
+                )}
               </div>
-              <div className="form-group">
-                <label htmlFor="gimContact">Contacto:</label>
+            </div>
+            <div className="form-group">
+              <label htmlFor="gimContact">Contacto:</label>
+              <div className="input-with-icon">
                 <input
                   type="text"
                   id="gimContact"
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  onBlur={() => handleUpdateField("contact", contact)}
-                  placeholder={`contacto : ${currentUserData.numberTelf}`} />
+                  onBlur={() => {
+                    handleUpdateField("contact", contact)
+                    setEditingContact(false)
+                  }}
+                  placeholder={`contacto : ${currentUserData.numberTelf}`}
+                  disabled={!editingContact}
+                />
+                {!editingContact && (
+                  <button type="button" onClick={() => setEditingContact(true)}>
+                    ✏️
+                  </button>
+                )}
               </div>
-              <div className="form-group">
-                <label id="input-Pass-signin" htmlFor="inputPass">
-                  Contraseña
-                  <br />
+            </div>
+            <div className="form-group">
+              <label id="input-Pass-signin" htmlFor="inputPass">
+                Contraseña
+                <br />
+                <div className="input-with-icon">
                   <input
                     id="inputPass"
                     placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onBlur={() => handleUpdateField("password", password)}
+                    onBlur={() => {
+                      handleUpdateField("password", password)
+                      setEditingPassword(false)
+                    }}
                     type={seePass ? 'text' : 'password'}
                     name="inputPass"
                     maxLength={30}
                     required
+                    disabled={!editingPassword}
                   />
                   <button type="button" className="btn-see" onClick={() => setSeePass(!seePass)}>
                     {seePass ? '🔒' : '👁️'}
                   </button>
-                </label>
-              </div>
+                  {!editingPassword && (
+                    <button type="button" onClick={() => setEditingPassword(true)}>
+                      ✏️
+                    </button>
+                  )}
+                </div>
+              </label>
             </div>
-          </form>
+          </div>
+        </form>
         </div>
 
         <div className="personal-data">
@@ -290,6 +342,7 @@ const Config = React.memo(({ currentUserData }) => {
           </div>
         </div>
         <div className='personal-data'>
+          <div className="gestion-sucrusal">
           <h2>Gestión de Sucursales</h2>
           <div className='search-address'>
             <input
@@ -301,6 +354,8 @@ const Config = React.memo(({ currentUserData }) => {
             />
             <button className='' onClick={handleSearchBranchLocation}>🔍</button>
           </div>
+          </div>
+          {!isHasSearch && <h5>¡ Aquí aparecerá la ubicación de la sucursal !</h5>}
           <input
             type='text'
             placeholder='Nombre de la Sucursal'
@@ -312,15 +367,20 @@ const Config = React.memo(({ currentUserData }) => {
             <iframe src={newBranch.location} width='300' height='200' allowFullScreen></iframe>
           )}
           <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button>
-          {/* <ul>
-            {branches.map((branch, index) => (
-              <li key={index}>
-                <strong>{branch.name}</strong> - {branch.address}
-                {branch.location && <iframe src={branch.location} width='300' height='200' allowFullScreen></iframe>}
-                <button onClick={() => handleRemoveBranch(index)}>Eliminar</button>
-              </li>
-            ))}
-          </ul> */}
+          {
+            isOnBoxSucursal && <div id='personnel'>
+            {branches.length > 0 ? branches.map((branch) => (
+              <div className='card_personnel' key={branch.id}>
+                <h4>{branch.name} - {branch.address}</h4>
+                <button onClick={() => handleRemoveBranch(branch.id)}>❌</button>
+              </div>
+            )) : <h3>No haz añadido ninguna sucursal</h3>}
+          </div>
+          }
+          <button onClick={() => setIsOnBoxSucursal(!isOnBoxSucursal)} id='personnel-btn'>
+            {!isOnBoxSucursal ? <img width={20} src={iconSucursal} alt="" /> : '❌'}
+          </button>
+
         </div>
         <div className='personal-data'>
           <h2>Gestión de Personal</h2>
@@ -381,7 +441,7 @@ const Config = React.memo(({ currentUserData }) => {
           </div>
           }
           <button onClick={() => setIsOnBoxPersonnel(!isOnBoxPersonnel)} id='personnel-btn'>
-            <img width={20} src={iconPersonal} alt="" />
+            {!isOnBoxPersonnel ? <img width={20} src={iconPersonal} alt="" /> : '❌'}
           </button>
         </div>
       </section>

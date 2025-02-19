@@ -9,11 +9,11 @@ import sliceText from './../Js/sliceText';
 const AllGyms = React.memo(({ filteredGyms, setSelectedGym }) => {
   return (
     <section className="all-gyms">
-      {filteredGyms?.length > 0 ?  filteredGyms?.map(({ uid, name_gym, imageProfile, province, gym_data, email, contact, address }) => (
+      {filteredGyms?.length > 0 ?  filteredGyms?.map(({ uid, name_gym, imageProfile, province, gym_data, email, contact, address,paid }) => (
         <div 
           key={uid} 
           className="gym-card"
-          onClick={() => setSelectedGym({ uid, name_gym, imageProfile, province, gym_data, email, contact, address })}
+          onClick={() => setSelectedGym({ uid, name_gym, imageProfile, province, gym_data, email, contact, address,paid })}
         >
           <div className="gym-card__image">
             <img src={imageProfile} alt={name_gym} className="gym-image" />
