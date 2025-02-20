@@ -35,6 +35,7 @@
   --co-black-1:rgba(0, 0, 0, 0.934);
   --co-black-2:rgba(0, 0, 0, 0.555);
   --co-red:rgb(234, 25, 25);
+  --co-red-2:#d9534f;
 }
 
 * button {

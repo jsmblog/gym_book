@@ -19,7 +19,7 @@ const Login = () => {
   const MESSAGE = '¡ Bienvenido Inicia Sesión !';
   const auth = getAuth();
 
-  const [message, messageError] = useMessage(); // Usamos el custom hook para manejar los mensajes
+  const [message, messageError] = useMessage(); 
 
   const login = async () => {
     setLoaderLogin(true);

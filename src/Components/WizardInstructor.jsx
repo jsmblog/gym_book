@@ -102,7 +102,7 @@ const WizardInstructor = React.memo(({ instructorData }) => {
     try {
       const {
         name, email, imageProfile, createAccount, userRole, dateBirth,
-        password, province, gender, isOnline, numberTelf, emailVerified
+        password, province, gender, isOnline, numberTelf, emailVerified , country
       } = instructorData || {};
       const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, decrypt(password));
       const userId = userCredential.user.uid;
@@ -124,6 +124,7 @@ const WizardInstructor = React.memo(({ instructorData }) => {
         rol: userRole,            // userRole -> rol
         uid: userId,
         g: gender,
+        c: country,   // country -> c
         pro: province,   // province -> prov
         birth: dateBirth,
         on: isOnline,             // isOnline -> on

@@ -47,6 +47,7 @@ const Post = React.memo(({ currentUser }) => {
     setDragging(false);
 
     const droppedFiles = Array.from(e.dataTransfer.files);
+    const minSize = 1024 * 1024 * 10;
     const validFiles = droppedFiles.filter((file) => {
       const type = file.type.split('/')[0];
       return (type === 'image' || type === 'video');
@@ -56,9 +57,10 @@ const Post = React.memo(({ currentUser }) => {
       messageError('Solo se permiten 2 archivos');
       return;
     }
+    const oversizedFiles = validFiles.filter((file) => file.size < minSize);
 
     setFiles((prevFiles) => {
-      const newFiles = [...prevFiles, ...validFiles].slice(0, 2);
+      const newFiles = [...prevFiles, ...oversizedFiles].slice(0, 2);
       return newFiles;
     });
   };
@@ -218,7 +220,8 @@ const Post = React.memo(({ currentUser }) => {
                     htmlFor="inputImageProduct"
                     className={dragging ? 'dragging' : ''}
                   >
-                    {dragging ? '¡ Suelta la imagen aquí !' : <p>Selecciona ó <span id='message-drop-span'>arrastra y suelta</span></p>}            <input
+                    {dragging ? '¡ Suelta la imagen aquí !' : <p>Selecciona ó <span id='message-drop-span'>arrastra y suelta</span></p>}
+                    <input
                       style={{ display: 'none' }}
                       type="file"
                       accept="image/*,video/*"
@@ -226,8 +229,10 @@ const Post = React.memo(({ currentUser }) => {
                       multiple
                       onChange={(e) => {
                         const selectedFiles = Array.from(e.target.files);
-                        if (selectedFiles.length + files.length <= 2) {
-                          setFiles(prevFiles => [...prevFiles, ...selectedFiles].slice(0, 2));
+                        const minSize = 1024 * 1024 * 10;
+                        const oversizedFiles = selectedFiles.filter((file) => file.size < minSize);
+                        if (oversizedFiles.length + files.length <= 2) {
+                          setFiles(prevFiles => [...prevFiles, ...oversizedFiles].slice(0, 2));
                         }
                       }}
                     />

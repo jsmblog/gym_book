@@ -56,7 +56,6 @@ const Gyms = React.memo(({ userId, role }) => {
           setSearchTerm={setSearchTerm} 
           searchTerm={searchTerm} 
           setProvince={setProvince} 
-          filteredGyms={filteredGyms} 
         />
         <h3 className="gyms_available">Gimnasios disponibles: {filteredGyms.length}</h3>
         <div className="gym-list">

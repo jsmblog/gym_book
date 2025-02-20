@@ -3,7 +3,7 @@ import '../Styles/stylesConfig.css'
 import iconChangePhoto from '/cambiar-de-camara.webp'
 import provinces from '../Js/provinces'
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
-import { db, STORAGE } from '../ConfigFirebase/config.js'
+import { AUTH_USER, db, STORAGE } from '../ConfigFirebase/config.js'
 import GET_LOCATION from '../Js/SearchLocation';
 import { API_KEY_GOOGLE } from '../FirebaseEnv/firebaseEnv.js';
 import useMessage from './../Hooks/useMessage';
@@ -14,6 +14,8 @@ import uuid from './../Js/uuid';
 import gymRoles from './Js/rolePersonal.js';
 import iconPersonal from '/personal.webp';
 import iconSucursal from '/sucursales.webp';
+import encrypt from './../Js/encrypt';
+import { updatePassword } from 'firebase/auth';
 const API_KEY = API_KEY_GOOGLE
 
 const Config = React.memo(({ currentUserData }) => {
@@ -30,6 +32,7 @@ const Config = React.memo(({ currentUserData }) => {
   const userDocRef = doc(db, "USERS", currentUserData.uid);
   const [isHasSearch, setIsHasSearch] = useState(false);
   const [branches, setBranches] = useState(currentUserData.gymData.branches || []);
+  const [photo, setPhoto] = useState(null);
   const [isOnBoxSucursal, setIsOnBoxSucursal] = useState(false)
   const [newBranch, setNewBranch] = useState({
     name: '',
@@ -108,7 +111,7 @@ const Config = React.memo(({ currentUserData }) => {
       const location = data.results[0].geometry.location;
       setNewBranch({ ...newBranch, location: `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${location.lat},${location.lng}` });
     } else {
-      alert('No se encontró la ubicación');
+      messageError('No se encontró la ubicación');
     }
   };
 
@@ -157,23 +160,83 @@ const Config = React.memo(({ currentUserData }) => {
       console.log(error.message)
     }
   };
+  
+  const handleChangePhotoPerfil = async (file) => {
+    try {
+      if (file) {
+        const confirmation = window.confirm('¿Estás seguro de cambiar la foto de perfil?');
+        if (!confirmation) return;
+        const webpImage = await convertToWebP(file);
+        const storageRef = ref(STORAGE, `profileImages/${currentUserData.uid}/image.webp`);
+        await uploadBytes(storageRef, webpImage);
+        const imageUrl = await getDownloadURL(storageRef);
+        await updateDoc(userDocRef, { img: encrypt(imageUrl) });
+        messageError("Foto de perfil actualizada correctamente");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  
+  const getImage = async (e) => {
+    const file = e.target.files[0];
+    const sizeFile = 5 * 1024 * 1024;
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        messageError("Solo se permiten archivos de imagen."); 
+        return;
+      }
+      if (file.size > sizeFile) {
+        messageError("El tamaño del archivo excede los 5 MB permitidos.");
+        return;
+      }
+    }
+    setPhoto(file);
+    handleChangePhotoPerfil(file);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
   }
-
   const handleUpdateField = async (field, value) => {
     try {
-      await updateDoc(userDocRef, {
-        [field]: value
-      });
-      console.log(`${field} actualizado correctamente!`);
+      if (value.length === 0) return; 
+      if (field === 'password') {
+        const changePassword = window.confirm('¿Estás seguro de cambiar la contraseña?');
+        if (!changePassword) return;
+  
+        if (value.length < 8) {
+          messageError('La contraseña debe tener al menos 8 caracteres');
+          return;
+        }
+  
+        await updatePassword(AUTH_USER.currentUser, value);
+        messageError('Contraseña actualizada correctamente');
+        return;
+      }
+  
+      if (currentUserData[field] === value) {
+        messageError('No hay cambios para actualizar');
+        return;
+      }
+  
+      if (field !== '') {
+        await updateDoc(userDocRef, {
+          [field]: encrypt(value)
+        });
+        messageError(`actualizado correctamente!`);
+      }
     } catch (error) {
       console.error(`Error actualizando ${field}:`, error);
+  
+      if (error.code === 'auth/requires-recent-login') {
+        messageError('Por seguridad, debes iniciar sesión nuevamente para cambiar la contraseña.');
+      } else {
+        messageError(`Error actualizando ${field}`);
+      }
     }
   };
-
- 
+  
   // Se determina el src del iframe. Si se obtuvo una ubicación de la búsqueda se usa esa,
   // de lo contrario se utiliza la dirección actual del usuario (province)
   let mapSrc = "";
@@ -195,7 +258,7 @@ const Config = React.memo(({ currentUserData }) => {
               <label className="imagePerfil" htmlFor="imagePerfil">
                 <img width={20} src={iconChangePhoto} alt="" />
               </label>
-              <input style={{ display: 'none' }} type="file" id="imagePerfil" accept="image/*" />
+              <input style={{ display: 'none' }} type="file" onChange={(e) => getImage(e)}  id="imagePerfil" accept="image/*" />
             </div>
           </div>
           <form className="config-form" onSubmit={handleSubmit}>
@@ -210,7 +273,7 @@ const Config = React.memo(({ currentUserData }) => {
                     value={gymName}
                     onChange={(e) => setGymName(e.target.value)}
                     onBlur={() => {
-                      handleUpdateField("gymName", gymName)
+                      handleUpdateField("n_g", gymName)
                       setEditingGymName(false)
                     }}
                     placeholder="Nombre del gimnasio"
@@ -233,7 +296,7 @@ const Config = React.memo(({ currentUserData }) => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   onBlur={() => {
-                    handleUpdateField("address", address)
+                    handleUpdateField("dir", address)
                     setEditingAddress(false)
                   }}
                   placeholder={rol === 'owner' ? "Dirección del gimnasio" : "Añade una dirección..."}
@@ -255,7 +318,7 @@ const Config = React.memo(({ currentUserData }) => {
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
                   onBlur={() => {
-                    handleUpdateField("contact", contact)
+                    handleUpdateField("tel", contact)
                     setEditingContact(false)
                   }}
                   placeholder={`contacto : ${currentUserData.numberTelf}`}
@@ -288,7 +351,7 @@ const Config = React.memo(({ currentUserData }) => {
                     required
                     disabled={!editingPassword}
                   />
-                  <button type="button" className="btn-see" onClick={() => setSeePass(!seePass)}>
+                  <button type="button" className="btn-see-config" onClick={() => setSeePass(!seePass)}>
                     {seePass ? '🔒' : '👁️'}
                   </button>
                   {!editingPassword && (
@@ -311,7 +374,7 @@ const Config = React.memo(({ currentUserData }) => {
               value={province}
               onChange={(e) => {
                 setProvince(e.target.value);
-                handleUpdateField("province", e.target.value);
+                handleUpdateField("pro", e.target.value);
               }}>
               <option disabled value="">--seleccione una provincia--</option>
               {provinces.map((p, index) => (

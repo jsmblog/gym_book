@@ -120,6 +120,11 @@ background-color: var(--co-back-gray-2);
     width: 30px;
     height: 30px;
 }
+.input-with-icon {
+    display: flex;
+    align-items: center;
+}
+
 @media screen and (max-width: 768px) {
     .configurations-section {
         width: 100%;

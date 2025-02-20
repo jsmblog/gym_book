@@ -129,8 +129,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
                   ) : null
                 )}
               </div>
-            </div>
-            {gym_data.branches && gym_data.branches.length > 0 && (
+              {gym_data.branches && gym_data.branches.length > 0 && (
               <div className="branches-container">
                   <h3 className='libre-Baskerville'>¡Explora nuestras sedes y vive la experiencia!</h3>
                   <div className="branches">
@@ -152,6 +151,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
                   </div>
               </div>
             )}
+            </div>
             <button className="btn-close-card-gyms" onClick={() => setSelectedGym(null)}>
               X
             </button>

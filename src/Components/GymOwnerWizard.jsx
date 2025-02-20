@@ -60,7 +60,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       return;
     }
     try {
-      const {address,name,nameGym,email,imageProfile,createAccount,userRole,password,province,isOnline,numberTelf,emailVerified} = infoPrincipalGym || {};
+      const {address,name,nameGym,email,imageProfile,createAccount,userRole,password,province,isOnline,numberTelf,emailVerified,country} = infoPrincipalGym || {};
       const userCredential = await createUserWithEmailAndPassword(AUTH_USER, email, decrypt(password));
       const userId = userCredential.user.uid;
   
@@ -81,6 +81,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
         c_a:createAccount, // createAccount -> c_a
         rol: userRole, // userRole -> rol
         uid: userId,
+        c:country,
         pro: encrypt(province), // province -> prov
         dir: encrypt(address) ,
         on: isOnline, // isOnline -> on
