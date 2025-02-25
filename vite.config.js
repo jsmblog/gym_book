@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['crypto-js'],
-    exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
+    include: ['crypto-js']
   },
 })
