@@ -7,7 +7,7 @@ import iconHeart from "/heart.webp";
 import iconHeartRed from "/amor.webp";
 import iconShare from "/share.webp";
 import iconComment from "/comment.webp";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { db } from "../ConfigFirebase/config";
 import useMessage from "../Hooks/useMessage";
 import DisplayMessage from "./DisplayMessage";
@@ -15,6 +15,7 @@ import uuid from './../Js/uuid';
 import encrypt from "../Js/encrypt";
 import CommentsBox from "./CommentsBox";
 import { useNavigate } from "react-router-dom";
+import formatDateCompleted from "../Js/formatDateCompleted";
 const COUNT = 10
 const Publications = React.memo(({ users, currentUser, allUsers }) => {
   const [visibleCount, setVisibleCount] = useState(COUNT);
@@ -37,75 +38,68 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
 
   const handleLiked = async (post, userId) => {
     try {
-      const docRef = doc(db, "USERS", userId);
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        console.error("User document not found!");
+      // Se busca en el contexto la información actualizada del usuario cuyo documento se va a actualizar
+      const userData = allUsers.find((u) => u.uid === userId);
+      if (!userData) {
+        console.error("User document not found in context!");
         return;
       }
-
-      const userData = docSnap.data();
       const posts = userData.posts || [];
-
+      const timeStampLike = new Date().toISOString();
+      // Nota: Si la intención es registrar el like del usuario actual, se podría usar currentUser.uid;
+      // sin embargo, se mantiene userId para respetar la lógica original.
       const userLiked = {
-        id: userId, // id
-        n: currentUser.name, // name
-        p: currentUser.imageProfile // photo
+        id: userId,
+        c: formatDate(timeStampLike),
+        n: currentUser.name,
+        p: currentUser.imageProfile,
       };
-
-      // Buscar el post a actualizar
+  
+      // Se actualiza el post correspondiente
       const updatedPosts = posts.map((p) => {
         if (p.post_id === post.post_id) {
           const hasLiked = p.likes?.some((like) => like.id === userId);
-
           if (hasLiked) {
             messageError("¡Ya diste like a esta publicación!");
-            return p; // No modificar el post si ya tiene el like
+            return p;
           }
-
           const updatedLikes = p.likes ? [...p.likes, userLiked] : [userLiked];
           messageError("Me gusta enviado con éxito");
           return { ...p, likes: updatedLikes };
         }
         return p;
       });
-
+  
+      // Se actualiza el documento en Firestore con el array de posts modificado
+      const docRef = doc(db, "USERS", userId);
       await updateDoc(docRef, { posts: updatedPosts });
-
     } catch (error) {
       console.error("Error liking the post:", error.message);
     }
   };
-
+  
   const handleShared = async (post, userId) => {
     try {
       if (currentUser?.uid === userId) {
         messageError("No puedes compartir tu propia publicación");
         return;
       }
-      const docRefCurrentUser = doc(db, "USERS", currentUser?.uid);
-      const docRefOwner = doc(db, "USERS", userId);
-
-      const [docSnapOwner, docSnapCurrentUser] = await Promise.all([
-        getDoc(docRefOwner),
-        getDoc(docRefCurrentUser)
-      ]);
-
-      if (!docSnapOwner.exists()) {
-        console.error("Owner document not found!");
+      // Se obtienen los datos actualizados del propietario y del usuario actual desde el contexto
+      const ownerData = allUsers.find((u) => u.uid === userId);
+      const currentUserData = allUsers.find((u) => u.uid === currentUser.uid);
+      if (!ownerData) {
+        console.error("Owner document not found in context!");
         return;
       }
-      if (!docSnapCurrentUser.exists()) {
-        console.error("Current user document not found!");
+      if (!currentUserData) {
+        console.error("Current user document not found in context!");
         return;
       }
-
-      const ownerData = docSnapOwner.data();
-      const currentUserData = docSnapCurrentUser.data();
-
-      const hasShared = currentUserData.posts.some((p) => p.post_id === post.post_id && p.i_sh);
-
+  
+      // Se verifica si el usuario actual ya compartió la publicación
+      const hasShared = currentUserData.posts.some(
+        (p) => p.post_id === post.post_id && p.i_sh
+      );
       if (hasShared) {
         messageError("¡Ya compartiste esta publicación!");
         return;
@@ -113,43 +107,46 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
       const createdAt = new Date().toISOString();
       const sharedPost = {
         c_a: createdAt,
-        d: post.d || '',
-        s: '',
+        d: post.d || "",
+        s: "",
         m: post.m || [],
-        l: post.l || '',
+        l: post.l || "",
         post_id: uuid(35),
         i_sh: true,
         likes: [],
         comments: [],
-        shared: []
+        shared: [],
       };
-
-      const updatedCurrentUserPosts = [...currentUserData.posts, sharedPost];
-
+  
+      // Se agrega la publicación compartida al array de posts del usuario actual
+      const updatedCurrentUserPosts = [...(currentUserData.posts || []), sharedPost];
+      const docRefCurrentUser = doc(db, "USERS", currentUser.uid);
       await updateDoc(docRefCurrentUser, { posts: updatedCurrentUserPosts });
-
+  
+      const timeStampShare = new Date().toISOString();
       const user = {
         id: currentUser.uid,
+        c: formatDate(timeStampShare),
         n: encrypt(currentUser.name),
-        p: encrypt(currentUser.imageProfile)
-      }
-
-      const updatedOwnerPosts = ownerData.posts.map((p) => {
+        p: encrypt(currentUser.imageProfile),
+      };
+  
+      // Se actualiza el post en el documento del propietario, agregando el usuario que compartió
+      const updatedOwnerPosts = (ownerData.posts || []).map((p) => {
         if (p.post_id === post.post_id) {
           const updatedShared = p.shared ? [...p.shared, user] : [user];
           return { ...p, shared: updatedShared };
         }
         return p;
       });
-
+      const docRefOwner = doc(db, "USERS", userId);
       await updateDoc(docRefOwner, { posts: updatedOwnerPosts });
-
+  
       messageError("¡Publicación compartida con éxito!");
-
     } catch (error) {
       console.error("Error sharing the post:", error.message);
     }
-  };
+  };  
 
   const handleComments = async (comments, uidOwner) => {
     setIsOnBoxComments(!isOnBoxComments)
@@ -157,19 +154,67 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
     setOwnerId(uidOwner)
   }
 
-  const navigateToPerfilUserSelected = (user) => {
+  const navigateToPerfilUserSelected = async (user) => {
     try {
       if (!user) {
-        messageError('Error');
+        messageError("Error: usuario no definido");
         return;
       }
-      const userSelected = allUsers.find(u => u.uid === user.ownerId);
-      navigate(`/perfil/${user.ownerId}`, { state: userSelected || null })
+  
+      const { rol, ownerId, paid, s = [] } = user;
+      const timeStamp = new Date().toISOString();
+  
+      if (paid.i_p && (rol === "owner" || rol === "instructor") && currentUser.rol === "user") {
+        const refOwner = doc(db, "USERS", ownerId);
+  
+        const hasVisitedPerfil = s.some((v) => v.id === currentUser.uid);
+  
+        if (!hasVisitedPerfil) {
+          const calculatedAge = new Date().getFullYear() - new Date(currentUser.birth).getFullYear();
+  
+          const visitorData = {
+            c: formatDate(timeStamp),         // Fecha de la primera visita
+            id: currentUser.uid,             // ID del usuario visitante
+            n: currentUser.name,             // Nombre
+            p: currentUser.imageProfile,      // Foto
+            pr: currentUser.province,        // Provincia
+            g: currentUser.gender,           // Género
+            t: currentUser.numberTelf,       // Teléfono
+            b: calculatedAge,                // Edad
+            v: {
+              c: 1,                          // Contador de visitas
+              l: formatDateCompleted(timeStamp), // Última vez visitado
+            },
+          };
+  
+          await updateDoc(refOwner, {
+            s: arrayUnion(visitorData),
+          });
+        } else {
+          const updatedVisitors = s.map((visitor) =>
+            visitor.id === currentUser.uid
+              ? {
+                  ...visitor,
+                  v: {
+                    c: (visitor.v?.c ?? 0) + 1,
+                    l: formatDateCompleted(timeStamp),
+                  },
+                }
+              : visitor
+          );
+  
+          await updateDoc(refOwner, { s: updatedVisitors });
+        }
+      }
+  
+      const userSelected = allUsers.find((u) => u.uid === ownerId);
+      navigate(`/perfil/${ownerId}`, { state: userSelected || null });
+  
     } catch (error) {
-      console.log(error.message);
+      messageError("Ha ocurrido un error inesperado.");
     }
-  }
-
+  };
+  
   return (
     <>
       <section id="sect-publications">
@@ -178,7 +223,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
             <div key={user.post.post_id} style={{ border: user.rol === 'owner' ? '1px solid #818080' : '' }} className="publication">
               <div className="publication-header">
                 <div>
-                  <img onClick={() => navigateToPerfilUserSelected(user)} src={user.ownerPhoto} alt="" />
+                  <img onClick={() => navigateToPerfilUserSelected(user)} src={user.ownerPhoto} alt={user.owner} />
                   <p className="name-navigate" onClick={() => navigateToPerfilUserSelected(user)}><h4 id="name_gym">{user.name_gym || ''}</h4> {user.rol === 'instructor' ? 'Instr :' : ''} {user.owner}</p>
                   {user.post?.s && (
                     <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
@@ -187,19 +232,19 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
                 <span>{formatDate(user.post?.c_a)}</span>
               </div>
               <p className="libre-Baskerville paragrahp">{decrypt(user.post?.d) || ""}</p>
-              {user.post?.m?.length > 0 && 
+              {user.post?.m?.length > 0 &&
                 <div className="publication-media">
-                {user.post?.m?.map((media, index) => (
-                  media.t === "image" ? (
-                    <img className="width-media" key={index} src={media.f} alt="Imagen de la publicación" />
-                  ) : (
-                    <video className="width-media" key={index} muted controls>
-                      <source src={media.f} type="video/mp4" />
-                      Tu navegador no soporta la reproducción de videos.
-                    </video>
-                  )
-                ))}
-              </div>
+                  {user.post?.m?.map((media, index) => (
+                    media.t === "image" ? (
+                      <img className="width-media" key={index} src={media.f} alt={`publicación creada por ${user.owner}`} />
+                    ) : (
+                      <video className="width-media" key={index} muted controls>
+                        <source src={media.f} type="video/mp4" />
+                        Tu navegador no soporta la reproducción de videos.
+                      </video>
+                    )
+                  ))}
+                </div>
               }
               <a
                 id="link-user"

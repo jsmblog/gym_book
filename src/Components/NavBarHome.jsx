@@ -11,7 +11,6 @@ import React from 'react';
 
 const NavBarHome = React.memo(({ userId , role }) => {
   const { toggleDarkMode } = useDarkMode();
- console.log(role)
   return (
     <>
       <main id="main-nvhome">

@@ -1,63 +1,62 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import NavBarHome from './NavBarHome';
 import '../Styles/stylesGyms.css';
-import { collection, getDocs, limit, query, where } from 'firebase/firestore';
-import { db } from '../ConfigFirebase/config.js';
-import decrypt from '../Js/decrypt';
+import { useUserContext } from '../Context/UserContext.jsx'; 
 import AllGyms from './AllGyms.jsx';
 import CardGym from './CardGym.jsx';
 import Search from './Search.jsx';
 
 const Gyms = React.memo(({ userId, role }) => {
-  const [gyms, setGyms] = useState([]);
+  const { users } = useUserContext();
+
+  const gymsFromContext = useMemo(() => {
+    const cachedGyms = sessionStorage.getItem("gyms");
+    if (cachedGyms) {
+      return JSON.parse(cachedGyms);
+    }
+
+    const gyms = users
+      .filter((user) => user.rol === 'owner')
+      .map((user) => ({
+        email: user.email,
+        imageProfile: user.imageProfile,
+        uid: user.uid,
+        province: user.province,
+        address: user.address,
+        contact: user.numberTelf,
+        paid: user.paid || {},
+        name_gym: user.name_gym,
+        gym_data: user.gymData || {},
+      }))
+      .slice(0, 100);
+    
+    sessionStorage.setItem("gyms", JSON.stringify(gyms));
+    return gyms;
+  }, [users]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [province, setProvince] = useState('');
   const [selectedGym, setSelectedGym] = useState(null);
-  
-  console.log(gyms)
-  useEffect(() => {
-    if (gyms.length === 0) {
-      (async () => {
-        const snapshot = await getDocs(
-          query(collection(db, 'USERS'), where('rol', '==', 'owner'), limit(100))
-        );
-
-        const gymsData = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            email: decrypt(data.e),
-            imageProfile: decrypt(data.img),
-            uid: data.uid,
-            province: decrypt(data.pro),
-            address: decrypt(data.dir),
-            contact: decrypt(data.tel),
-            paid: data.paid || {},
-            name_gym: decrypt(data.n_g).toLowerCase(),
-            gym_data: data.gymData || {}
-          };
-        });
-
-        setGyms(gymsData);
-      })();
-    }
-  }, [gyms]);
 
   const filteredGyms = useMemo(() => {
-    return gyms.filter(gym =>
-      gym.name_gym.includes(searchTerm.toLowerCase()) &&
-      (!province || gym.province.includes(province))
+    return gymsFromContext.filter(
+      (gym) =>
+        (gym.name_gym || '').toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (!province || (gym.province || '').includes(province))
     );
-  }, [gyms, searchTerm, province]);
-
+  }, [gymsFromContext, searchTerm, province]);
+  
   return (
     <>
       <main className="main-gyms">
-        <Search 
-          setSearchTerm={setSearchTerm} 
-          searchTerm={searchTerm} 
-          setProvince={setProvince} 
+        <Search
+          setSearchTerm={setSearchTerm}
+          searchTerm={searchTerm}
+          setProvince={setProvince}
         />
-        <h3 className="gyms_available">Gimnasios disponibles: {filteredGyms.length}</h3>
+        <h3 className="gyms_available">
+          Gimnasios disponibles: {filteredGyms.length}
+        </h3>
         <div className="gym-list">
           <AllGyms filteredGyms={filteredGyms} setSelectedGym={setSelectedGym} />
           <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} />

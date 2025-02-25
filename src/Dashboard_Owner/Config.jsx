@@ -20,7 +20,7 @@ const API_KEY = API_KEY_GOOGLE
 
 const Config = React.memo(({ currentUserData }) => {
   const rol = currentUserData?.rol || ''
-
+  console.log(currentUserData)
   const [province, setProvince] = useState(currentUserData.province || '')
   const [gymName, setGymName] = useState(currentUserData.name_gym || '')
   const [address, setAddress] = useState(currentUserData.address || '')
@@ -253,7 +253,7 @@ const Config = React.memo(({ currentUserData }) => {
       <section className="configurations-section">
         <div className="personal-data">
           <div>
-            <img id="photo-profile-config" src={currentUserData.imageProfile} alt="" />
+            <img id="photo-profile-config" src={currentUserData.imageProfile} alt={`Foto de perfil de ${currentUserData.name}`} />
             <div className="form-group-imagePerfil">
               <label className="imagePerfil" htmlFor="imagePerfil">
                 <img width={20} src={iconChangePhoto} alt="" />
@@ -429,7 +429,9 @@ const Config = React.memo(({ currentUserData }) => {
           {newBranch.location && (
             <iframe src={newBranch.location} width='300' height='200' allowFullScreen></iframe>
           )}
-          <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button>
+          {
+            currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button> : <button className='back-blue-dark'>Suscríbete a un plan</button>
+          }
           {
             isOnBoxSucursal && <div id='personnel'>
             {branches.length > 0 ? branches.map((branch) => (
@@ -490,7 +492,9 @@ const Config = React.memo(({ currentUserData }) => {
               }
             </select>
           </label>
-        <button className='back-blue-dark' onClick={handleAddPerson}>{isAddedPersonel ? 'Añadiendo...' : 'Añadir Personal'}</button>
+{
+ currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddPerson}>{isAddedPersonel ? 'Añadiendo...' : 'Añadir Personal'}</button> : <button className='back-blue-dark'>Suscríbete a un plan</button>
+}
           {
             isOnBoxPersonnel && <div id='personnel'>
             {personnel.length > 0 ? personnel.map((person, index) => (

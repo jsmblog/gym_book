@@ -32,7 +32,7 @@
     cursor: pointer;
     position: absolute;
     right: .5rem;
-    bottom: 38%;
+    bottom: 45%;
     display: flex;
     background-color: var(--co-white);
     border-radius: 50%;

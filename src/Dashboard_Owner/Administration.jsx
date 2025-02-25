@@ -19,11 +19,10 @@ const Administration = React.memo((({currentUserData}) => {
   const navigate = useNavigate();
   const backHome = () => {
     navigate(-1, { replace: true });
-}; 
-      const [users, setUsers] = useState([]);
-  const [activeSection, setActiveSection] = useState("usuarios");
+  }; 
 
-  // Funciones de renderizado para cada sección
+  const [users, setUsers] = useState([]);
+  const [activeSection, setActiveSection] = useState("usuarios");
 
   const renderUsuariosSection = () => (
     <Usuarios currentUserData={currentUserData} users={users} setUsers={setUsers}/>
@@ -33,7 +32,7 @@ const Administration = React.memo((({currentUserData}) => {
   );
 
   const renderEstadisticasSection = () => (
-    <Statistics users={users} />
+    <Statistics users={users} currentUserData={currentUserData} />
   );
 
   const renderCampanasSection = () => (

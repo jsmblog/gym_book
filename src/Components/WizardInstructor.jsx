@@ -133,7 +133,8 @@ const WizardInstructor = React.memo(({ instructorData }) => {
         posts: [],
         f_d:formData,
         u:[],
-        paid:{i_p:false,t_p:''}
+        paid:{i_p:false,t_p:'',d:''},
+        s:[] // stadistics -> s
       };
 
       const collectionUsers = collection(db, "USERS");

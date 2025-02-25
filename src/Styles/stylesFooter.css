@@ -1,0 +1,18 @@
+.footer {
+    color: var(--co-white);
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: .5rem;
+}
+#link-my-portfolio {
+    color: var(--co-gray);
+    text-decoration: underline;
+}

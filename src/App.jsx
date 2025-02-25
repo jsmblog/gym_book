@@ -15,6 +15,7 @@ import {useUserContext } from './Context/UserContext.jsx';
 import Perfil from './Components/Perfil.jsx';
 import './Styles/stylesDarkMode.css'
 import Administration from './Dashboard_Owner/Administration.jsx';
+import Admin from './Components/Admin.jsx';
 
 function App() {
   const { authUser, currentUserData, isLoading } = useUserContext();
@@ -55,13 +56,14 @@ function App() {
         {/*Ruta protegida para usuarios autenticados*/}
         <Route
           element={
-            <ProtectedRoute emailVerified={currentUserData?.v} user={authUser} role={role} allowedRoles={['user','owner','instructor']} />
+            <ProtectedRoute emailVerified={currentUserData?.v} user={authUser} role={role} allowedRoles={['user','owner','instructor','admin']} />
           }
         >
           <Route
             path="/Home/:userId"
             element={<Home role={role} userId={userId} user={authUser} />}
           />
+          <Route path='/Admin/:userId' element={<Admin userId={userId}/>} />
         <Route path='/administracion/:userId'  element={<Administration currentUserData={currentUserData} />} />
         <Route path='/gimnasios/:userId' element={<Gyms role={role} userId={userId} />} />
         <Route path='/perfil/:userId' element={ <Perfil currentUserData={currentUserData} /> } />

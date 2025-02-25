@@ -90,7 +90,7 @@ const Perfil = React.memo(({ currentUserData }) => {
                         </div>
                     )}
                     <div className='photo-perfil'>
-                        <img src={user.imageProfile} alt="Perfil" className="perfil-avatar" />
+                        <img src={user.imageProfile} alt={`Perfil de ${user.name}`} className="perfil-avatar" />
                         <div className='isOnline' style={{ backgroundColor: user.isOnline ? 'greenyellow' : 'gray' }}></div>
                         <h6>({user.isOnline ? 'Activo' : 'No Disponible'})</h6>
                     </div>

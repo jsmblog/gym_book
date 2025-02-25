@@ -37,14 +37,15 @@ const Login = () => {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const role = userData.rol;
-        if (role === 'user' || role === 'owner' || role === "instructor") {
+        const rol = userData.rol;
+        if (rol === 'user' || rol === 'owner' || rol === "instructor") {
           navigate(`/Home/${user.uid}`, { replace: true });
-        }//  else if (userData.userRole === 'admin') {
-        //   navigate(`/Admin/${user.uid}`, { replace: true });
-        // } else {
-        //   messageError('No se pudo determinar el rol del usuario.');
-        // }
+        }  else if (rol === 'admin') {
+           navigate(`/Admin/${user.uid}`, { replace: true });
+        } else {
+          navigate('/*', { replace: true });
+          messageError('No se pudo determinar el rol del usuario.');
+        }
       } else {
         setLoaderLogin(false);
         messageError('El usuario no se encuentra registrado.');

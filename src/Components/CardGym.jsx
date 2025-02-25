@@ -46,7 +46,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
                 <div className="gym-card__personal-trainer-container">
                   {gym_data.per.map((p, index) => (
                     <div key={index} className="gym-card__personal">
-                      <img src={p.i} width={30} alt="" />
+                      <img src={p.i} width={30} alt={p.n} />
                       <h4 className="gym-card__personal-trainer-name libre-Baskerville">{p.n}</h4>
                       <h5 className="gym-card__personal-trainer-rol">{p.r}</h5>
                     </div>

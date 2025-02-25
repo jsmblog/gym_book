@@ -1,0 +1,93 @@
+#dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  #dashboard-header {
+    background-color: var(--co-blue-1);
+    color: var(--co-white);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  #dashboard-body {
+    display: flex;
+    flex: 1;
+  }
+  
+  #dashboard-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    overflow-x: auto;
+  }
+  #filters {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    width: 100%;
+  }
+  #users-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  #users-table th,
+  #users-table td {
+    border: 1px solid var(--co-back-gray);
+    padding: 10px;
+    text-align: left;
+  }
+  
+  #users-table th {
+    background-color: var(--co-back-gray-2);
+    text-align: center;
+  }
+  .cont-table {
+    height: 72vh;
+    overflow-y: auto;
+  }
+  .user-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .sesionOff {
+    position: absolute;
+    right: 1.2rem;
+  }
+  .sesionOff button img {
+    width: 25px;
+  }
+  @media screen and (max-width: 768px) {
+    #dashboard-body {
+      flex-direction: column;
+    }
+    
+    #users-table {
+      font-size: 14px;
+    }
+    #filters {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    #filters select {
+        width: 100%;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    #dashboard-header h1 {
+      font-size: 18px;
+    }
+    
+    #users-table th,
+    #users-table td {
+      padding: 8px;
+    }
+  }
+  

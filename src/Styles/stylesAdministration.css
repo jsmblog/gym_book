@@ -137,7 +137,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: column;
     margin-bottom: 15px;
+    gap: .5rem;
     width: 100%;
   }
   
@@ -359,20 +361,49 @@
   
 .header-actions {
     display: flex;
-    width: 60%;
+    width: 100%;
     justify-content: space-between;
     gap: .5rem;
 }  
+.header-actions select {
+  width: 100px;
+}
 #select-category {
   width: 100px;
 }
 .added {
     position: absolute;
     left: 1.5rem;
-    top: 3.5rem;
+    top: 2rem;
 }
-
-
+#donwload-data-excel  {
+  color: var(--co-white);
+  background: #013e0d;  
+  background: -webkit-linear-gradient(to bottom, #013e0d, #1ad798);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom,#013e0d, #1ad798); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */    
+}
+.total-amount {
+  position: absolute;
+  right: 1rem;
+  bottom: 1.5rem;
+}
+@media  screen and (max-width: 768px) {
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+}
+.header-actions select  , #select-category{
+  width: 100%; 
+}
+.add-user-form {
+  width: 100%;
+}
+.total-amount {
+  bottom: 0;
+  font-size: .75rem;
+  right: .2rem;
+}
+}
   @media (max-width: 992px) {
     .dashboard-container {
       flex-direction: column;

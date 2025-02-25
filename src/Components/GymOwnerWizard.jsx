@@ -75,7 +75,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       const downloadUrl = await getDownloadURL(storageRef);  
       const userDoc = {
         n: encrypt(name), // name -> n
-        n_g :encrypt(nameGym),
+        n_g :encrypt(nameGym), // nameGym -> n_g
         e: encrypt(email), // email -> e
         img: encrypt(downloadUrl), // imageProfile -> img
         c_a:createAccount, // createAccount -> c_a
@@ -90,7 +90,8 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
         posts: [],
         gymData: gymData,
         u:[],
-        paid:{i_p:false,t_p:''},
+        paid:{i_p:false,t_p:'',d:''},
+        s:[], // stadistics -> s
         inv:[],
       };
   

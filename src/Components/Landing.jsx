@@ -1,5 +1,6 @@
 import '../Styles/stylesLanding.css'
 import {Link} from 'react-router-dom'
+import Footer from './Footer'
 const Landing = () => {
   return (
     <>
@@ -22,6 +23,7 @@ const Landing = () => {
       <button>Iniciar Sesión</button>
     </Link>
   </div>
+  <Footer/>
 </main>
 
     </>

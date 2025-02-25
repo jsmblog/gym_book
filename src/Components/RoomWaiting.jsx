@@ -34,7 +34,8 @@ const RoomWaiting = () => {
             setIsFirestoreUpdated(true);
 
             const role = docSnap.data().rol;
-            const homePath = role ? `/Home/${userId}` : "/";
+            const homePath = role && role === 'user' ? `/Home/${userId}` :
+                                     role === 'admin' ? `/Admin/${userId}` : "/";
             navigate(homePath, { replace: true });
 
             unsubscribe(); 

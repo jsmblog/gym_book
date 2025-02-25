@@ -6,6 +6,7 @@ import DisplayMessage from './../Components/DisplayMessage';
 import { db } from '../ConfigFirebase/config.js';
 import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore';
 import uuid from './../Js/uuid';
+import * as XLSX from "xlsx";
 
 const Iventory = React.memo(({ currentUserData }) => {
   // Estados para el formulario de agregar producto
@@ -203,6 +204,35 @@ const Iventory = React.memo(({ currentUserData }) => {
     setEditingProductData({ p: '', c: '', b: '', q: '', pr: '', l: '', s: '', d: '' });
   };
 
+const handleDownloadExcel = () => {
+    const dataForExcel = filteredInventory;
+    
+    if (dataForExcel.length === 0) {
+      messageError("No hay datos para exportar.");
+      return;
+    }
+    
+    const dataExcel = dataForExcel.map((product,index) => ({
+      "ID": index + 1,
+      "Producto": product.p,
+      "Marca": product.b,
+      "Categoría": product.c,
+      "Fecha de adquisición": product.d,
+      "Ubicación": product.l,
+      "Estado": product.s,
+      "Cantidad": product.q,
+      "Costo de adquisición": `$ ${product.pr}`,
+      "Total": parseFloat(product.q * product.pr),
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(dataExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario");
+  
+    const fileName = selectedDate ? `Inventario_${selectedDate}.xlsx` : "Inventario.xlsx";
+    XLSX.writeFile(workbook, fileName);
+  };
+
   return (
     <>
       <section className="users-management">
@@ -236,6 +266,9 @@ const Iventory = React.memo(({ currentUserData }) => {
             ) : (
               <button className="back-blue-dark">Susbríbete a un plan</button>
             )}
+            <button id='donwload-data-excel' onClick={handleDownloadExcel}>
+              Descargar datos a excel
+            </button>
           </div>
         </div>
 

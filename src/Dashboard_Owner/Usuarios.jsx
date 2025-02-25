@@ -6,6 +6,7 @@ import { db } from '../ConfigFirebase/config.js';
 import { arrayUnion, arrayRemove, doc, setDoc, updateDoc } from 'firebase/firestore';
 import uuid from './../Js/uuid';
 import formatDate from './../Js/formatDate';
+import * as XLSX from "xlsx";
 
 const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
   // Estados para búsqueda, paginación y formulario de nuevo usuario
@@ -25,7 +26,9 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
   const [saving, setSaving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false)
   const [message, messageError] = useMessage();
-
+  const [inventoryDates, setInventoryDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [totalRaised, setTotalRaised] = useState(0);
   // Estados para filtrar por estado y membresía
   const [statusFilter, setStatusFilter] = useState('');
   const [membershipFilter, setMembershipFilter] = useState('');
@@ -42,10 +45,15 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
     amount: ''
   });
 
+  
   useEffect(() => {
     const userList = currentUserData?.paid?.i_p ? currentUserData.users : fakeUsers;
     setUsers(userList);
     setFilteredUsers(userList);
+    const uniqueDates = [...new Set(userList.map(item => item.c))].filter(date => date);
+    setInventoryDates(uniqueDates);
+    const totalRaised = userList.reduce((acc, user) => acc + parseFloat(user.amount), 0);
+    setTotalRaised(totalRaised);
   }, [currentUserData, setUsers]);
 
   useEffect(() => {
@@ -65,9 +73,15 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
     if (membershipFilter) {
       filtered = filtered.filter(user => user.m === membershipFilter);
     }
+    // filtrado por fechas
+    if (selectedDate) {
+      filtered = filtered.filter(item => item.c === selectedDate);
+    }
+    const totalRaised = filtered.reduce((acc, user) => acc + parseFloat(user.amount), 0);
     setFilteredUsers(filtered);
+    setTotalRaised(totalRaised);
     setCurrentPage(1);
-  }, [searchQuery, statusFilter, membershipFilter, users]);
+  }, [searchQuery, statusFilter, membershipFilter, users, selectedDate]);
 
   // Cálculos para la paginación
   const indexOfLastUser = currentPage * itemsPerPage;
@@ -236,6 +250,35 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
     setEditingUserData({ n: '', e: '', s: '', m: '', md: '', mt: '', amount: '' });
   };
 
+  const handleDownloadExcel = () => {
+    const dataForExcel = filteredUsers;
+    
+    if (dataForExcel.length === 0) {
+      messageError("No hay datos para exportar.");
+      return;
+    }
+    
+    const dataExcel = dataForExcel.map((user,index) => ({
+      "ID": index + 1,
+      "Registrado": user.c,
+      "Nombre": user.n,
+      "Email": user.e,
+      "Estado": user.s,
+      "Membresía": user.m,
+      "Tipo Membresía": user.mt,
+      "Fecha Membresía": user.md,
+      "Finalización Membresía": user.fmd,
+      "Monto": parseFloat(user.amount),
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(dataExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Usuarios");
+  
+    const fileName = selectedDate ? `Usuarios_${selectedDate}.xlsx` : "Usuarios.xlsx";
+    XLSX.writeFile(workbook, fileName);
+  };
+  
   return (
     <>
       <section className="users-management">
@@ -262,6 +305,12 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
               <option value="Básico">Básico</option>
               <option value="Premium">Premium</option>
             </select>
+            <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+              <option value="">-- Filtre por fecha --</option>
+              {inventoryDates.map((date, index) => (
+                <option key={index} value={date}>{date}</option>
+              ))}
+            </select>
             {currentUserData?.paid?.i_p ? (
               <button className="back-blue-dark" onClick={() => setShowAddUserForm(true)}>
                 Agregar
@@ -269,6 +318,9 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
             ) : (
               <button className="back-blue-dark">Suscríbete a un plan</button>
             )}
+            <button id='donwload-data-excel' onClick={handleDownloadExcel}>
+              Descargar datos a excel
+            </button>
           </div>
         </div>
 
@@ -492,6 +544,9 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
               )}
             </tbody>
           </table>
+          <div className="total-amount">
+            <h3>Total recaudado : $ {totalRaised}</h3>
+          </div>
         </div>
 
         <div className="pagination">

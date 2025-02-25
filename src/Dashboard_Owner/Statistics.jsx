@@ -1,7 +1,9 @@
 import React from 'react'
 
-const Statistics = React.memo(({users}) => {
-    const totalUsers = users.length;
+const Statistics = React.memo(({users,currentUserData}) => {
+  const totalUsers = users.length;
+  const {statistics} = currentUserData;
+  console.log(statistics)
   const activeUsers = users.filter(user => user.s === 'Activo').length;
   const inactiveUsers = users.filter(user => user.s === 'Inactivo').length;
     return (

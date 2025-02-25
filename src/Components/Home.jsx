@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { useUserContext } from "../Context/UserContext.jsx"; 
-import SesionOff from "./SesionOff";
 import NavBarHome from "./NavBarHome";
 import "../Styles/stylesHome.css";
 import Post from "./Post.jsx";
@@ -22,7 +21,9 @@ const Home = React.memo(({ userId ,role }) => {
         rol: user.rol,
         ownerPhoto: user.imageProfile, 
         ownerId: user.uid, 
-        post: post || []
+        post: post || [],
+        s: user.statistics || [],
+        paid: user.paid || false,
       }))
     );
   }, [users]);

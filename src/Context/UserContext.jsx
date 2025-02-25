@@ -1,7 +1,6 @@
-// AuthContext.jsx
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { AUTH_USER, db } from "../ConfigFirebase/config.js";
 import decrypt from "../Js/decrypt.js";
 
@@ -47,15 +46,18 @@ export const AuthProvider = ({ children }) => {
             gender: decrypt(data.g) || "",
             numberTelf: decrypt(data.tel),
             province: decrypt(data.pro),
+            createAccount: data.c_a,
             imageProfile: decrypt(data.img),
             uid: data.uid,
             rol: data.rol,
+            birth:decrypt(data.birth) || '',
             inv: data.inv && Array.isArray(data.inv) && data.inv.length > 0 ? data.inv : [],
             instr: data.f_d && typeof data.f_d === "object" ? data.f_d : {},
             paid: data.paid && typeof data.paid === "object" ? data.paid : {},
             address: data.dir && decrypt(data.dir),
             name_gym: data.n_g && decrypt(data.n_g),
             users: data.u && Array.isArray(data.u) && data.u.length > 0 ? data.u : [],
+            statistics: data.s && Array.isArray(data.s) && data.s.length > 0 ? data.s : [],
             isOnline: data.on,
             posts: data.posts || [],
             gymData:
