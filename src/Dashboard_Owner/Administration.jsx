@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import '../Styles/stylesAdministration.css';
 import { useNavigate } from 'react-router-dom';
 import Usuarios from './Usuarios';
@@ -32,7 +32,7 @@ const Administration = React.memo((({currentUserData}) => {
   );
 
   const renderEstadisticasSection = () => (
-    <Statistics users={users} currentUserData={currentUserData} />
+    <Statistics currentUserData={currentUserData} />
   );
 
   const renderCampanasSection = () => (

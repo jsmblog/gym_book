@@ -114,7 +114,7 @@ const SignUpUser = () => {
         setPassword("");
         return;
       }
-      if (CURRENT_YEAR - dateBirth.slice(0, 4) < 18) {
+      if (CURRENT_YEAR - dateBirth.slice(0, 4) < 14) {
         messageError("Debes ser mayor de edad para registrarte.");
         setLoaderMessageSuccess(false);
         setDateBirth("");

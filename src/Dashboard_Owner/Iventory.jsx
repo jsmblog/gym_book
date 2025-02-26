@@ -6,7 +6,8 @@ import DisplayMessage from './../Components/DisplayMessage';
 import { db } from '../ConfigFirebase/config.js';
 import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore';
 import uuid from './../Js/uuid';
-import * as XLSX from "xlsx";
+import ExcelJS from 'exceljs'
+import {saveAs} from 'file-saver'
 
 const Iventory = React.memo(({ currentUserData }) => {
   // Estados para el formulario de agregar producto
@@ -203,37 +204,79 @@ const Iventory = React.memo(({ currentUserData }) => {
     setEditingProductId(null);
     setEditingProductData({ p: '', c: '', b: '', q: '', pr: '', l: '', s: '', d: '' });
   };
-
-const handleDownloadExcel = () => {
-    const dataForExcel = filteredInventory;
+  
+  const handleDownloadExcel = async () => {
+    const dataForExcel = filteredInventory; 
     
     if (dataForExcel.length === 0) {
       messageError("No hay datos para exportar.");
       return;
     }
     
-    const dataExcel = dataForExcel.map((product,index) => ({
-      "ID": index + 1,
-      "Producto": product.p,
-      "Marca": product.b,
-      "Categoría": product.c,
-      "Fecha de adquisición": product.d,
-      "Ubicación": product.l,
-      "Estado": product.s,
-      "Cantidad": product.q,
-      "Costo de adquisición": `$ ${product.pr}`,
-      "Total": parseFloat(product.q * product.pr),
-    }));
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Inventario');
   
-    const worksheet = XLSX.utils.json_to_sheet(dataExcel);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario");
+    const headerRow = worksheet.addRow([
+      "ID", "Producto", "Marca", "Categoría", "Fecha de adquisición", "Ubicación", "Estado", "Cantidad", "Costo de adquisición", "Total"
+    ]);
+    
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1E88E5' },
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
   
+    // Agregar filas de datos
+    dataForExcel.forEach((product, index) => {
+      const row = worksheet.addRow([
+        index + 1,
+        product.p,
+        product.b,
+        product.c,
+        product.d,
+        product.l,
+        product.s,
+        product.q,
+        `$ ${product.pr}`,
+        parseFloat(product.q * product.pr)
+      ]);
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'left' };
+      });
+    });
+  
+    // Ajustar ancho de las columnas
+    worksheet.columns.forEach((column) => {
+      let maxLength = 10;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const cellValue = cell.value ? cell.value.toString() : '';
+        maxLength = Math.max(maxLength, cellValue.length);
+      });
+      column.width = maxLength + 2;
+    });
+  
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
     const fileName = selectedDate ? `Inventario_${selectedDate}.xlsx` : "Inventario.xlsx";
-    XLSX.writeFile(workbook, fileName);
+    saveAs(blob, fileName);
   };
-
-  return (
+    return (
     <>
       <section className="users-management">
         <h4 className='added'>{`${currentInventoryItems.length} ${inventory?.length === 0 || inventory?.length > 1 ? `productos añadidos` : `producto añadido`}`}</h4>

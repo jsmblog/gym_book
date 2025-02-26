@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import provinces from '../Js/provinces';
 import { useNavigate } from 'react-router-dom';
 
 const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const backHome = () => {
     navigate(-1, { replace: true });
@@ -11,12 +12,15 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
+      setLoading(true);
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
         const provinceName = await getProvinceFromCoordinates(latitude, longitude);
         setProvince(provinceName);
+        setLoading(false);
       }, (error) => {
         console.error("Error obteniendo la ubicación:", error);
+        setLoading(false);
       });
     } else {
       console.error("Geolocalización no soportada en este navegador.");
@@ -27,7 +31,7 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
       const data = await response.json();
-      return data.address.state || ""; // Devuelve el nombre de la provincia
+      return data.address.state || "";
     } catch (error) {
       console.error("Error obteniendo la provincia:", error);
       return "";
@@ -49,7 +53,7 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
           Buscar por mi ubicación
         </button>
         <label>
-          Filtrar:{" "}
+          Filtrar: {" "}
           <select onChange={(e) => setProvince(e.target.value)} className="province-select">
             <option value="">-- Todas las provincias --</option>
             {provinces.map((p, index) => (
@@ -62,6 +66,14 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
           </select>
         </label>
       </div>
+
+      {loading && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="loader-search"></div>
+          </div>
+        </div>
+      )}
     </>
   );
 });

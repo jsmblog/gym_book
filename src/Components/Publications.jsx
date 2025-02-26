@@ -173,7 +173,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
           const calculatedAge = new Date().getFullYear() - new Date(currentUser.birth).getFullYear();
   
           const visitorData = {
-            c: formatDate(timeStamp),         // Fecha de la primera visita
+            c: formatDateCompleted(timeStamp),         // Fecha de la primera visita
             id: currentUser.uid,             // ID del usuario visitante
             n: currentUser.name,             // Nombre
             p: currentUser.imageProfile,      // Foto

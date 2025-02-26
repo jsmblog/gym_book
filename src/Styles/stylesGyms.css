@@ -77,3 +77,19 @@ border-radius: 50%;
     transition: .3s ease-in-out;
     overflow-x: auto;
 }
+.loader-search {
+    --w:10ch;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 20px;
+    line-height: 1.2em;
+    letter-spacing: var(--w);
+    width: var(--w);
+    overflow: hidden;
+    white-space: nowrap;
+    color: #0000;
+    animation: l17 2s infinite;
+  }
+  .loader-search:before {
+    content:"Buscando...";
+  }

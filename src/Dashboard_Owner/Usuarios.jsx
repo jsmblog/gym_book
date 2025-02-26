@@ -6,7 +6,8 @@ import { db } from '../ConfigFirebase/config.js';
 import { arrayUnion, arrayRemove, doc, setDoc, updateDoc } from 'firebase/firestore';
 import uuid from './../Js/uuid';
 import formatDate from './../Js/formatDate';
-import * as XLSX from "xlsx";
+import ExcelJS from 'exceljs'
+import {saveAs} from 'file-saver'
 
 const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
   // Estados para búsqueda, paginación y formulario de nuevo usuario
@@ -14,7 +15,9 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
+  const totalUsers = users.length;
+  const activeUsers = users.filter(user => user.s === 'Activo').length;
+  const inactiveUsers = users.filter(user => user.s === 'Inactivo').length;
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -250,37 +253,96 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
     setEditingUserData({ n: '', e: '', s: '', m: '', md: '', mt: '', amount: '' });
   };
 
-  const handleDownloadExcel = () => {
-    const dataForExcel = filteredUsers;
-    
-    if (dataForExcel.length === 0) {
-      messageError("No hay datos para exportar.");
-      return;
-    }
-    
-    const dataExcel = dataForExcel.map((user,index) => ({
-      "ID": index + 1,
-      "Registrado": user.c,
-      "Nombre": user.n,
-      "Email": user.e,
-      "Estado": user.s,
-      "Membresía": user.m,
-      "Tipo Membresía": user.mt,
-      "Fecha Membresía": user.md,
-      "Finalización Membresía": user.fmd,
-      "Monto": parseFloat(user.amount),
-    }));
+
+const handleDownloadExcel = async () => {
+  const dataForExcel = filteredUsers; // Asume que "filteredUsers" está definido en el alcance.
   
-    const worksheet = XLSX.utils.json_to_sheet(dataExcel);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Usuarios");
+  if (dataForExcel.length === 0) {
+    messageError("No hay datos para exportar.");
+    return;
+  }
   
-    const fileName = selectedDate ? `Usuarios_${selectedDate}.xlsx` : "Usuarios.xlsx";
-    XLSX.writeFile(workbook, fileName);
-  };
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Usuarios');
+
+  // Agregar encabezado con estilos
+  const headerRow = worksheet.addRow([
+    "ID", "Registrado", "Nombre", "Email", "Estado", "Membresía", "Tipo Membresía", "Fecha Membresía", "Finalización Membresía", "Monto"
+  ]);
   
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF1E88E5' },
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  // Agregar filas de datos
+  dataForExcel.forEach((user, index) => {
+    const row = worksheet.addRow([
+      index + 1,
+      user.c,
+      user.n,
+      user.e,
+      user.s,
+      user.m,
+      user.mt,
+      user.md,
+      user.fmd,
+      parseFloat(user.amount)
+    ]);
+    row.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'left' };
+    });
+  });
+
+  // Ajustar ancho de las columnas
+  worksheet.columns.forEach((column) => {
+    let maxLength = 10;
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      const cellValue = cell.value ? cell.value.toString() : '';
+      maxLength = Math.max(maxLength, cellValue.length);
+    });
+    column.width = maxLength + 2;
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/octet-stream' });
+  const fileName = selectedDate ? `Usuarios_${selectedDate}.xlsx` : "Usuarios.xlsx";
+  saveAs(blob, fileName);
+};
+
   return (
     <>
+    <div className="stats-cards">
+        <div className="card">
+          <h3>Total de Usuarios</h3>
+          <p>{totalUsers}</p>
+        </div>
+        <div className="card">
+          <h3>Usuarios Activos</h3>
+          <p>{activeUsers}</p>
+        </div>
+        <div className="card">
+          <h3>Usuarios Inactivos</h3>
+          <p>{inactiveUsers}</p>
+        </div>
+      </div>
       <section className="users-management">
         <h4 className='added'>
           {`${currentUsers.length} ${users?.length === 0 || users?.length > 1 ? `usuarios añadidos` : `usuario añadido`}`}
@@ -573,6 +635,7 @@ const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
           </button>
         </div>
       </section>
+      
       <DisplayMessage message={message} />
     </>
   );
