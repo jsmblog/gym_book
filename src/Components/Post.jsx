@@ -14,7 +14,7 @@ import { setDoc, doc, arrayUnion } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import encrypt from './../Js/encrypt';
 import convertToWebP from '../Js/convertToWebp.js';
-
+const MAX_LENGTH = 255 ;
 const Post = React.memo(({ currentUser }) => {
   const { name, imageProfile, isOnline, uid } = currentUser || {};
   const [message, messageError] = useMessage();
@@ -212,8 +212,9 @@ const Post = React.memo(({ currentUser }) => {
               <div id='isOnline' style={{ backgroundColor: isOnline ? 'greenyellow' : 'red' }}></div>
               {selectedSentiment && <h5>{`Me siento ${selectedSentiment}`}</h5>}
             </section>
+                <h6 id='max-length'>{MAX_LENGTH - textPublish.length}</h6>
             <section className="post__content">
-              <textarea placeholder={`Escribe aquí ${name}...`} id="textarea-post" maxLength={255} value={textPublish} onChange={(e) => setTextPublish(e.target.value)} />
+              <textarea placeholder={`Escribe aquí ${name}...`} id="textarea-post" maxLength={MAX_LENGTH} value={textPublish} onChange={(e) => setTextPublish(e.target.value)} />
               <div id='cont-icons-actions' className='btns-for-create-publish'>
                 <button onClick={handleAddSentiment}><img src={iconLaugh} title="Añadir estado sentimental" alt="" /></button>
                 <button onClick={handleAddLink}><img src={iconLink} title="Añadir enlace" alt="" />{link && "✅"}</button>

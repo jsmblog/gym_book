@@ -1,12 +1,20 @@
-// src/components/Search.jsx
+// src/components/SearchInstructors.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import provinces from '../Js/provinces';
 import useGeolocation from '../Hooks/useGeolocation';
 
-const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
+const SearchInstructors = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
   const navigate = useNavigate();
   const { getUserLocation, loading } = useGeolocation(setProvince);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleProvinceChange = (e) => {
+    setProvince(e.target.value);
+  };
 
   const backHome = () => {
     navigate(-1, { replace: true });
@@ -18,17 +26,17 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
         <button onClick={backHome} id="go-back-search">←</button>
         <input
           type="text"
-          placeholder="🔎 Busca un gimnasio por su nombre..."
+          placeholder="Busca un instructor por nombre..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="search-input"
         />
         <button className="back-blue-dark" onClick={getUserLocation}>
-          Gimnasios cerca
+          Instructores cerca
         </button>
         <label>
           Filtrar:{" "}
-          <select onChange={(e) => setProvince(e.target.value)} className="province-select" defaultValue="">
+          <select onChange={handleProvinceChange} className="province-select" defaultValue="">
             <option value="">-- Todas las provincias --</option>
             {provinces.map((p, index) => (
               <optgroup key={index} label={p.provincia}>
@@ -52,4 +60,4 @@ const Search = React.memo(({ setSearchTerm, searchTerm, setProvince }) => {
   );
 });
 
-export default Search;
+export default SearchInstructors;

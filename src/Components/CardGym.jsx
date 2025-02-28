@@ -25,7 +25,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
             <section className="gym-card-body">
               <img src={imageProfile} alt={name_gym} className="gym-image gym-image_width" />
               <div>
-                <h2>{name_gym}</h2>
+                <h2 className='name'>{name_gym}</h2>
                 <p className="gym-card__province">{province} - {address}</p>
                 <a href={`tel:${contact}`} className="contact-link">
                   <h4>{contact}</h4>
@@ -37,7 +37,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
             </p>
             {gym_data.m_m && (
               <p className="max-people">
-                Aforo máximo: <span>{gym_data.m_m}</span> personas
+                <strong>Aforo máximo:</strong> <span>{gym_data.m_m}</span> personas
               </p>
             )}
             {paid.i_p && (
@@ -101,7 +101,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
             </div>
             {gym_data.p_m?.length > 0 && (
               <div className="payment-methods">
-                <h3>Métodos de pago:</h3>
+                <strong>Métodos de pago:</strong>
                 <p className="payment-item">{gym_data.p_m.join(' , ')}</p>
               </div>
             )}
@@ -136,11 +136,10 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
                   {gym_data.branches.map(branch => (
                   <div key={branch.id} className="branch">
                     <h3 className='libre-Baskerville'>{branch.name}</h3>
-                    <p>{branch.address}</p>
+                    <p>Dir : {branch.address}</p>
                     <iframe
                       width="300"
                       height="200"
-                      frameBorder="0"
                       style={{ border: 0 }}
                       src={`https://www.google.com/maps/embed/v1/place?key=${API_KEY_GOOGLE}&q=${branch.lat},${branch.lng}`}
                       allowFullScreen

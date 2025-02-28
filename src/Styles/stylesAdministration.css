@@ -407,7 +407,7 @@
   bottom: 1.5rem;
 }
 #width-icon-statistics {
-  width: 400px;
+  width: 350px;
 }
 .custom-tooltip {
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -427,14 +427,13 @@
   border-right: 1px solid var(--co-back-gray-3);
 }
 @media  screen and (max-width: 768px) {
-  .custom-tooltip {
-    width: 100%;
-  }
+
   .header-administration h1 {
     font-size: .9rem;
   }
   #go-back-admin {
     font-size: 1rem;
+    left: 0;
   }
   .header-actions {
     width: 100%;
@@ -447,16 +446,16 @@
   width: 100%;
 }
 .total-amount {
-  bottom: 0;
-  font-size: .75rem;
-  right: .2rem;
+  display: none;
+}
+.charts {
+  height: auto;
 }
 }
   @media (max-width: 992px) {
     .dashboard-container {
       flex-direction: column;
     }
-  
     .sidebar {
       width: 100%;
       text-align: center;

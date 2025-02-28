@@ -12,6 +12,7 @@ const SesionOff = () => {
   const handleSignOut = async () => {
     try {
       sessionStorage.removeItem('gyms')
+      sessionStorage.removeItem('instructors')
       await signOut(AUTH_USER);
       setTimeout(() => {
         navigate("/");

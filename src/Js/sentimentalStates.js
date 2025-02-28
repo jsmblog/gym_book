@@ -1,1 +1,1 @@
-const sentimentalStates=["Feliz 😄","Triste 😔","Enojado 😠","Sorprendido 😮","Confundido 🤔","Emocionado 😁","Agradecido 😊","Nostálgico 😔","Decepcionado 😞","Ansioso 😬"];export default sentimentalStates;
+const sentimentalStates=["Feliz 😄","Triste 😔","Enojado 😠","Sorprendido 😮","Confundido 🤔","Emocionado 😁","Agradecido 😊","Nostálgico 😔", "Motivado 💪🏻","Decepcionado 😞","Ansioso 😬"];export default sentimentalStates;

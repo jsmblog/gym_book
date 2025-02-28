@@ -1,6 +1,6 @@
 .perfil-container {
     width: 85%;
-    height: 100vh;
+    height: auto;
     margin: 0 auto;
     font-family: Arial, sans-serif;
     padding: 20px;
@@ -206,6 +206,13 @@ box-shadow: 0 5px 10px -5px var(--co-back-gray);
 }
 .delete-button:hover {
     background-color: var(--co-back-gray-2);
+}
+.cont-followers {
+    position: absolute;
+    right: 0;
+    bottom: .35rem;
+    display: flex;
+    gap: .5rem;
 }
 
 @media (max-width: 768px) {

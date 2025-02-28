@@ -1,4 +1,3 @@
-// Statistics.jsx
 import React, { useMemo, useState } from 'react';
 import iconStatistics from '/statistics.webp';
 import ChartBar from './Charts/ChartBar';
@@ -15,11 +14,14 @@ import GenderAgeChart from './Charts/GenderAgeChart';
 const Statistics = ({ currentUserData }) => {
   const { paid, statistics, posts } = currentUserData;
   const [activeTab, setActiveTab] = useState('visits');
+
+  // Si no ha pagado, no se realizan cálculos y se retorna valor por defecto
   const chartItems = useMemo(() => {
+    if (!(paid && paid.i_p)) return [];
     if (!statistics || !Array.isArray(statistics)) return [];
     return statistics.map((stat) => ({
       label: stat.n || stat.id || 'Usuario',
-      visits: stat.v?.c || 0, // visitas
+      visits: stat.v?.c || 0,
       firstVisit: stat.c || 'Fecha desconocida',
       lastVisit: stat.v?.l || 'Sin última visita',
       image: stat.p || '',
@@ -28,10 +30,11 @@ const Statistics = ({ currentUserData }) => {
       telf: stat.t || '',
       province: stat.pr || '',
     }));
-  }, [statistics]);
+  }, [statistics, paid]);
 
   // Total de interacciones: likes, comentarios y compartidos
   const interactionsData = useMemo(() => {
+    if (!(paid && paid.i_p)) return { totalLikes: 0, totalComments: 0, totalShares: 0 };
     if (!posts) return { totalLikes: 0, totalComments: 0, totalShares: 0 };
     return posts.reduce(
       (acc, post) => {
@@ -42,10 +45,11 @@ const Statistics = ({ currentUserData }) => {
       },
       { totalLikes: 0, totalComments: 0, totalShares: 0 }
     );
-  }, [posts]);
+  }, [posts, paid]);
 
   // Top de usuarios que comentan
   const topCommenters = useMemo(() => {
+    if (!(paid && paid.i_p)) return [];
     if (!posts) return [];
     const counts = {};
     posts.forEach((post) => {
@@ -59,10 +63,11 @@ const Statistics = ({ currentUserData }) => {
     return Object.entries(counts)
       .map(([user, count]) => ({ user, count }))
       .sort((a, b) => b.count - a.count);
-  }, [posts]);
+  }, [posts, paid]);
 
   // Interacciones por publicación
   const interactionsPerPost = useMemo(() => {
+    if (!(paid && paid.i_p)) return { labels: [], data: [] };
     if (!posts) return { labels: [], data: [] };
     const labels = posts.map((_, i) => `Post ${i + 1}`);
     const data = posts.map(
@@ -72,7 +77,7 @@ const Statistics = ({ currentUserData }) => {
         (post.shared ? post.shared.length : 0)
     );
     return { labels, data };
-  }, [posts]);
+  }, [posts, paid]);
 
   // Preparamos los datasets para cada gráfico
   const interactionsBarData = {
@@ -196,7 +201,6 @@ const Statistics = ({ currentUserData }) => {
                 <ChartPieI chartData={topCommentersData} title="Top Comentadores" />
                 <ChartLineI chartData={interactionsLineData} title="Interacciones por Publicación" />
                 <ChartDoughnutI chartData={interactionsDoughnutData} title="Proporción de Reacciones" />
-
               </>
             )}
           </div>

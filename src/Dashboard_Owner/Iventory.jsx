@@ -8,6 +8,7 @@ import { arrayRemove, arrayUnion, doc, setDoc, updateDoc } from 'firebase/firest
 import uuid from './../Js/uuid';
 import ExcelJS from 'exceljs'
 import {saveAs} from 'file-saver'
+import { Link } from 'react-router-dom';
 
 const Iventory = React.memo(({ currentUserData }) => {
   // Estados para el formulario de agregar producto
@@ -307,7 +308,9 @@ const Iventory = React.memo(({ currentUserData }) => {
                 Agregar
               </button>
             ) : (
-              <button className="back-blue-dark">Susbríbete a un plan</button>
+              <Link to="/planes">
+              <button className="back-blue-dark">Suscríbete a un plan</button>
+              </Link>
             )}
             <button id='donwload-data-excel' onClick={handleDownloadExcel}>
               Descargar datos a excel

@@ -8,6 +8,7 @@ import uuid from './../Js/uuid';
 import formatDate from './../Js/formatDate';
 import ExcelJS from 'exceljs'
 import {saveAs} from 'file-saver'
+import { Link } from 'react-router-dom';
 
 const Usuarios = React.memo(({ currentUserData, users, setUsers }) => {
   // Estados para búsqueda, paginación y formulario de nuevo usuario
@@ -378,7 +379,9 @@ const handleDownloadExcel = async () => {
                 Agregar
               </button>
             ) : (
+              <Link to="/planes">
               <button className="back-blue-dark">Suscríbete a un plan</button>
+              </Link>
             )}
             <button id='donwload-data-excel' onClick={handleDownloadExcel}>
               Descargar datos a excel
@@ -610,7 +613,6 @@ const handleDownloadExcel = async () => {
             <h3>Total recaudado : $ {totalRaised}</h3>
           </div>
         </div>
-
         <div className="pagination">
           <button
             onClick={() => setCurrentPage(currentPage - 1)}

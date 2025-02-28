@@ -16,11 +16,11 @@ import iconPersonal from '/personal.webp';
 import iconSucursal from '/sucursales.webp';
 import encrypt from './../Js/encrypt';
 import { updatePassword } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 const API_KEY = API_KEY_GOOGLE
 
 const Config = React.memo(({ currentUserData }) => {
   const rol = currentUserData?.rol || ''
-  console.log(currentUserData)
   const [province, setProvince] = useState(currentUserData.province || '')
   const [gymName, setGymName] = useState(currentUserData.name_gym || '')
   const [address, setAddress] = useState(currentUserData.address || '')
@@ -430,7 +430,9 @@ const Config = React.memo(({ currentUserData }) => {
             <iframe src={newBranch.location} width='300' height='200' allowFullScreen></iframe>
           )}
           {
-            currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button> : <button className='back-blue-dark'>Suscríbete a un plan</button>
+            currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddBranch}>{isAddBranch ? 'Añadiendo...' : 'Añadir Sucursal'}</button> : <Link to="/planes">
+            <button className="back-blue-dark">Suscríbete a un plan</button>
+            </Link>
           }
           {
             isOnBoxSucursal && <div id='personnel'>
@@ -493,7 +495,9 @@ const Config = React.memo(({ currentUserData }) => {
             </select>
           </label>
 {
- currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddPerson}>{isAddedPersonel ? 'Añadiendo...' : 'Añadir Personal'}</button> : <button className='back-blue-dark'>Suscríbete a un plan</button>
+ currentUserData.paid.i_p ? <button className='back-blue-dark' onClick={handleAddPerson}>{isAddedPersonel ? 'Añadiendo...' : 'Añadir Personal'}</button> : <Link to="/planes">
+               <button className="back-blue-dark">Suscríbete a un plan</button>
+               </Link>
 }
           {
             isOnBoxPersonnel && <div id='personnel'>

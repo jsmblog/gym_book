@@ -16,6 +16,7 @@ import Perfil from './Components/Perfil.jsx';
 import './Styles/stylesDarkMode.css'
 import Administration from './Dashboard_Owner/Administration.jsx';
 import Admin from './Components/Admin.jsx';
+import CardPlans from './Components/CardPlans.jsx';
 
 function App() {
   const { authUser, currentUserData, isLoading } = useUserContext();
@@ -68,7 +69,7 @@ function App() {
         <Route path='/gimnasios/:userId' element={<Gyms role={role} userId={userId} />} />
         <Route path='/perfil/:userId' element={ <Perfil currentUserData={currentUserData} /> } />
         </Route>
-
+        <Route path='/planes' element={<CardPlans/>}/>
         <Route path="/*" element={<PageNotFound />} />
         <Route path='/registro/usuario' element={<SignUpUser />} />
         <Route path='/registro/propietario' element={<SignUpBearer />} />
