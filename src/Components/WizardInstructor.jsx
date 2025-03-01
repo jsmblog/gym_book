@@ -119,18 +119,18 @@ const WizardInstructor = React.memo(({ instructorData }) => {
       const userDoc = {
         n: name,         // name -> n
         e: encrypt(email),        // email -> e
-        img: encrypt(downloadUrl),// imageProfile -> img
-        c_a: formatDate(createAccount), // createAccount -> c_a
-        rol: userRole,            // userRole -> rol
+        i: downloadUrl,// imageProfile -> i
+        ca: formatDate(createAccount), // createAccount -> ca
+        r: userRole,            // userRole -> rol
         uid: userId,
         g: gender,
         c: country,   // country -> c
-        pro: province,   // province -> prov
-        birth: dateBirth,
+        pr: province,   // province -> prov
+        b: dateBirth,
         on: isOnline,             // isOnline -> on
-        tel: numberTelf, // numberTelf -> tel
+        t: numberTelf, // numberTelf -> tel
         v: emailVerified,         // emailVerified -> v
-        posts: [],
+        p: [], // posts
         f_d:formData,
         u:[],
         paid:{i_p:false,t_p:'',d:''},

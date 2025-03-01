@@ -16,6 +16,7 @@ const CardInstructor = React.memo(({ selectedInstructor, setSelectedInstructor }
     birth,
     email,
     province,
+    country,
     contact,
     instructor_data = {}
   } = selectedInstructor;
@@ -40,7 +41,7 @@ const CardInstructor = React.memo(({ selectedInstructor, setSelectedInstructor }
               />
               <div>
                 <h2 className='name'>{name_instructor} - {CALCULATED_AGE} años</h2>
-                <p className="gym-card__province">{province}</p>
+                <p className="gym-card__province">{country} - {province}</p>
                 <a href={`tel:${contact}`} className="contact-link">
                   <h4>{contact}</h4>
                 </a>

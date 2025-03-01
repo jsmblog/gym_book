@@ -10,7 +10,7 @@ import DisplayMessage from './DisplayMessage';
 import validateUrl from './../Js/validateUrl';
 import { db, STORAGE } from '../ConfigFirebase/config.js';
 import uuid from './../Js/uuid';
-import { setDoc, doc, arrayUnion } from 'firebase/firestore';
+import { setDoc, doc, arrayUnion, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import encrypt from './../Js/encrypt';
 import convertToWebP from '../Js/convertToWebp.js';
@@ -175,12 +175,12 @@ const Post = React.memo(({ currentUser }) => {
           }
         }
         const createdAt = new Date().toISOString();
-        const post_id = uuid(30);
+        const post_id = uuid(15);
         const objectPost = {
           d: textPublish ? encrypt(textPublish) : '',
           m: uploadedFiles,
           l: link ? encrypt(link) : '',
-          s: selectedSentiment ? encrypt(selectedSentiment) : '',
+          s: selectedSentiment ? selectedSentiment : '',
           c_a: createdAt,
           post_id,
           likes: [],
@@ -188,7 +188,7 @@ const Post = React.memo(({ currentUser }) => {
           shared: [],
           i_sh: false
         };
-        await setDoc(docRef, { posts: arrayUnion(objectPost) }, { merge: true });
+        await updateDoc(docRef, { p: arrayUnion(objectPost) });
         setIsCreatedPublish(false);
         messageError("Publicación creada exitosamente 😄");
       }

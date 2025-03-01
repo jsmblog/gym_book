@@ -21,7 +21,7 @@ const RoomWaiting = () => {
       const currentUser = auth.currentUser;
       if (!currentUser) return;
 
-      await currentUser.reload(); // Actualiza la info del usuario
+      await currentUser.reload(); 
       if (currentUser.emailVerified) {
         setIsVerified(true);
 
@@ -33,7 +33,7 @@ const RoomWaiting = () => {
             await updateDoc(userDocRef, { v: true }); 
             setIsFirestoreUpdated(true);
 
-            const role = docSnap.data().rol;
+            const role = docSnap.data().r;
             const homePath = role && role === 'user' ? `/Home/${userId}` :
                                      role === 'admin' ? `/Admin/${userId}` : "/";
             navigate(homePath, { replace: true });

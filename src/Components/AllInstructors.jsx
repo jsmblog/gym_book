@@ -8,21 +8,21 @@ import sliceText from './../Js/sliceText';
 const AllInstructors = React.memo(({ filteredInstructors, setSelectedInstructor }) => {
   return (
     <section className="all-gyms"> 
-      {filteredInstructors?.length > 0 ? filteredInstructors.map(({ uid, name_instructor, imageProfile,birth, province, instructor_data, email, contact, address }) => (
+      {filteredInstructors?.length > 0 ? filteredInstructors.map(({ uid, name_instructor, imageProfile,birth, country,province, instructor_data, email, contact, address }) => (
         <div 
           key={uid} 
           className="gym-card" 
-          onClick={() => setSelectedInstructor({ uid, name_instructor, imageProfile,birth , province, instructor_data, email, contact, address })}
+          onClick={() => setSelectedInstructor({ uid, name_instructor, imageProfile,birth , country,province, instructor_data, email, contact, address })}
         >
           <div className="gym-card__image">
             <img src={imageProfile} alt={name_instructor} className="gym-image" />
             <h5 className='merriweather-bold'>{name_instructor}</h5>
-            <p className="gym-card__province">{province}</p>
+            <p className="gym-card__province">{country} {province}</p>
           </div>
           <p className='gym-data__description'>
-            {instructor_data?.p_i.s.join(', ')} : {instructor_data?.p_i.bio ? sliceText(instructor_data.p_i.bio, 50) : ''}
+            {instructor_data?.p_i?.s?.join(', ')} : {instructor_data?.p_i?.bio ? sliceText(instructor_data.p_i.bio, 50) : ''}
           </p>
-          <h5>{instructor_data.p_i.exp} años de experiencia</h5>
+          <h5>{instructor_data.p_i?.exp} años de experiencia</h5>
           <div className="social-links">
             {[
               { key: 'wh', icon: i_wh },

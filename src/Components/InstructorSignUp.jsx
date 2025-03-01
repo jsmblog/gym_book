@@ -110,21 +110,20 @@ const InstructorSignUp = () => {
         return;
       }
   
-      const createdAt = new Date().toISOString();
       const userDoc = {
-        name: encrypt(nameUser),
+        name:nameUser,
         email: email,
-        imageProfile: photo, // En este ejemplo se guarda el archivo; en un flujo real se convertiría y subiría a storage
-        createAccount: createdAt,
+        imageProfile: photo, 
         userRole: "instructor",
-        dateBirth: encrypt(dateBirth),
+        dateBirth: dateBirth,
         password: encrypt(password),
-        province: encrypt(province),
-        gender: encrypt(gender),
+        province:province,
+        gender:gender,
         isOnline: true,
-        numberTelf: encrypt(numberTelf),
+        numberTelf:numberTelf,
         emailVerified: false,
-        country: encrypt(selectedCountry)
+        country:selectedCountry,
+        createdAccount : new Date().toISOString(),
       };
       setInstructorData(userDoc);
       setIsWizard(true);

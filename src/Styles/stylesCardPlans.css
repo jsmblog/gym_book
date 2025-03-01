@@ -1,55 +1,47 @@
-/* Contenedor principal de las tarjetas */
 .card-plans-container {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    padding: 2rem;
-    background-color: #f7f7f7;
+    padding: .75rem;
     flex-wrap: wrap;
   }
-  
-  /* Estilo base para cada tarjeta */
+  .back {
+    position: absolute;
+    left: .75rem;
+    font-size: 1.4rem;
+  }
   .card-plan {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
+    border: 1px solid var(--co-back-gray);
+    border-radius: 15px;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    height: 100%;
+    box-shadow: 0 8px 10px -5px var(--co-back-gray);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
-  .card-plan:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Títulos de los planes */
   .plan-title {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: #333;
+    margin-bottom: 0.2rem;
+    color: var(--co-black-1);
     text-align: center;
   }
   
-  /* Descripción del plan */
   .plan-description {
     font-size: 1rem;
     margin-bottom: 1rem;
     text-align: center;
-    color: #666;
   }
   
-  /* Lista de características del plan */
   .plan-features {
     list-style: none;
     padding: 0;
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
-    color: #444;
+    color: var(--co-gray);
   }
   
   .plan-features li {
@@ -58,7 +50,6 @@
     position: relative;
   }
   
-  /* Icono de verificación para cada característica */
   .plan-features li::before {
     content: '✓';
     position: absolute;
@@ -67,37 +58,23 @@
     font-weight: bold;
   }
   
-  /* Botones de acción */
   .plan-button {
     display: block;
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
     font-weight: bold;
-    border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-align: center;
+    color: var(--co-white);
   }
   
-  /* Botón del plan Free */
   .free-button {
-    background-color: #3498db;
-    color: #fff;
+    background-color: var(--co-blue-1);
   }
   
-  .free-button:hover {
-    background-color: #2980b9;
+  .premium-button {
+background-color: #27ae60;
   }
-  
-  /* Botón del plan Básico */
-  .basic-button {
-    background-color: #e67e22;
-    color: #fff;
-  }
-  
-  .basic-button:hover {
-    background-color: #d35400;
-  }
-  

@@ -9,7 +9,7 @@ const CardPlans = React.memo(() => {
     }
   return (
     <div className="card-plans-container">
-        <button onClick={goBack} >←</button>
+        <button className='back' onClick={goBack} >←</button>
       <div className="card-plan free-plan">
         <h2 className="plan-title">Plan Free</h2>
         <p className="plan-description">
@@ -17,12 +17,11 @@ const CardPlans = React.memo(() => {
         </p>
         <ul className="plan-features">
           <li>Creación y publicación de contenido</li>
-          <li>Gestión básica de usuarios</li>
           <li>Registra tu gimnasio</li>
           <li>Muestra tus tarifas y horarios</li>
           <li>Crea una comunidad</li>
         </ul>
-        <button className="plan-button free-button">¡Empieza Gratis!</button>
+        <button onClick={goBack} className="plan-button free-button">¡Empieza Gratis!</button>
       </div>
 
       <div className="card-plan basic-plan">
@@ -44,7 +43,7 @@ const CardPlans = React.memo(() => {
           <li>Soporte premium y actualizaciones continuas</li>
         </ul>
         <h6>(equivalente a <strong>$15 USD/mes</strong>)</h6>
-        <button className="plan-button basic-button">¡Hazlo Premium!</button>
+        <button className="plan-button premium-button">¡Hazlo Premium!</button>
       </div>
     </div>
   );

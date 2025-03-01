@@ -99,15 +99,15 @@ const SignUpBearer = () => {
         name: nameUser,
         nameGym,
         email,
-        imageProfile: photo, // En un flujo real, aquí se subiría y obtendría la URL de la imagen
+        imageProfile: photo, 
         createAccount,
         userRole: 'owner',
         password: encrypt(password),
-        province: encrypt(geoGym),
+        province:geoGym,
         isOnline: true,
         numberTelf,
         emailVerified: false,
-        country: encrypt(selectedCountry)
+        country:selectedCountry,
       };
       setInfoPrincipalGym(userDoc);
       setIsWizard(true);

@@ -15,7 +15,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
     );
   }
 
-  const { uid, name_gym, imageProfile, email, contact, address, province, gym_data, paid } = selectedGym || {};
+  const { uid, name_gym, imageProfile, email, contact, address, country,province, gym_data, paid } = selectedGym || {};
   return (
     <>
       {selectedGym !== null && (
@@ -26,7 +26,7 @@ const CardGym = React.memo(({ selectedGym, setSelectedGym }) => {
               <img src={imageProfile} alt={name_gym} className="gym-image gym-image_width" />
               <div>
                 <h2 className='name'>{name_gym}</h2>
-                <p className="gym-card__province">{province} - {address}</p>
+                <p className="gym-card__province">{country} - {province} - {address}</p>
                 <a href={`tel:${contact}`} className="contact-link">
                   <h4>{contact}</h4>
                 </a>

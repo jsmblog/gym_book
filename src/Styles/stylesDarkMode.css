@@ -7,6 +7,7 @@
 .dark-mode * button,
 .dark-mode #nav-bar-home button,
 .dark-mode .gym-card,
+.dark-mode .tab-button.active,
 .dark-mode table ,.dark-mode .Form-signIn , .dark-mode #label-photo{
     background-color: var(--co-);
     color: var(--co-back-gray-2);
@@ -23,7 +24,7 @@
     background-color: var(--co-back-gray-5);
     color: var(--co-txt-dark);
 }
-.dark-mode .gym-card__tables table , .dark-mode .table-header h2,.dark-mode .campaigns-section h2, .dark-mode .btn-save  ,.dark-mode .popup-content button, .dark-mode .gym-card__tables table td , .dark-mode .pagination button {
+.dark-mode .gym-card__tables table , .dark-mode .table-header h2,.dark-mode .campaigns-section h2, .dark-mode .btn-save  ,.dark-mode .popup-content button, .dark-mode .gym-card__tables table td , .dark-mode .pagination button , .dark-mode .tab-button  {
     color: var(--co-black-1);
 } 
 .dark-mode #main-post {

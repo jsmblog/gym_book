@@ -72,7 +72,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
   
       // Se actualiza el documento en Firestore con el array de posts modificado
       const docRef = doc(db, "USERS", userId);
-      await updateDoc(docRef, { posts: updatedPosts });
+      await updateDoc(docRef, { p: updatedPosts });
     } catch (error) {
       console.error("Error liking the post:", error.message);
     }
@@ -121,7 +121,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
       // Se agrega la publicación compartida al array de posts del usuario actual
       const updatedCurrentUserPosts = [...(currentUserData.posts || []), sharedPost];
       const docRefCurrentUser = doc(db, "USERS", currentUser.uid);
-      await updateDoc(docRefCurrentUser, { posts: updatedCurrentUserPosts });
+      await updateDoc(docRefCurrentUser, { p: updatedCurrentUserPosts });
   
       const timeStampShare = new Date().toISOString();
       const user = {
@@ -140,7 +140,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
         return p;
       });
       const docRefOwner = doc(db, "USERS", userId);
-      await updateDoc(docRefOwner, { posts: updatedOwnerPosts });
+      await updateDoc(docRefOwner, { p: updatedOwnerPosts });
   
       messageError("¡Publicación compartida con éxito!");
     } catch (error) {
@@ -226,7 +226,7 @@ const Publications = React.memo(({ users, currentUser, allUsers }) => {
                   <img onClick={() => navigateToPerfilUserSelected(user)} src={user.ownerPhoto} alt={user.owner} />
                   <p className="name-navigate" onClick={() => navigateToPerfilUserSelected(user)}><h4 id="name_gym">{user.name_gym || ''}</h4> {user.rol === 'instructor' ? 'Instr :' : ''} {user.owner}</p>
                   {user.post?.s && (
-                    <span id="sentiment-user">{`se siente ${decrypt(user.post?.s)}`}</span>
+                    <span id="sentiment-user">{`se siente ${user.post?.s}`}</span>
                   )}
                 </div>
                 <span>{formatDate(user.post?.c_a)}</span>

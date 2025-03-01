@@ -41,26 +41,27 @@ export const AuthProvider = ({ children }) => {
           const data = doc.data();
   
           const userObj = {
-            name: decrypt(data.n),
+            name:data.n,
             email: decrypt(data.e),
-            gender: decrypt(data.g) || "",
-            numberTelf: decrypt(data.tel),
-            province: decrypt(data.pro),
-            createAccount: data.c_a,
-            imageProfile: decrypt(data.img),
+            gender:data.g || "",
+            numberTelf:data.t,
+            country : data.c || '',
+            province:data.pr,
+            createAccount: data.ca,
+            imageProfile:data.i,
             uid: data.uid,
-            rol: data.rol,
-            birth:decrypt(data.birth) || '',
+            rol: data.r,
+            birth:data.b || '',
             inv: data.inv && Array.isArray(data.inv) && data.inv.length > 0 ? data.inv : [],
             instr: data.f_d && typeof data.f_d === "object" ? data.f_d : {},
             paid: data.paid && typeof data.paid === "object" ? data.paid : {},
-            address: data.dir && decrypt(data.dir),
-            name_gym: data.n_g && decrypt(data.n_g),
+            address: data.dir && data.dir,
+            name_gym: data.n_g && data.n_g,
             followers: data.f && Array.isArray(data.f) && data.f.length > 0 ? data.f : [],
             users: data.u && Array.isArray(data.u) && data.u.length > 0 ? data.u : [],
             statistics: data.s && Array.isArray(data.s) && data.s.length > 0 ? data.s : [],
             isOnline: data.on,
-            posts: data.posts || [],
+            posts: data.p || [],
             gymData:
               data.gymData && typeof data.gymData === "object"
                 ? data.gymData

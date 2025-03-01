@@ -133,20 +133,20 @@ const SignUpUser = () => {
       const imageUrl = await getDownloadURL(storageRef);
       const createdAt = new Date().toISOString();
       const userDoc = {
-        n: encrypt(nameUser),
+        n:nameUser,
         e: encrypt(email),
-        img: encrypt(imageUrl),
-        c_a: formatDate(createdAt),
-        rol: "user",
+        i: imageUrl,
+        ca: formatDate(createdAt),
+        r: "user",
         uid: userId,
-        birth: encrypt(dateBirth),
-        pro: encrypt(province),
-        g: encrypt(gender),
+        b:dateBirth,
+        pr:province,
+        g:gender,
         on: true,
-        tel: encrypt(numberTelf),
+        t: numberTelf,
         v: false,
-        posts: [],
-        c: encrypt(selectedCountry)
+        p: [], // posts
+        c:selectedCountry
       };
 
       const collectionUsers = collection(db, "USERS");
