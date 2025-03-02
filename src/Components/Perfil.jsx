@@ -12,7 +12,7 @@ import { db } from '../ConfigFirebase/config';
 const Perfil = React.memo(({ currentUserData }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [isOpenCardFollowers, setIsOpenCardFollowers] = useState(false);
   // Se obtiene la info del usuario a través de location o currentUserData
   const user = location.state || currentUserData || {};
 
@@ -48,7 +48,7 @@ const Perfil = React.memo(({ currentUserData }) => {
     address: address || '',
     maxCapacity: gymData.m_m || ''
   });
-  // Estado exclusivo para los seguidores (propiedad "f" en Firestore)
+
   const [followers, setFollowers] = useState(user.f || []);
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const Perfil = React.memo(({ currentUserData }) => {
     }
   };
 
-  const handleFollow = async () => {
+  const handleFollow = async (userId) => {
     try {
       if (userId === currentUserUid) {
         return messageError("No puedes seguirte a ti mismo");
@@ -279,10 +279,10 @@ const Perfil = React.memo(({ currentUserData }) => {
           </div>
 
           <div className="cont-followers">
-            <button>
+            <button onClick={()=> setIsOpenCardFollowers(true)}>
               {followers.length} {followers.length === 1 ? 'Seguidor' : 'Seguidores'}
             </button>
-            <button onClick={handleFollow} className="back-blue-dark">
+            <button onClick={()=>handleFollow(userId)} className="back-blue-dark">
               {followers.some((follower) => follower.i === currentUserUid)
                 ? 'Dejar de seguir'
                 : 'Seguir'}
@@ -319,6 +319,30 @@ const Perfil = React.memo(({ currentUserData }) => {
           )}
         </div>
       </div>
+      {
+        isOpenCardFollowers && (
+          <section className='modal-overlay'>
+           <div className='card-followers fade-in-left' >
+            {
+              followers?.length > 0 ? (
+                followers.map(({i,n,p}) => (
+                  <div key={i} className='user-foolower' >
+                    <img src={p} alt="" />
+                    <h3>{n}</h3>
+                    <button onClick={()=> handleFollow(i)} className='back-blue-dark'>
+                      Seguir
+                    </button>
+                  </div>
+                ))
+              ) : <h5>Sin seguidores...</h5>
+            }
+            <button onClick={()=>setIsOpenCardFollowers(false)} className='close-card-followers' >
+              X
+            </button>
+           </div>
+          </section>
+        )
+      }
       <DisplayMessage message={message} />
     </>
   );

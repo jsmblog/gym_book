@@ -22,10 +22,10 @@
 
 .dark-mode table td , .dark-mode #bearer {
     background-color: var(--co-back-gray-5);
-    color: var(--co-txt-dark);
+    color: var(--co-back-gray-3);
 }
 .dark-mode .gym-card__tables table , .dark-mode .table-header h2,.dark-mode .campaigns-section h2, .dark-mode .btn-save  ,.dark-mode .popup-content button, .dark-mode .gym-card__tables table td , .dark-mode .pagination button , .dark-mode .tab-button  {
-    color: var(--co-black-1);
+    color: var(--co-back-gray-3);
 } 
 .dark-mode #main-post {
     background: linear-gradient(to bottom, #092635, #020d16);

@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
             statistics: data.s && Array.isArray(data.s) && data.s.length > 0 ? data.s : [],
             isOnline: data.on,
             posts: data.p || [],
+            raiting: data.rt || [] ,
             gymData:
               data.gymData && typeof data.gymData === "object"
                 ? data.gymData

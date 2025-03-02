@@ -100,7 +100,19 @@ border-radius: 50%;
     background-color: var(--co-blue-1);
     color: var(--co-white);
   }
-  
+  .gym-data__reviews {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: .5rem .75rem;
+  }
+  .gym-data__reviews h5:hover{
+   text-decoration: underline;
+   transition: .4s ease-in-out;
+   cursor: pointer;
+   color: var(--co-blue-1);
+  }
   .tab-content {
     opacity: 0;
     display: flex;
@@ -125,6 +137,123 @@ border-radius: 50%;
 strong {
     font-weight: bold;
 }
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--co-black-2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal {
+    background: var(--co-white);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 10px -5px var(--co-black-2);
+  }
+  
+  .modal textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+    resize: none;
+    border: 1px solid var(--co-back-gray);
+    border-radius: 4px;
+  }
+  
+  #star-rating {
+    margin: 15px 0;
+    text-align: center;
+  }
+  
+  .star {
+    font-size: 3rem;
+    color: var(--co-back-gray-3);
+    cursor: pointer;
+    transition: color 0.2s;
+    margin: 0 2px;
+  }
+  
+  .star.selected , .star-user{
+    color: var(--co-yellow);
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    background-color: var(--co-blue-1);
+    color: var(--co-white);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .modal-buttons .cancel-raiting {
+    background-color: var(--co-white);
+    color: var(--co-red);
+  }
+  .review-title:hover {
+    text-decoration: underline;
+  }
+  .ratings-list {
+    display: flex;
+    min-height: 260px;
+    width: 100%;
+    padding: 0 .75rem;
+    align-items: center;
+    overflow-x: auto;
+    gap: 1rem;
+  }
+  .rating-item {
+    border: 1px solid var(--co-back-gray-3);
+    display: flex;
+    padding: 0 1rem;
+    flex-direction: column;
+    width: 200px;
+    text-align: center;
+    height: 200px;
+    border-radius: 20px;
+    align-items: center;
+    box-shadow: 6px 6px 15px -5px var(--co-back-gray);
+  }
+  .rating-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    position: relative;
+    bottom: 1rem;
+    height: 100%;
+  }
+  .rating-item img {
+    width: 55px;
+    height: 60px;
+    border-radius: 50%;
+    position: relative;
+    bottom: 1.3rem;
+    border: 2px solid var(--co-white);
+  }
+  .instructor-rating-button {
+    text-align: center;
+    padding: .75rem 0;
+  }
+  .instructor-rating-button h5:hover {
+    color: var(--co-blue-1);
+    cursor: pointer;
+  }
 @media screen and (max-width: 768px) {
     .gym-filter label select{
         width: 100%;

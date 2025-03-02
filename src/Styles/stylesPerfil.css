@@ -214,7 +214,63 @@ box-shadow: 0 5px 10px -5px var(--co-back-gray);
     display: flex;
     gap: .5rem;
 }
-
+.card-followers {
+    background-color: var(--co-white);
+    width: 320px;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    z-index: 999;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+.close-card-followers {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: var(--co-red);
+}
+.user-foolower {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.user-foolower img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.fade-in-left {
+	-webkit-animation: fade-in-left 1.3s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: fade-in-left 1.3s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+@-webkit-keyframes fade-in-left {
+    0% {
+      -webkit-transform: translateX(-50px);
+              transform: translateX(-50px);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes fade-in-left {
+    0% {
+      -webkit-transform: translateX(-50px);
+              transform: translateX(-50px);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
 @media (max-width: 768px) {
     .perfil-container {
         width: 100%;

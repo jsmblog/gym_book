@@ -76,7 +76,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
       const userDoc = {
         n:name, // name -> n
         n_g :nameGym, // nameGym -> n_g
-        e:email, // email -> e
+        e:encrypt(email), // email -> e
         i:downloadUrl, // imageProfile -> img
         ca:createAccount, // createAccount -> c_a
         r: userRole, // userRole -> rol
@@ -93,6 +93,7 @@ const GymOwnerWizard = React.memo(({infoPrincipalGym}) => {
         paid:{i_p:false,t_p:'',d:''},
         s:[], // stadistics -> s
         inv:[],
+        rt: [], // raiting
       };
   
       const collectionUsers = collection(db, "USERS");

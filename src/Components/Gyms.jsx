@@ -12,10 +12,9 @@ import Search from './Search.jsx';
 import AllInstructors from './AllInstructors.jsx';
 import CardInstructor from './CardInstructor.jsx';
 import SearchInstructors from './SearchInstructors.jsx';
-import decrypt from '../Js/decrypt.js';
 
 const Gyms = React.memo(({ userId, role }) => {
-  const { users } = useUserContext();
+  const { users ,currentUserData } = useUserContext();
 
   const [activeTab, setActiveTab] = useState('gyms');
 
@@ -37,6 +36,7 @@ const Gyms = React.memo(({ userId, role }) => {
         paid: user.paid || {},
         name_gym: user.name_gym,
         gym_data: user.gymData || {},
+        raiting : user.raiting || [],
       }))
       .slice(0, 100);
 
@@ -77,6 +77,7 @@ const Gyms = React.memo(({ userId, role }) => {
         paid: user.paid || {},
         name_instructor: user.name,
         instructor_data: user.instr || {},
+        raiting: user.raiting || [],
       }))
       .slice(0, 100);
 
@@ -130,7 +131,7 @@ const Gyms = React.memo(({ userId, role }) => {
           </h3>
           <div className="gym-list">
             <AllGyms filteredGyms={filteredGyms} setSelectedGym={setSelectedGym} />
-            <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} />
+            <CardGym selectedGym={selectedGym} setSelectedGym={setSelectedGym} currentUserData={currentUserData} />
           </div>
         </div>
 
@@ -151,6 +152,7 @@ const Gyms = React.memo(({ userId, role }) => {
             <CardInstructor
               selectedInstructor={selectedInstructor}
               setSelectedInstructor={setSelectedInstructor}
+              currentUserData={currentUserData}
             />
           </div>
         </div>
